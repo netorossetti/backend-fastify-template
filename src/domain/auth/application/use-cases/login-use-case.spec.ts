@@ -25,7 +25,8 @@ describe("Login Use Case", () => {
   });
 
   test("Deve ser possivel realizar um login", async () => {
-    const user = makeUser({ password: "teste@1234" });
+    const passwordHash = await fakeHasher.hash("teste@1234");
+    const user = makeUser({ password: passwordHash });
     inMemoryUsersRepository.items.push(user);
     const result = await sut.execute({
       email: user.email,
@@ -38,7 +39,8 @@ describe("Login Use Case", () => {
   });
 
   test("Não deve ser possivel realizar um login com senha inválida", async () => {
-    const user = makeUser({ password: "teste@1234" });
+    const passwordHash = await fakeHasher.hash("teste@1234");
+    const user = makeUser({ password: passwordHash });
     inMemoryUsersRepository.items.push(user);
     const result = await sut.execute({
       email: user.email,
@@ -58,7 +60,8 @@ describe("Login Use Case", () => {
   });
 
   test("Não deve ser possivel realizar um login para um usuário inativado", async () => {
-    const user = makeUser({ password: "teste@1234", active: false });
+    const passwordHash = await fakeHasher.hash("teste@1234");
+    const user = makeUser({ password: passwordHash, active: false });
     inMemoryUsersRepository.items.push(user);
     const result = await sut.execute({
       email: user.email,

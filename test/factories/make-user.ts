@@ -10,16 +10,11 @@ export function makeUser(
 ) {
   const firstName = faker.person.firstName();
   const fullName = faker.person.fullName({ firstName });
-  if (override.password) {
-    if (!override.password.endsWith("-hashed"))
-      override.password = override.password.concat("-hashed");
-  }
-
   const newUser = User.create(
     {
       name: fullName,
       email: faker.internet.email({ firstName: firstName }),
-      password: "p@s5Word123-hashed",
+      password: "p@s5Word123",
       role: "user",
       ...override,
     },
