@@ -38,7 +38,7 @@ class Logger {
   }
 
   private getTransports(): winston.transport[] {
-    const dirname = env.LOGGER_FOLDER || "logs";
+    const dirname = env.LOGGER_FOLDER || "temp/logs";
     const filename = `${env.LOGGER_FILENAME || "application"}-%DATE%.log`;
 
     const dailyRotateFileTransport = new DailyRotateFile({
