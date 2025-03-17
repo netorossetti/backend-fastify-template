@@ -1,2 +1,0 @@
-[2025-03-12T00:34:46.296Z] [fasity-app] info: REQUEST: [POST] /auth/login 
-[2025-03-12T00:34:46.472Z] [fasity-app] info: RESPONSE: [POST] /auth/login, status(200) 177.64ms 
