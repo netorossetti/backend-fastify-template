@@ -1,0 +1,26 @@
+[2025-03-17T15:18:34.193Z] [fasity-app] info: REQUEST: [GET] /ping 
+[2025-03-17T15:18:34.206Z] [fasity-app] info: RESPONSE: [GET] /ping, status(200) 15.31ms 
+[2025-03-17T15:18:34.958Z] [fasity-app] info: REQUEST: [GET] /favicon.ico 
+[2025-03-17T15:18:34.960Z] [fasity-app] info: RESPONSE: [GET] /favicon.ico, status(404) 2.11ms 
+[2025-03-17T15:18:39.279Z] [fasity-app] info: REQUEST: [GET] /docs 
+[2025-03-17T15:18:39.282Z] [fasity-app] info: RESPONSE: [GET] /docs, status(200) 2.70ms 
+[2025-03-17T15:18:39.340Z] [fasity-app] info: REQUEST: [GET] /docs/static/swagger-ui.css 
+[2025-03-17T15:18:39.345Z] [fasity-app] info: REQUEST: [GET] /docs/static/index.css 
+[2025-03-17T15:18:39.350Z] [fasity-app] info: REQUEST: [GET] /docs/static/swagger-ui-bundle.js 
+[2025-03-17T15:18:39.360Z] [fasity-app] info: RESPONSE: [GET] /docs/static/index.css, status(200) 15.34ms 
+[2025-03-17T15:18:39.367Z] [fasity-app] info: REQUEST: [GET] /docs/static/swagger-ui-standalone-preset.js 
+[2025-03-17T15:18:39.372Z] [fasity-app] info: RESPONSE: [GET] /docs/static/swagger-ui.css, status(200) 31.54ms 
+[2025-03-17T15:18:39.379Z] [fasity-app] info: REQUEST: [GET] /docs/static/swagger-initializer.js 
+[2025-03-17T15:18:39.381Z] [fasity-app] info: RESPONSE: [GET] /docs/static/swagger-initializer.js, status(200) 2.30ms 
+[2025-03-17T15:18:39.395Z] [fasity-app] info: RESPONSE: [GET] /docs/static/swagger-ui-standalone-preset.js, status(200) 27.95ms 
+[2025-03-17T15:18:39.451Z] [fasity-app] info: RESPONSE: [GET] /docs/static/swagger-ui-bundle.js, status(200) 102.01ms 
+[2025-03-17T15:18:39.947Z] [fasity-app] info: REQUEST: [GET] /docs/static/favicon-32x32.png 
+[2025-03-17T15:18:39.954Z] [fasity-app] info: RESPONSE: [GET] /docs/static/favicon-32x32.png, status(200) 6.48ms 
+[2025-03-17T15:18:39.964Z] [fasity-app] info: REQUEST: [GET] /docs/static/favicon-16x16.png 
+[2025-03-17T15:18:39.967Z] [fasity-app] info: RESPONSE: [GET] /docs/static/favicon-16x16.png, status(200) 3.78ms 
+[2025-03-17T15:18:40.051Z] [fasity-app] info: REQUEST: [GET] /docs/json 
+[2025-03-17T15:18:40.084Z] [fasity-app] info: RESPONSE: [GET] /docs/json, status(200) 32.82ms 
+[2025-03-17T15:18:40.127Z] [fasity-app] info: REQUEST: [GET] /docs/static/favicon-32x32.png 
+[2025-03-17T15:18:40.132Z] [fasity-app] info: RESPONSE: [GET] /docs/static/favicon-32x32.png, status(304) 5.13ms 
+[2025-03-17T15:18:40.251Z] [fasity-app] info: REQUEST: [GET] /docs/static/favicon-16x16.png 
+[2025-03-17T15:18:40.254Z] [fasity-app] info: RESPONSE: [GET] /docs/static/favicon-16x16.png, status(304) 2.67ms 

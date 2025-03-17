@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:3333
+@authToken = {{logar.response.body.token}}
+
+# @name logar
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "teste@teste.com",
+  "senha": "teste@123"
+}
+
+###
+
+# @name register-user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "nome": "Teste Teste",
+  "email": "teste@teste.com",
+  "senha": "teste@123",
+  "empresaId": "5ae34279-3466-4863-8596-5390d7fa3d61"
+}
