@@ -3,19 +3,16 @@ import { BadRequestError } from "src/core/errors/bad-request-error";
 import { ConflictError } from "src/core/errors/conflict-error";
 import { FakeHasher } from "test/cryptography/fake-hasher";
 import { makeUser } from "test/factories/make-user";
-import { FakeRedisServices } from "test/lib/faker-redis-services";
 import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
 import { RegisterUserUseCase } from "./register-use-case";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let fakeHasher: FakeHasher;
-let fakeRedisServices: FakeRedisServices;
 let sut: RegisterUserUseCase;
 
 describe("Login Use Case", () => {
   beforeEach(() => {
     fakeHasher = new FakeHasher();
-    fakeRedisServices = new FakeRedisServices();
     inMemoryUsersRepository = new InMemoryUsersRepository();
     sut = new RegisterUserUseCase(inMemoryUsersRepository, fakeHasher);
   });

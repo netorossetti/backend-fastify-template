@@ -12,7 +12,7 @@ const envSchema = z.object({
     .union([z.coerce.number(), z.string().regex(/^[0-9]+[smhd]$/)])
     .transform((val) => {
       try {
-        if (typeof val === "string") return ms(val as ms.StringValue);
+        if (typeof val === "string") return ms(val as ms.StringValue) / 1000;
       } catch (error) {
         throw new Error("JWT_EXP: Valor inválido para ms.StringValue");
       }

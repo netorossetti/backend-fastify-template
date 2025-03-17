@@ -78,6 +78,27 @@ describe("Date Helper", () => {
     expect(result2).toEqual(new Date(2023, 9, 29));
   });
 
+  test("Add hours", () => {
+    const date = new Date(2024, 9, 29, 12);
+    const result = DateHelper.addHours(date, 4);
+    const diff = (result.getTime() - date.getTime()) / 60 / 60 / 1000;
+    expect(diff).toEqual(4);
+  });
+
+  test("Add minutes", () => {
+    const date = new Date(2024, 9, 29, 12, 0);
+    const result = DateHelper.addMinutes(date, 4);
+    const diff = (result.getTime() - date.getTime()) / 60 / 1000;
+    expect(diff).toEqual(4);
+  });
+
+  test("Add seconds", () => {
+    const date = new Date(2024, 9, 29, 12, 0, 0);
+    const result = DateHelper.addSeconds(date, 4);
+    const diff = (result.getTime() - date.getTime()) / 1000;
+    expect(diff).toEqual(4);
+  });
+
   test("Parse date string", () => {
     const result = DateHelper.parseDateString("20/01/2022");
     expect(result).toEqual(new Date(2022, 0, 20));

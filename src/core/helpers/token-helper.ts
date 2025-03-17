@@ -6,7 +6,7 @@ const decodedSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   email: z.string().email(),
-  regra: z.enum(["user", "admin", "superAdmin"]),
+  role: z.enum(["user", "admin", "superAdmin"]),
   iat: z.number().int().positive(),
   exp: z.number().int().positive(),
 });

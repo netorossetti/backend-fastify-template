@@ -142,6 +142,18 @@ export class DateHelper {
     return dayjs(date).add(years, "year").toDate();
   }
 
+  static addHours(date: Date, hours: number): Date {
+    return dayjs(date).add(hours, "hours").toDate();
+  }
+
+  static addMinutes(date: Date, minutes: number): Date {
+    return dayjs(date).add(minutes, "minutes").toDate();
+  }
+
+  static addSeconds(date: Date, seconds: number): Date {
+    return dayjs(date).add(seconds, "seconds").toDate();
+  }
+
   static parseDateString(dateString: string): Date | null {
     const datePatterns = [
       /^(\d{2})\/(\d{2})\/(\d{4})$/,
