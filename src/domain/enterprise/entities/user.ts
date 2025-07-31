@@ -5,23 +5,50 @@ import { Optional } from "src/core/types/optional";
 export type RoleUserType = "user" | "admin" | "superAdmin";
 
 export interface UserProps {
-  name: string;
+  firstName: string;
+  lastName: string;
+  nickName: string;
   email: string;
   active: boolean;
   password: string;
   role: RoleUserType;
+  tenantId: string;
   createdAt: Date;
   updatedAt?: Date | null;
 }
 
 export class User extends Entity<UserProps> {
-  get name() {
-    return this.props.name;
+  get firstName() {
+    return this.props.firstName;
   }
 
-  set name(name: string) {
-    this.props.name = name;
-    this.touch();
+  set firstName(firstName) {
+    if (firstName !== this.props.firstName) {
+      this.props.firstName = firstName;
+      this.touch();
+    }
+  }
+
+  get lastName() {
+    return this.props.lastName;
+  }
+
+  set lastName(lastName) {
+    if (lastName !== this.props.lastName) {
+      this.props.lastName = lastName;
+      this.touch();
+    }
+  }
+
+  get nickName() {
+    return this.props.nickName;
+  }
+
+  set nickName(nickName) {
+    if (nickName !== this.props.nickName) {
+      this.props.nickName = nickName;
+      this.touch();
+    }
   }
 
   get email() {
@@ -58,6 +85,10 @@ export class User extends Entity<UserProps> {
   set role(role) {
     this.props.role = role;
     this.touch();
+  }
+
+  get tenantId() {
+    return this.props.tenantId;
   }
 
   get createdAt() {

@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client/extension";
 import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { User, UserProps } from "src/domain/auth/enterprise/entities/user";
+import { User, UserProps } from "src/domain/enterprise/entities/user";
 import { PrismaUserMapper } from "src/infra/database/repository/mappers/prisma-user-mapper";
 
 export function makeUser(

@@ -1,6 +1,6 @@
 import { TokenHelper } from "src/core/helpers/token-helper";
 import { IRedisService } from "src/core/lib/redis/redis-services";
-import { User } from "src/domain/auth/enterprise/entities/user";
+import { User } from "src/domain/enterprise/entities/user";
 
 export function makeAuthToken(user: User, redisService: IRedisService) {
   // Geração do token

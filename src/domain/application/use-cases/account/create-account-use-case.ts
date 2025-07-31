@@ -3,17 +3,23 @@ import { ConflictError } from "src/core/errors/conflict-error";
 import { StringHelper } from "src/core/helpers/string-helper";
 import { HashGenerator } from "src/core/lib/criptography/hash-generator";
 import { Result, failure, success } from "src/core/result";
-import { RoleUserType, User } from "../../enterprise/entities/user";
-import { UsersRepository } from "../repositories/usuarios-repository";
+import { DocumentType, Tenant } from "src/domain/enterprise/entities/tenant";
+import { RoleUserType, User } from "../../../enterprise/entities/user";
+import { TenantsRepository } from "../../repositories/tenants-repository";
+import { UsersRepository } from "../../repositories/users-repository";
 
-interface RegisterUserUseCaseRequest {
-  name: string;
+interface CreateAccountUseCaseRequest {
+  firstName: string;
+  lastName: string;
+  nickName?: string;
+  documentType: DocumentType;
+  documentNumber: string;
   email: string;
   password: string;
   role: RoleUserType;
 }
 
-type RegisterUserUseCaseResponse = Result<
+type CreateAccountUseCaseResponse = Result<
   ConflictError | BadRequestError,
   {
     name: string;
@@ -22,18 +28,41 @@ type RegisterUserUseCaseResponse = Result<
   }
 >;
 
-export class RegisterUserUseCase {
+export class CreateAccountUseCase {
   constructor(
+    private tenantsRepository: TenantsRepository,
     private usersRepository: UsersRepository,
     private hasher: HashGenerator
   ) {}
   async execute({
-    name,
+    firstName,
+    lastName,
+    nickName,
+    documentType,
+    documentNumber,
     email,
     password,
     role,
-  }: RegisterUserUseCaseRequest): Promise<RegisterUserUseCaseResponse> {
-    // Autenticar no sistema de contrato
+  }: CreateAccountUseCaseRequest): Promise<CreateAccountUseCaseResponse> {
+    // Verificar se o tenant já existe
+    const tenantExists = await this.tenantsRepository.findByDocument(
+      documentType
+    );
+    if (tenantExists)
+      return failure(
+        new ConflictError(
+          "Organização já foi registrada com o documento informado."
+        )
+      );
+
+    const newTenant = Tenant.create({
+      firstName,
+      lastName,
+      nickName: nickName ?? firstName,
+      documentType,
+      documentNumber,
+    });
+
     const userExists = await this.usersRepository.findByEmail(email);
     if (userExists) {
       return failure(

@@ -1,5 +1,5 @@
 import redisServices from "src/core/lib/redis/redis-services";
-import { LoginUseCase } from "src/domain/auth/application/use-cases/login-use-case";
+import { LoginUseCase } from "src/domain/application/use-cases/auth/login-use-case";
 import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository";
 import { BcryptHasher } from "../../criptography/bcrypt-hasher";
 import { prisma } from "../../database/prisma";

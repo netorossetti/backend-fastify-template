@@ -1,4 +1,4 @@
-import { RegisterUserUseCase } from "src/domain/auth/application/use-cases/register-use-case";
+import { RegisterUserUseCase } from "src/domain/application/use-cases/account/create-account-use-case";
 import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository";
 import { BcryptHasher } from "../../criptography/bcrypt-hasher";
 import { prisma } from "../../database/prisma";

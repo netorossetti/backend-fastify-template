@@ -4,17 +4,17 @@ import { ConflictError } from "src/core/errors/conflict-error";
 import { FakeHasher } from "test/cryptography/fake-hasher";
 import { makeUser } from "test/factories/make-user";
 import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { RegisterUserUseCase } from "./register-use-case";
+import { CreateAccountUseCase } from "./create-account-use-case";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let fakeHasher: FakeHasher;
-let sut: RegisterUserUseCase;
+let sut: CreateAccountUseCase;
 
 describe("Login Use Case", () => {
   beforeEach(() => {
     fakeHasher = new FakeHasher();
     inMemoryUsersRepository = new InMemoryUsersRepository();
-    sut = new RegisterUserUseCase(inMemoryUsersRepository, fakeHasher);
+    sut = new CreateAccountUseCase(inMemoryUsersRepository, fakeHasher);
   });
 
   test("Deve ser possivel registrar um novo usuário", async () => {

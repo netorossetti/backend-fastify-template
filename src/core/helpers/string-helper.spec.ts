@@ -84,4 +84,44 @@ describe("String Helper", () => {
       StringHelper.generateRandomCode(0);
     }).rejects.toBeInstanceOf(Error);
   });
+
+  test("Validate CNPJ with formatting", () => {
+    const result = StringHelper.isValidCNPJ("20.582.568/0001-75");
+    expect(result).toBe("20582568000175");
+  });
+
+  test("Validate CNPJ without formatting", () => {
+    const result = StringHelper.isValidCNPJ("20582568000175");
+    expect(result).toBe("20582568000175");
+  });
+
+  test("Validate CNPJ repeated numbers", () => {
+    const result = StringHelper.isValidCNPJ("00000000000000");
+    expect(result).toBe(false);
+  });
+
+  test("Validate invalid CNPJ", () => {
+    const result = StringHelper.isValidCNPJ("12345678901234");
+    expect(result).toBe(false);
+  });
+
+  test("Validate CPF with formatting", () => {
+    const result = StringHelper.isValidCPF("610.594.580-98");
+    expect(result).toBe("61059458098");
+  });
+
+  test("Validate CPF without formatting", () => {
+    const result = StringHelper.isValidCPF("61059458098");
+    expect(result).toBe("61059458098");
+  });
+
+  test("Validate CPF repeated numbers", () => {
+    const result = StringHelper.isValidCPF("00000000000");
+    expect(result).toBe(false);
+  });
+
+  test("Validate invalid CPF", () => {
+    const result = StringHelper.isValidCPF("12345678901");
+    expect(result).toBe(false);
+  });
 });

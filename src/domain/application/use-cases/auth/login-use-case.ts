@@ -6,7 +6,7 @@ import { TokenHelper } from "src/core/helpers/token-helper";
 import { HashCompare } from "src/core/lib/criptography/hash-compare";
 import { IRedisService } from "src/core/lib/redis/redis-services";
 import { Result, failure, success } from "src/core/result";
-import { UsersRepository } from "../repositories/usuarios-repository";
+import { UsersRepository } from "../../repositories/users-repository";
 
 interface LoginUseCaseRequest {
   email: string;
@@ -46,7 +46,7 @@ export class LoginUseCase {
     // Geração do token
     const token = TokenHelper.singToken({
       id: user.id.toString(),
-      name: user.name,
+      name: user.nickName,
       email: user.email,
       role: user.role,
     });

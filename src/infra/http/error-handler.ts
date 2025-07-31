@@ -8,7 +8,7 @@ import { FastifyInstance } from "fastify";
 import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
 import { ForbiddenError } from "src/core/errors/forbidden-error";
 import Logger from "src/core/lib/logger/logger";
-import { z, ZodError } from "zod/v4";
+import { ZodError } from "zod";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
@@ -16,6 +16,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   let erroName = "UnknownError";
   let statusCode = 500;
   let responseBody: {
+    statusCode?: number | undefined;
     message: string;
     issues?: Record<string, string[] | undefined>;
   } = {
@@ -26,12 +27,33 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
 
   // Usando switch para identificar o tipo de erro
   switch (true) {
+    case error.code === "FST_ERR_VALIDATION":
+      erroName = "ValidationError";
+      statusCode = 400;
+
+      const issues: Record<string, string[]> = {};
+
+      if (Array.isArray(error.validation)) {
+        for (const validationError of error.validation) {
+          const path =
+            validationError.instancePath?.replace(/^\//, "") || "root";
+          if (!issues[path]) issues[path] = [];
+          issues[path].push(validationError.message || "Campo inválido");
+        }
+      }
+
+      responseBody = {
+        message: "Erro de validação dos campos",
+        issues,
+      };
+      break;
+
     case error instanceof BadRequestQueryError:
       erroName = "BadRequestQueryError";
       statusCode = 400;
       responseBody = {
         message: `Parâmetros de ${error.invalidQueryType} inválidos.`,
-        issues: z.treeifyError(error),
+        issues: error.flatten().fieldErrors,
       };
       break;
 
@@ -40,7 +62,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       statusCode = 400;
       responseBody = {
         message: "Erro de validação dos campos",
-        issues: z.treeifyError(error),
+        issues: error.flatten().fieldErrors,
       };
       break;
 
