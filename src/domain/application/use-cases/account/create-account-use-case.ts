@@ -4,6 +4,7 @@ import { StringHelper } from "src/core/helpers/string-helper";
 import { HashGenerator } from "src/core/lib/criptography/hash-generator";
 import { Result, failure, success } from "src/core/result";
 import { DocumentType, Tenant } from "src/domain/enterprise/entities/tenant";
+import { isCNH, isCNPJ, isCPF } from "validation-br";
 import { RoleUserType, User } from "../../../enterprise/entities/user";
 import { TenantsRepository } from "../../repositories/tenants-repository";
 import { UsersRepository } from "../../repositories/users-repository";
@@ -54,6 +55,42 @@ export class CreateAccountUseCase {
           "Organização já foi registrada com o documento informado."
         )
       );
+
+    let documentOnlyNumbers = StringHelper.onlyNumbers(documentNumber);
+    switch (documentType) {
+      case "CPF":
+        if (!isCPF(documentOnlyNumbers)) {
+          return failure(
+            new BadRequestError(
+              "Numero do documento informado não é um CPF válido."
+            )
+          );
+        }
+        break;
+
+      case "CNPJ":
+        if (!isCNPJ(documentOnlyNumbers)) {
+          return failure(
+            new BadRequestError(
+              "Numero do documento informado não é um CNPJ válido."
+            )
+          );
+        }
+        break;
+
+      case "CNH":
+        if (!isCNH(documentOnlyNumbers)) {
+          return failure(
+            new BadRequestError(
+              "Numero do documento informado não é um CNH válido."
+            )
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
 
     const newTenant = Tenant.create({
       firstName,

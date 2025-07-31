@@ -30,7 +30,6 @@ model Tenant {
 }
 
 enum enumDocumentType {
-  RG
   CNH
   CPF
   CNPJ

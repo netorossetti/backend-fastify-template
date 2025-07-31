@@ -2,7 +2,7 @@ import { Entity } from "src/core/entities/entity-uuid";
 import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
 import { Optional } from "src/core/types/optional";
 
-export type DocumentType = "RG" | "CNH" | "CPF" | "CNPJ";
+export type DocumentType = "CNH" | "CPF" | "CNPJ";
 
 export interface TenantProps {
   firstName: string;
