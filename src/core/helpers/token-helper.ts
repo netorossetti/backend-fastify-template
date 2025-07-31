@@ -1,11 +1,11 @@
 import JWT from "jsonwebtoken";
-import z from "zod";
+import z from "zod/v4";
 import { env } from "../env";
 
 const decodedSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   role: z.enum(["user", "admin", "superAdmin"]),
   iat: z.number().int().positive(),
   exp: z.number().int().positive(),

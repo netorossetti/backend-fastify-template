@@ -8,7 +8,7 @@ import { FastifyInstance } from "fastify";
 import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
 import { ForbiddenError } from "src/core/errors/forbidden-error";
 import Logger from "src/core/lib/logger/logger";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod/v4";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
@@ -31,7 +31,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       statusCode = 400;
       responseBody = {
         message: `Parâmetros de ${error.invalidQueryType} inválidos.`,
-        issues: error.flatten().fieldErrors,
+        issues: z.treeifyError(error),
       };
       break;
 
@@ -40,7 +40,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       statusCode = 400;
       responseBody = {
         message: "Erro de validação dos campos",
-        issues: error.flatten().fieldErrors,
+        issues: z.treeifyError(error),
       };
       break;
 

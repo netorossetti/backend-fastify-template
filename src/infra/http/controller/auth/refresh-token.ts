@@ -1,6 +1,6 @@
 import Logger from "src/core/lib/logger/logger";
 import { makeRefreshTokenUseCase } from "src/infra/factories/auth/make-refresh-token-use-case";
-import z from "zod";
+import z from "zod/v4";
 import { schemaResponseError } from "../../@schema-errors/response-error-schema";
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
 import { auth } from "../../middleware/auth";
@@ -21,7 +21,9 @@ export async function refreshToken(app: FastifyTypedInstace) {
         security: [{ bearerAuth: [] }],
         response: {
           200: responseOkSchema,
-          401: z.object({ statusCode: z.number() }).merge(schemaResponseError),
+          401: z
+            .object({ statusCode: z.number() })
+            .extend(schemaResponseError.shape),
         },
       },
     },

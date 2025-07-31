@@ -1,3 +1,4 @@
+import { env } from "src/core/env";
 import { NotAllowedError } from "src/core/errors/not-allowed-error";
 import { NotFoundError } from "src/core/errors/not-found-error";
 import { UnauthorizedError } from "src/core/errors/unauthorized-error";
@@ -51,11 +52,10 @@ export class LoginUseCase {
     });
 
     // Registrar token de acesso no cache do redis
-    const seteHorasEmSegundos = 60 * 60 * 7;
     this.redisServices.set(
       `access_token:${user.id.toString()}`,
       token,
-      seteHorasEmSegundos
+      env.JWT_EXP
     );
 
     return success({ token });

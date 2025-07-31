@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { JsonObjectSchema } from "../types/json-object-schema/json-object-schema";
 import { JsonObjectSchemaList } from "../types/json-object-schema/json-object-schema-list";
 import { ZodHelper } from "./zod-helper";

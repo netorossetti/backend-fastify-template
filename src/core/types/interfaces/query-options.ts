@@ -1,5 +1,5 @@
 import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { ReqQueryOptions } from "./request-query-options";
 
 // Definindo os operadores válidos
@@ -22,6 +22,7 @@ const filterValueSchema = z.union([z.any(), z.array(z.any())]);
 
 // Definindo o esquema para os filtros
 const schemaFilterOptions = z.record(
+  z.string(),
   z
     .object({
       equals: filterValueSchema.optional(),

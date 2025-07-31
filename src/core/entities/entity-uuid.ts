@@ -1,4 +1,4 @@
-import { z, ZodSchema } from "zod";
+import { z, ZodSchema } from "zod/v4";
 import { UniqueEntityId } from "./value-objects/unique-entity-id";
 
 export class Entity<Props> {

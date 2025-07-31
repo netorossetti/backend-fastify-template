@@ -1,11 +1,15 @@
-import { z, ZodTypeAny } from "zod";
+import { z, ZodTypeAny } from "zod/v4";
 import { JsonObjectSchema } from "../types/json-object-schema/json-object-schema";
 
 const literalSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
 type Literal = z.infer<typeof literalSchema>;
 type Json = Literal | { [key: string]: Json } | Json[];
 export const jsonZodSchema: z.ZodType<Json> = z.lazy(() =>
-  z.union([literalSchema, z.array(jsonZodSchema), z.record(jsonZodSchema)])
+  z.union([
+    literalSchema,
+    z.array(jsonZodSchema),
+    z.record(z.string(), jsonZodSchema),
+  ])
 );
 
 interface paramsCreateZodJsonObjectSchemaObject {
@@ -89,20 +93,16 @@ export class ZodHelper {
               break;
 
             case "DATE":
-              zobejct = z.coerce
-                .string()
-                .date(
-                  'Invalid date format. Expect recive values in this format: "YYYY-MM-DD"'
-                );
+              zobejct = z.iso.date(
+                'Invalid date format. Expect recive values in this format: "YYYY-MM-DD"'
+              );
               if (schema.nullable) zobejct = zobejct.nullable();
               break;
 
             case "TIME":
-              zobejct = z.coerce
-                .string()
-                .time(
-                  'Invalid time format. Expect recive value in this format: "HH:MM:SS[.s+]".'
-                );
+              zobejct = z.iso.time(
+                'Invalid time format. Expect recive value in this format: "HH:MM:SS[.s+]".'
+              );
               if (schema.nullable) zobejct = zobejct.nullable();
               break;
 

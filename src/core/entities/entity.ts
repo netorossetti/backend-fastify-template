@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { z, ZodSchema } from "zod";
+import { z, ZodSchema } from "zod/v4";
 
 export class Entity<Props> {
   private _id: number;

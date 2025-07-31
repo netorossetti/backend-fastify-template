@@ -1,7 +1,7 @@
 import { StringHelper } from "src/core/helpers/string-helper";
 import Logger from "src/core/lib/logger/logger";
 import { makeRegisterUserUseCase } from "src/infra/factories/auth/make-register-user-use-case";
-import z from "zod";
+import z from "zod/v4";
 import { schemaResponseError } from "../../@schema-errors/response-error-schema";
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
 
@@ -16,13 +16,13 @@ export async function register(app: FastifyTypedInstace) {
         operationId: "auth_register",
         body: z.object({
           name: z.string(),
-          email: z.string().email(),
+          email: z.email(),
           password: z.string().superRefine((novaSenha, ctx) => {
             const mensagemErro = StringHelper.passwordRequirements(novaSenha);
             if (mensagemErro) {
               mensagemErro.forEach((error) => {
                 ctx.addIssue({
-                  code: z.ZodIssueCode.invalid_string,
+                  code: "custom",
                   message: error,
                   validation: "regex",
                 });
@@ -32,7 +32,9 @@ export async function register(app: FastifyTypedInstace) {
         }),
         response: {
           201: z.null(),
-          401: z.object({ statusCode: z.number() }).merge(schemaResponseError),
+          401: z
+            .object({ statusCode: z.number() })
+            .extend(schemaResponseError.shape),
         },
       },
     },

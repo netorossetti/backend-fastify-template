@@ -1,3 +1,4 @@
+import { env } from "src/core/env";
 import { UnauthorizedError } from "src/core/errors/unauthorized-error";
 import { DateHelper } from "src/core/helpers/date-helper";
 import { FakeHasher } from "test/cryptography/fake-hasher";
@@ -56,7 +57,8 @@ describe("Refresh Token Use Case", () => {
     inMemoryUsersRepository.items.push(user);
     const token = makeAuthToken(user, fakeRedisServices);
 
-    vi.setSystemTime(DateHelper.addHours(date, 2));
+    const jwtExpSeconds = (env.JWT_EXP ?? 10) - 10;
+    vi.setSystemTime(DateHelper.addSeconds(date, jwtExpSeconds));
     const result = await sut.execute({
       usuarioId: user.id.toString(),
       token,
@@ -80,7 +82,8 @@ describe("Refresh Token Use Case", () => {
     inMemoryUsersRepository.items.push(user);
     const token = makeAuthToken(user, fakeRedisServices);
 
-    vi.setSystemTime(DateHelper.addHours(date, 5));
+    const jwtExpSeconds = (env.JWT_EXP ?? 10) + 10;
+    vi.setSystemTime(DateHelper.addSeconds(date, jwtExpSeconds));
     const result = await sut.execute({
       usuarioId: user.id.toString(),
       token,

@@ -13,9 +13,9 @@ type Role = (typeof Roles)[keyof typeof Roles];
 export const verifyRole = (allowedRoles: Role[]) =>
   fastifyPlugin(async (app: FastifyInstance) => {
     app.addHook("onRequest", async (request, reply) => {
-      const { regra } = request.user || {};
-      if (regra !== "superAdmin")
-        if (!regra || !allowedRoles.includes(regra)) {
+      const { role } = request.user || {};
+      if (role !== "superAdmin")
+        if (!role || !allowedRoles.includes(role)) {
           throw new ForbiddenError(
             `Permissão de acesso '${allowedRoles.join("' ou '")}' exigida.`
           );

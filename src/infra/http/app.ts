@@ -13,7 +13,7 @@ import {
 } from "fastify-type-provider-zod";
 import { env } from "src/core/env";
 import Logger from "src/core/lib/logger/logger";
-import z from "zod";
+import z from "zod/v4";
 import { authRoutes } from "./controller/auth/@auth-routes";
 import { errorHandler } from "./error-handler";
 

@@ -1,12 +1,12 @@
 import "dotenv/config";
 import ms from "ms";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "production"]).default("dev"),
   PORT: z.coerce.number().default(3333),
   HOST: z.string().default("0.0.0.0"),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.url(),
   JWT_KEY: z.string().min(10),
   JWT_EXP: z
     .union([z.coerce.number(), z.string().regex(/^[0-9]+[smhd]$/)])

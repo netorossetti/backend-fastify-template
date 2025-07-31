@@ -1,3 +1,4 @@
+import { env } from "src/core/env";
 import { NotFoundError } from "src/core/errors/not-found-error";
 import { UnauthorizedError } from "src/core/errors/unauthorized-error";
 import { InfoToken, TokenHelper } from "src/core/helpers/token-helper";
@@ -54,12 +55,7 @@ export class RefreshTokenUseCase {
     });
 
     // Atualiza token do cache
-    const seteHorasEmSegundos = 7 * 60 * 60;
-    this.redisServices.set(
-      `access_token:${usuarioId}`,
-      newtoken,
-      seteHorasEmSegundos
-    );
+    this.redisServices.set(`access_token:${usuarioId}`, newtoken, env.JWT_EXP);
 
     // Tudo certo
     return success({ token: newtoken });
