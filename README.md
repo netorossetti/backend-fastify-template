@@ -18,6 +18,17 @@
 
 ---
 
+## 🧠 Conceitos Arquiteturais
+
+Este template segue boas práticas e padrões de projeto como:
+
+- 🏗️ **DDD** (Domain-Driven Design)
+- 🛠️ **Factory Pattern**
+- 🧰 **SOLID Principles**
+- 📦 Separação em camadas: Domain, Application, Infrastructure
+
+---
+
 ## 📁 Estrutura do projeto
 
 ```text
