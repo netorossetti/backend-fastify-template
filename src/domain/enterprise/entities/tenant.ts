@@ -5,8 +5,7 @@ import { Optional } from "src/core/types/optional";
 export type DocumentType = "CNH" | "CPF" | "CNPJ";
 
 export interface TenantProps {
-  firstName: string;
-  lastName: string;
+  name: string;
   nickName: string;
   documentType: DocumentType;
   documentNumber: string;
@@ -16,24 +15,13 @@ export interface TenantProps {
 }
 
 export class Tenant extends Entity<TenantProps> {
-  get firstName() {
-    return this.props.firstName;
+  get name() {
+    return this.props.name;
   }
 
-  set firstName(firstName) {
-    if (firstName !== this.props.firstName) {
-      this.props.firstName = firstName;
-      this.touch();
-    }
-  }
-
-  get lastName() {
-    return this.props.lastName;
-  }
-
-  set lastName(lastName) {
-    if (lastName !== this.props.lastName) {
-      this.props.lastName = lastName;
+  set name(name) {
+    if (name !== this.props.name) {
+      this.props.name = name;
       this.touch();
     }
   }

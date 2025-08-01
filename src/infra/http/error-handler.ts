@@ -8,7 +8,7 @@ import { FastifyInstance } from "fastify";
 import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
 import { ForbiddenError } from "src/core/errors/forbidden-error";
 import Logger from "src/core/lib/logger/logger";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
@@ -27,6 +27,25 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
 
   // Usando switch para identificar o tipo de erro
   switch (true) {
+    case error instanceof BadRequestQueryError &&
+      error.name === "BadRequestQueryError":
+      erroName = "BadRequestQueryError";
+      statusCode = 400;
+      responseBody = {
+        message: `Parâmetros de ${error.invalidQueryType} inválidos.`,
+        issues: error.flatten().fieldErrors,
+      };
+      break;
+
+    case error instanceof ZodError:
+      erroName = "ZodError";
+      statusCode = 400;
+      responseBody = {
+        message: "Erro de validação dos campos",
+        issues: error.flatten().fieldErrors,
+      };
+      break;
+
     case error.code === "FST_ERR_VALIDATION":
       erroName = "ValidationError";
       statusCode = 400;
@@ -45,24 +64,6 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       responseBody = {
         message: "Erro de validação dos campos",
         issues,
-      };
-      break;
-
-    case error instanceof BadRequestQueryError:
-      erroName = "BadRequestQueryError";
-      statusCode = 400;
-      responseBody = {
-        message: `Parâmetros de ${error.invalidQueryType} inválidos.`,
-        issues: error.flatten().fieldErrors,
-      };
-      break;
-
-    case error instanceof ZodError:
-      erroName = "ZodError";
-      statusCode = 400;
-      responseBody = {
-        message: "Erro de validação dos campos",
-        issues: error.flatten().fieldErrors,
       };
       break;
 

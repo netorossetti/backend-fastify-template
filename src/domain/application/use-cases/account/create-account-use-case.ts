@@ -4,60 +4,60 @@ import { StringHelper } from "src/core/helpers/string-helper";
 import { HashGenerator } from "src/core/lib/criptography/hash-generator";
 import { Result, failure, success } from "src/core/result";
 import { DocumentType, Tenant } from "src/domain/enterprise/entities/tenant";
+import { UserTenantMembership } from "src/domain/enterprise/entities/user-tenant-membership";
 import { isCNH, isCNPJ, isCPF } from "validation-br";
-import { RoleUserType, User } from "../../../enterprise/entities/user";
+import { User } from "../../../enterprise/entities/user";
 import { TenantsRepository } from "../../repositories/tenants-repository";
+import { UserTenantMembershipsRepository } from "../../repositories/user-tenant-memberships-repository";
 import { UsersRepository } from "../../repositories/users-repository";
 
 interface CreateAccountUseCaseRequest {
   firstName: string;
   lastName: string;
   nickName?: string;
-  documentType: DocumentType;
-  documentNumber: string;
   email: string;
   password: string;
-  role: RoleUserType;
+  tenant: {
+    name: string;
+    nickName: string;
+    documentType: DocumentType;
+    documentNumber: string;
+  };
 }
 
 type CreateAccountUseCaseResponse = Result<
   ConflictError | BadRequestError,
-  {
-    name: string;
-    email: string;
-    role: RoleUserType;
-  }
+  { userId: string; tenantId: string }
 >;
 
 export class CreateAccountUseCase {
   constructor(
     private tenantsRepository: TenantsRepository,
     private usersRepository: UsersRepository,
+    private membershipsRepository: UserTenantMembershipsRepository,
     private hasher: HashGenerator
   ) {}
   async execute({
     firstName,
     lastName,
     nickName,
-    documentType,
-    documentNumber,
     email,
     password,
-    role,
+    tenant,
   }: CreateAccountUseCaseRequest): Promise<CreateAccountUseCaseResponse> {
     // Verificar se o tenant já existe
-    const tenantExists = await this.tenantsRepository.findByDocument(
-      documentType
+    const tenantAlreadyExists = await this.tenantsRepository.findByDocument(
+      tenant.documentType
     );
-    if (tenantExists)
+    if (tenantAlreadyExists)
       return failure(
         new ConflictError(
           "Organização já foi registrada com o documento informado."
         )
       );
 
-    let documentOnlyNumbers = StringHelper.onlyNumbers(documentNumber);
-    switch (documentType) {
+    let documentOnlyNumbers = StringHelper.onlyNumbers(tenant.documentNumber);
+    switch (tenant.documentType) {
       case "CPF":
         if (!isCPF(documentOnlyNumbers)) {
           return failure(
@@ -93,19 +93,23 @@ export class CreateAccountUseCase {
     }
 
     const newTenant = Tenant.create({
-      firstName,
-      lastName,
-      nickName: nickName ?? firstName,
-      documentType,
-      documentNumber,
+      name: tenant.name,
+      nickName: tenant.nickName,
+      documentType: tenant.documentType,
+      documentNumber: documentOnlyNumbers,
     });
 
+    // Recuperar usuário
     const userExists = await this.usersRepository.findByEmail(email);
-    if (userExists) {
-      return failure(
-        new ConflictError("Usuário já foi registrado com o email informado.")
-      );
-    }
+    const user =
+      userExists ??
+      User.create({
+        firstName,
+        lastName,
+        nickName: nickName ?? firstName,
+        email,
+        password: "",
+      });
 
     // Verifica senha
     const passwordRequirements = StringHelper.passwordRequirements(password);
@@ -119,21 +123,26 @@ export class CreateAccountUseCase {
 
     // Cryptografar password do usuário
     const passwordHash = await this.hasher.hash(password);
+    user.password = passwordHash;
 
-    // Criar registro do usuário
-    const user = await this.usersRepository.create(
-      User.create({
-        name,
-        email,
-        password: passwordHash,
-        role,
-      })
-    );
+    const membership = UserTenantMembership.create({
+      userId: user.id.toString(),
+      tenantId: newTenant.id.toString(),
+      role: "admin",
+      owner: true,
+    });
+
+    // Adicionar/Atualiza usuário
+    if (user.isNew()) await this.usersRepository.create(user);
+    else await this.usersRepository.save(user);
+
+    // Registrar novo tenant
+    await this.tenantsRepository.create(newTenant);
+    await this.membershipsRepository.create(membership);
 
     return success({
-      name: user.name,
-      email: user.email,
-      role: user.role,
+      userId: user.id.toString(),
+      tenantId: newTenant.id.toString(),
     });
   }
 }

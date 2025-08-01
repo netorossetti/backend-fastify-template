@@ -5,4 +5,5 @@ export interface TenantsRepository {
   findByDocument(documentNumber: string): Promise<Tenant | null>;
   create(user: Tenant): Promise<Tenant>;
   save(user: Tenant): Promise<void>;
+  delete(tenant: Tenant): Promise<boolean>;
 }

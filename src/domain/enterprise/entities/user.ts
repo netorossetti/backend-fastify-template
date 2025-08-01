@@ -2,8 +2,6 @@ import { Entity } from "src/core/entities/entity-uuid";
 import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
 import { Optional } from "src/core/types/optional";
 
-export type RoleUserType = "user" | "admin" | "superAdmin";
-
 export interface UserProps {
   firstName: string;
   lastName: string;
@@ -11,13 +9,15 @@ export interface UserProps {
   email: string;
   active: boolean;
   password: string;
-  role: RoleUserType;
-  tenantId: string;
   createdAt: Date;
   updatedAt?: Date | null;
 }
 
 export class User extends Entity<UserProps> {
+  get fullName() {
+    return `${this.props.firstName} ${this.props.lastName}`;
+  }
+
   get firstName() {
     return this.props.firstName;
   }
@@ -76,19 +76,6 @@ export class User extends Entity<UserProps> {
   set password(password: string) {
     this.props.password = password;
     this.touch();
-  }
-
-  get role() {
-    return this.props.role;
-  }
-
-  set role(role) {
-    this.props.role = role;
-    this.touch();
-  }
-
-  get tenantId() {
-    return this.props.tenantId;
   }
 
   get createdAt() {

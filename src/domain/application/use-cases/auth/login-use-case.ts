@@ -6,6 +6,8 @@ import { TokenHelper } from "src/core/helpers/token-helper";
 import { HashCompare } from "src/core/lib/criptography/hash-compare";
 import { IRedisService } from "src/core/lib/redis/redis-services";
 import { Result, failure, success } from "src/core/result";
+import { TenantsRepository } from "../../repositories/tenants-repository";
+import { UserTenantMembershipsRepository } from "../../repositories/user-tenant-memberships-repository";
 import { UsersRepository } from "../../repositories/users-repository";
 
 interface LoginUseCaseRequest {
@@ -15,12 +17,27 @@ interface LoginUseCaseRequest {
 
 type LoginUseCaseResponse = Result<
   NotFoundError | UnauthorizedError | NotAllowedError,
-  { token: string }
+  {
+    token: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      tenantId: string;
+      role: string;
+    };
+    tenants: {
+      id: string;
+      name: string;
+    }[];
+  }
 >;
 
 export class LoginUseCase {
   constructor(
     private usersRepository: UsersRepository,
+    private tenantsRepository: TenantsRepository,
+    private membershipsRepository: UserTenantMembershipsRepository,
     private hasher: HashCompare,
     private redisServices: IRedisService
   ) {}
@@ -43,12 +60,55 @@ export class LoginUseCase {
       return failure(new NotAllowedError("Acesso negado. Usuário inátivado."));
     }
 
+    // Recuperar Tenants do usuário
+    const memberships = await this.membershipsRepository.findManyByUser(
+      user.id.toString()
+    );
+
+    let lastAccess: Date | null = null;
+    let lastTenantLogin: { id: string; name: string; role: string } | null =
+      null;
+    const tenants: { id: string; name: string }[] = [];
+
+    for await (const membership of memberships) {
+      const tenant = await this.tenantsRepository.findById(membership.tenantId);
+      if (!tenant) continue;
+
+      tenants.push({ id: tenant.id.toString(), name: tenant.name });
+
+      if (
+        membership.lastAccessAt &&
+        (!lastAccess || membership.lastAccessAt > lastAccess)
+      ) {
+        lastAccess = membership.lastAccessAt;
+        lastTenantLogin = {
+          id: tenant.id.toString(),
+          name: tenant.name,
+          role: membership.role,
+        };
+      }
+    }
+
+    // Fallback caso nenhum tenant tenha lastAccessAt
+    if (!lastTenantLogin && tenants.length > 0) {
+      const fallback = memberships[0];
+      const fallbackTenant = await this.tenantsRepository.findById(
+        fallback.tenantId
+      );
+      lastTenantLogin = {
+        id: fallbackTenant!.id.toString(),
+        name: fallbackTenant!.name,
+        role: fallback.role,
+      };
+    }
+
     // Geração do token
     const token = TokenHelper.singToken({
       id: user.id.toString(),
       name: user.nickName,
       email: user.email,
-      role: user.role,
+      tenantId: lastTenantLogin?.id.toString() ?? "",
+      role: lastTenantLogin?.id.toString() ?? "",
     });
 
     // Registrar token de acesso no cache do redis
@@ -58,6 +118,16 @@ export class LoginUseCase {
       env.JWT_EXP
     );
 
-    return success({ token });
+    return success({
+      token,
+      user: {
+        id: user.id.toString(),
+        name: user.fullName,
+        email: user.email,
+        tenantId: lastTenantLogin?.id ?? "",
+        role: lastTenantLogin?.role ?? "",
+      },
+      tenants,
+    });
   }
 }

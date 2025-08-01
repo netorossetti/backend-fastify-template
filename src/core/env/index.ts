@@ -19,6 +19,8 @@ const envSchema = z.object({
     }),
   LOGGER_FOLDER: z.string().optional(),
   LOGGER_FILENAME: z.string().optional(),
+  UPDALOAS_PUBLIC_PATH: z.string(),
+  UPDALOAS_PRIVATE_PATH: z.string(),
   ENCRYPTION_KEY: z.string().min(10),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.coerce.number(),

@@ -51,6 +51,7 @@ export class RefreshTokenUseCase {
       id: payload.id,
       name: payload.name,
       email: payload.email,
+      tenantId: payload.tenantId,
       role: payload.role,
     });
 
