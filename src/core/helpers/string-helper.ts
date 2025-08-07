@@ -1,3 +1,4 @@
+import { Parser } from "htmlparser2";
 export class StringHelper {
   static stringToSlug(value: string) {
     const slugText = value
@@ -83,5 +84,29 @@ export class StringHelper {
     }
 
     return codigo;
+  }
+
+  static onlyNumbers(value: string) {
+    var numsStr = value.replace(/[^0-9]/g, "");
+    return numsStr;
+  }
+
+  static isHTML(value: string): boolean {
+    try {
+      let isValid = false;
+
+      const parser = new Parser({
+        onopentag: () => {
+          isValid = true; // Se encontrar uma tag, já é considerado HTML
+        },
+      });
+
+      parser.write(value);
+      parser.end();
+
+      return isValid;
+    } catch {
+      return false;
+    }
   }
 }

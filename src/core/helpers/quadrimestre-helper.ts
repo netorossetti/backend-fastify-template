@@ -6,7 +6,7 @@ export class QuarterHelper {
 
   static toQuarter(date: Date): string {
     const ano = date.getFullYear();
-    const mes = date.getMonth() + 1;
+    const mes = date.getMonth();
 
     const quadrimestre = mes < 4 ? 1 : mes > 7 ? 3 : 2;
 

@@ -1,3 +1,5 @@
+import { NotFoundError } from "src/core/errors/not-found-error";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error";
 import Logger from "src/core/lib/logger/logger";
 import { makeRefreshTokenUseCase } from "src/infra/factories/auth/make-refresh-token-use-case";
 import z from "zod/v4";
@@ -16,14 +18,12 @@ export async function refreshToken(app: FastifyTypedInstace) {
       schema: {
         summary: "Refresh Token",
         description: "Atualização de token do usuário",
-        tags: ["App: Autenticação"],
+        tags: ["App: Authenticate"],
         operationId: "auth_refreshToken",
         security: [{ bearerAuth: [] }],
         response: {
           200: responseOkSchema,
-          401: z
-            .object({ statusCode: z.number() })
-            .extend(schemaResponseError.shape),
+          401: schemaResponseError,
         },
       },
     },
@@ -40,10 +40,21 @@ export async function refreshToken(app: FastifyTypedInstace) {
       if (response.isFailure()) {
         const logger = Logger.getInstance("Autenticação");
         logger.error(response.value.message);
-        reply.status(401).send({
-          statusCode: 401,
-          message: "Token inválido.",
-        });
+        const error = response.value;
+        switch (error.constructor) {
+          case NotFoundError:
+          case UnauthorizedError:
+            reply.status(401).send({
+              statusCode: 401,
+              message: "Token inválido.",
+            });
+            break;
+          default:
+            reply.status(500).send({
+              statusCode: 500,
+              message: "Internal server error.",
+            });
+        }
         return;
       }
 

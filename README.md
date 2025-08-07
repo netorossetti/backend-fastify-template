@@ -47,3 +47,63 @@ Este template segue boas práticas e padrões de projeto como:
  ┣ tsconfig.json
  ┗ README.md
 ```
+
+---
+
+## 📚 API - Estrutura de Rotas
+
+### 🔐 Autenticação (`/auth`)
+
+| ✅  | Token | Método | Rota                    | Descrição                               |
+| --- | ----- | ------ | ----------------------- | --------------------------------------- |
+| ✅  | 🌐    | POST   | `/auth/login`           | Autentica o usuário e retorna o token   |
+| ✅  | 🔐    | POST   | `/auth/refresh-token`   | Gera novo token com refresh token       |
+| ✅  | 🔐    | POST   | `/auth/logout`          | Encerra a sessão atual                  |
+| ✅  | 🌐    | POST   | `/auth/forgot-password` | Inicia fluxo de recuperação de senha    |
+| ✅  | 🌐    | POST   | `/auth/reset-password`  | Redefine senha com token de recuperação |
+
+---
+
+### 🏢 Conta / Tenant (`/tenants`)
+
+| ✅  | Token | Método | Rota              | Descrição                                                |
+| --- | ----- | ------ | ----------------- | -------------------------------------------------------- |
+| ✅  | 🔐    | GET    | `/tenants`        | Lista as contas do usuário proprietário ou administrador |
+| ✅  | 🌐    | POST   | `/tenants`        | Cria uma nova conta                                      |
+| ✅  | 🔐    | POST   | `/tenants/select` | Seleciona nova conta para a sessão atual                 |
+| ❌  | 🔐    | PATCH  | `/tenants/:id`    | Atualiza informações da conta                            |
+| ❌  | 🔐    | DELETE | `/tenants/:id`    | Cancelar conta                                           |
+
+---
+
+### 👤 Usuário (`/users`)
+
+| ✅  | Token | Método | Rota         | Descrição                              |
+| --- | ----- | ------ | ------------ | -------------------------------------- |
+| ✅  | 🔐    | GET    | `/users/me`  | Retorna dados do usuário autenticado   |
+| ✅  | 🔐    | PATCH  | `/users/me`  | Atualiza dados do próprio usuário      |
+| ❌  | 🔐    | GET    | `/users`     | (Admin) Lista usuários do tenant atual |
+| ❌  | 🔐    | POST   | `/users`     | (Admin) Cria novo usuário no tenant    |
+| ❌  | 🔐    | PATCH  | `/users/:id` | (Admin) Atualiza dados de um usuário   |
+| ❌  | 🔐    | DELETE | `/users/:id` | (Admin) Remove ou desativa um usuário  |
+
+---
+
+### 👥 Membros de Tenant (`/memberships`)
+
+| ✅  | Token | Método | Rota               | Descrição                             |
+| --- | ----- | ------ | ------------------ | ------------------------------------- |
+| ❌  | 🔐    | GET    | `/memberships`     | Lista tenants associados ao usuário   |
+| ❌  | 🔐    | PATCH  | `/memberships/:id` | Atualiza permissões ou role do membro |
+| ❌  | 🔐    | DELETE | `/memberships/:id` | Remove membro do tenant               |
+
+---
+
+### 💡 Observações
+
+- Todas as rotas protegidas requerem autenticação via Bearer Token:  
+  `Authorization: Bearer <token>`
+
+- A seleção de tenant via `/tenants/select` define o escopo de execução das demais rotas protegidas.
+
+- Perfis e permissões são aplicados por tenant.

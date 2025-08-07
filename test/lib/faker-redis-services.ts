@@ -23,7 +23,8 @@ export class FakeRedisServices implements IRedisService {
   }
 
   async delete(key: string): Promise<boolean> {
-    return this.store.delete(key);
+    const isRemoved = this.store.delete(key);
+    return isRemoved;
   }
 
   // Método auxiliar para testes: verificar se uma chave ainda existe no mock

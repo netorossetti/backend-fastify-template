@@ -6,6 +6,9 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "production"]).default("dev"),
   PORT: z.coerce.number().default(3333),
   HOST: z.string().default("0.0.0.0"),
+  PROJECT_NAME: z.string(),
+  PROJECT_VERSION: z.string(),
+  PROJECT_WEBSITE: z.url(),
   DATABASE_URL: z.url(),
   JWT_KEY: z.string().min(10),
   JWT_EXP: z
@@ -19,9 +22,17 @@ const envSchema = z.object({
     }),
   LOGGER_FOLDER: z.string().optional(),
   LOGGER_FILENAME: z.string().optional(),
+  UPLOADS_PUBLIC_PATH: z.string(),
+  UPLOADS_PRIVATE_PATH: z.string(),
   ENCRYPTION_KEY: z.string().min(10),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.coerce.number(),
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.coerce.number(),
+  SMTP_NAME: z.string(),
+  SMTP_MAIL: z.email().optional(),
+  SMTP_USER: z.email(),
+  SMTP_PASS: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);

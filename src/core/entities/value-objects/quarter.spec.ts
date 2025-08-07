@@ -14,8 +14,8 @@ describe("Class Quarter", () => {
     const quarter = new Quarter();
 
     let quarterIdx = 2;
-    if (data.getMonth() <= 4) quarterIdx = 1;
-    else if (data.getMonth() >= 9) quarterIdx = 3;
+    if (data.getMonth() < 4) quarterIdx = 1;
+    else if (data.getMonth() > 9) quarterIdx = 3;
     expect(quarter.value()).toEqual(`${data.getFullYear()}/Q${quarterIdx}`);
   });
 

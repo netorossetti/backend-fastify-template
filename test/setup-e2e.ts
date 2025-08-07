@@ -2,9 +2,21 @@ import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import { mkdirSync, rmSync } from "node:fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 const schemaId = randomUUID();
+
+// Criação de pastas temporárias de upload para testes
+const tmpBaseDir = path.join(
+  __dirname,
+  "..",
+  "temp",
+  `e2e-uploads-${schemaId}`
+);
+const tmpPublicPath = path.join(tmpBaseDir, "public");
+const tmpPrivatePath = path.join(tmpBaseDir, "private");
 
 function generateUniqueDatabaseURL(schemaId: string) {
   if (!process.env.DATABASE_URL) {
@@ -21,11 +33,15 @@ const databaseURL = generateUniqueDatabaseURL(schemaId);
 
 // Ajusta o node_env para teste
 process.env.NODE_ENV = "test";
-
-// Sobrescrever a variavel de ambiente com a nova URL de conexão para os teste
 process.env.DATABASE_URL = databaseURL;
+process.env.UPLOADS_PUBLIC_PATH = tmpPublicPath;
+process.env.UPLOADS_PRIVATE_PATH = tmpPrivatePath;
 
 beforeAll(async () => {
+  // Criar diretórios temporários
+  mkdirSync(tmpPublicPath, { recursive: true });
+  mkdirSync(tmpPrivatePath, { recursive: true });
+
   // Executar as migrations do prisma no novo esquema gerado
   execSync("npx prisma migrate deploy");
 });
@@ -34,4 +50,7 @@ afterAll(async () => {
   // REMOVER BANCO DE DADOS ISOLADO DOS TESTE E2E
   await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`);
   await prisma.$disconnect();
+
+  // Limpa diretórios temporários de uploads
+  rmSync(tmpBaseDir, { recursive: true, force: true });
 });

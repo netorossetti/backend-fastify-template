@@ -1,23 +1,26 @@
+import { env } from "src/core/env";
 import { TokenHelper } from "src/core/helpers/token-helper";
 import { IRedisService } from "src/core/lib/redis/redis-services";
-import { User } from "src/domain/auth/enterprise/entities/user";
+import { Membership } from "src/domain/enterprise/entities/membership";
+import { User } from "src/domain/enterprise/entities/user";
 
-export function makeAuthToken(user: User, redisService: IRedisService) {
+export function makeAuthToken(
+  user: User,
+  menbership: Membership,
+  redisService: IRedisService
+) {
   // Geração do token
   const token = TokenHelper.singToken({
     id: user.id.toString(),
-    name: user.name,
+    name: user.nickName,
     email: user.email,
-    role: user.role,
+    role: menbership.role,
+    tenantId: menbership.tenantId,
   });
 
   // Registrar token de acesso no cache do redis
-  const seteHorasEmSegundos = 60 * 60 * 7;
-  redisService.set(
-    `access_token:${user.id.toString()}`,
-    token,
-    seteHorasEmSegundos
-  );
+  const keyAccessToken = TokenHelper.getAccessTokenKey(user.id.toString());
+  redisService.set(keyAccessToken, token, env.JWT_EXP);
 
   return token;
 }
@@ -25,7 +28,7 @@ export function makeAuthToken(user: User, redisService: IRedisService) {
 export class AuthTokenFactory {
   constructor(private redisService: IRedisService) {}
 
-  async makeAuthToken(user: User): Promise<string> {
-    return makeAuthToken(user, this.redisService);
+  async makeAuthToken(user: User, menbership: Membership): Promise<string> {
+    return makeAuthToken(user, menbership, this.redisService);
   }
 }

@@ -1,7 +1,9 @@
-export class UnauthorizedError extends Error {
+import { BaseError } from "./base-error";
+
+export class UnauthorizedError extends BaseError {
   public name: string = "UnauthorizedError";
 
   constructor(message?: string) {
-    super(message ?? "Unauthorized.");
+    super(401, message ?? "Unauthorized.");
   }
 }

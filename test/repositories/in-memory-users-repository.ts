@@ -1,5 +1,5 @@
-import { UsersRepository } from "src/domain/auth/application/repositories/usuarios-repository";
-import { User } from "src/domain/auth/enterprise/entities/user";
+import { UsersRepository } from "src/domain/application/repositories/users-repository";
+import { User } from "src/domain/enterprise/entities/user";
 
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];
@@ -27,5 +27,12 @@ export class InMemoryUsersRepository implements UsersRepository {
     if (itemIndex !== -1) {
       this.items[itemIndex] = user;
     }
+  }
+
+  async delete(user: User): Promise<boolean> {
+    const newItems = this.items.filter((i) => i.id !== user.id);
+    const excluded = newItems.length < this.items.length;
+    this.items = newItems;
+    return excluded;
   }
 }

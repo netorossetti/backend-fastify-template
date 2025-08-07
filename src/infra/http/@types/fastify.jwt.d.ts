@@ -1,5 +1,6 @@
 // fastify-jwt.d.ts
 import "@fastify/jwt";
+import type { RoleUserType } from "src/domain/enterprise/entities/user";
 
 declare module "@fastify/jwt" {
   export interface FastifyJWT {
@@ -7,7 +8,8 @@ declare module "@fastify/jwt" {
       id: string;
       name: string;
       email: string;
-      role: "user" | "admin" | "superAdmin";
+      tenantId: string;
+      role: RoleUserType;
     };
   }
 }

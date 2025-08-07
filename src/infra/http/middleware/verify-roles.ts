@@ -1,16 +1,9 @@
 import type { FastifyInstance } from "fastify";
 import { fastifyPlugin } from "fastify-plugin";
 import { ForbiddenError } from "src/core/errors/forbidden-error";
+import { RoleUserType } from "src/domain/enterprise/entities/membership";
 
-// Defina os papéis disponíveis
-export const Roles = {
-  USER: "user",
-  ADMIN: "admin",
-} as const;
-
-type Role = (typeof Roles)[keyof typeof Roles];
-
-export const verifyRole = (allowedRoles: Role[]) =>
+export const verifyRole = (allowedRoles: RoleUserType[]) =>
   fastifyPlugin(async (app: FastifyInstance) => {
     app.addHook("onRequest", async (request, reply) => {
       const { role } = request.user || {};

@@ -1,46 +1,62 @@
 import { BadRequestError } from "@core/errors/bad-request-error";
 import { NotAllowedError } from "@core/errors/not-allowed-error";
-import { ResourceAlreadyExistsError } from "@core/errors/resource-already-exists-error";
-import { ResourceNotFoundError } from "@core/errors/resource-not-found-error";
 import { UnauthorizedError } from "@core/errors/unauthorized-error";
 import { Prisma } from "@prisma/client";
 import { FastifyInstance } from "fastify";
 import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
 import { ForbiddenError } from "src/core/errors/forbidden-error";
 import Logger from "src/core/lib/logger/logger";
-import { z, ZodError } from "zod/v4";
+import { ZodError } from "zod/v4";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
 export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   let erroName = "UnknownError";
-  let statusCode = 500;
   let responseBody: {
+    statusCode: number;
     message: string;
     issues?: Record<string, string[] | undefined>;
-  } = {
-    message: "Internal server error!",
   };
 
   const logger = Logger.getInstance("ErrorHandler");
 
   // Usando switch para identificar o tipo de erro
   switch (true) {
-    case error instanceof BadRequestQueryError:
+    case error instanceof BadRequestQueryError &&
+      error.name === "BadRequestQueryError":
       erroName = "BadRequestQueryError";
-      statusCode = 400;
+
       responseBody = {
+        statusCode: 400,
         message: `Parâmetros de ${error.invalidQueryType} inválidos.`,
-        issues: z.treeifyError(error),
+        issues: error.flatten().fieldErrors,
       };
       break;
 
     case error instanceof ZodError:
       erroName = "ZodError";
-      statusCode = 400;
       responseBody = {
+        statusCode: 400,
         message: "Erro de validação dos campos",
-        issues: z.treeifyError(error),
+        issues: error.flatten().fieldErrors,
+      };
+      break;
+
+    case error.code === "FST_ERR_VALIDATION":
+      erroName = "ValidationError";
+      const issues: Record<string, string[]> = {};
+      if (Array.isArray(error.validation)) {
+        for (const validationError of error.validation) {
+          const path =
+            validationError.instancePath?.replace(/^\//, "") || "root";
+          if (!issues[path]) issues[path] = [];
+          issues[path].push(validationError.message || "Campo inválido");
+        }
+      }
+      responseBody = {
+        statusCode: 400,
+        message: "Erro de validação dos campos",
+        issues,
       };
       break;
 
@@ -48,10 +64,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       erroName = "PrismaClientValidationError";
       const message = error.message.split("Argument")[1]?.trim();
       if (!message) {
-        responseBody = { message: `PrismaClientValidationError: ${error}` };
+        responseBody = {
+          statusCode: 500,
+          message: `PrismaClientValidationError: ${error}`,
+        };
       } else {
-        statusCode = 404;
-        responseBody = { message: `Argument${message}` };
+        responseBody = { statusCode: 404, message: `Argument${message}` };
       }
       break;
 
@@ -60,14 +78,14 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       error instanceof Prisma.PrismaClientInitializationError ||
       error instanceof Prisma.PrismaClientUnknownRequestError:
       erroName = error.name;
-      responseBody = { message: `${error}` };
+      responseBody = { statusCode: 500, message: `${error}` };
       break;
 
     case error instanceof BadRequestError:
       const badRequestError = error as BadRequestError; // 👈 Type Assertion
       erroName = "BadRequestError";
-      statusCode = 400;
       responseBody = {
+        statusCode: 400,
         message: badRequestError.message,
         issues: badRequestError.issues,
       };
@@ -75,37 +93,22 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
 
     case error instanceof UnauthorizedError:
       erroName = "UnauthorizedError";
-      statusCode = 401;
-      responseBody = { message: error.message };
+      responseBody = { statusCode: 401, message: error.message };
       break;
 
     case error instanceof ForbiddenError:
       erroName = "ForbiddenError";
-      statusCode = 403;
-      responseBody = { message: error.message };
+      responseBody = { statusCode: 403, message: error.message };
       break;
 
     case error instanceof NotAllowedError:
       erroName = "NotAllowedError";
-      statusCode = 405;
-      responseBody = { message: error.message };
-      break;
-
-    case error instanceof ResourceNotFoundError:
-      erroName = "ResourceNotFoundError";
-      statusCode = 404;
-      responseBody = { message: error.message };
-      break;
-
-    case error instanceof ResourceAlreadyExistsError:
-      erroName = "ResourceAlreadyExistsError";
-      statusCode = 409;
-      responseBody = { message: error.message };
+      responseBody = { statusCode: 405, message: error.message };
       break;
 
     default:
       // Para erros desconhecidos, loga o erro completo
-      responseBody = { message: `${error}` };
+      responseBody = { statusCode: 500, message: `${error}` };
       break;
   }
 
@@ -113,10 +116,10 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
   logger.error(erroName, {
     method: request.method,
     originalUrl: request.originalUrl,
-    statusCode: statusCode,
+    statusCode: responseBody.statusCode,
     responseBody: responseBody,
   });
 
   // Envia a resposta de erro
-  reply.status(statusCode).send(responseBody);
+  reply.status(responseBody.statusCode).send(responseBody);
 };

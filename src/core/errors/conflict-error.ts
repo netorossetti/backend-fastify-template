@@ -1,7 +1,9 @@
-export class ConflictError extends Error {
+import { BaseError } from "./base-error";
+
+export class ConflictError extends BaseError {
   public name: string = "Conflict";
 
   constructor(message?: string) {
-    super(message ?? "Conflict error.");
+    super(409, message ?? "Conflict error.");
   }
 }

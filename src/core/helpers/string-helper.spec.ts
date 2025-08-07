@@ -84,4 +84,14 @@ describe("String Helper", () => {
       StringHelper.generateRandomCode(0);
     }).rejects.toBeInstanceOf(Error);
   });
+
+  test("Only numbers", () => {
+    const result = StringHelper.onlyNumbers("02.582.568/0001-75");
+    expect(result).toBe("02582568000175");
+  });
+
+  test("Is HTML", () => {
+    expect(StringHelper.isHTML("<p>Texto HTML</p>")).toBe(true);
+    expect(StringHelper.isHTML("Texto comum")).toBe(false);
+  });
 });

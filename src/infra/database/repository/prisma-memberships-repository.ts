@@ -1,0 +1,68 @@
+import { PrismaClient } from "@prisma/client";
+
+import { MembershipsRepository } from "src/domain/application/repositories/memberships-repository";
+import { Membership } from "src/domain/enterprise/entities/membership";
+import { PrismaMembershipMapper } from "./mappers/prisma-membership-mapper";
+
+export class PrismaMembershipsRepository implements MembershipsRepository {
+  constructor(private prisma: PrismaClient) {}
+
+  async findByUserAndTenant(
+    userId: string,
+    tenantId: string
+  ): Promise<Membership | null> {
+    const dbMembership = await this.prisma.usersOnTenants.findUnique({
+      where: {
+        userId_tenantId: {
+          userId,
+          tenantId,
+        },
+      },
+    });
+    if (!dbMembership) return null;
+    return PrismaMembershipMapper.toDomain(dbMembership);
+  }
+
+  async findManyByUser(userId: string): Promise<Membership[]> {
+    const dbMemberships = await this.prisma.usersOnTenants.findMany({
+      where: { userId },
+    });
+    return dbMemberships.map(PrismaMembershipMapper.toDomain);
+  }
+
+  async findManyByTenant(tenantId: string): Promise<Membership[]> {
+    const dbMemberships = await this.prisma.usersOnTenants.findMany({
+      where: { tenantId },
+    });
+    return dbMemberships.map(PrismaMembershipMapper.toDomain);
+  }
+
+  async updateLastAccess(userId: string, tenantId: string): Promise<boolean> {
+    const isUpdated = await this.prisma.usersOnTenants.update({
+      where: { userId_tenantId: { userId, tenantId } },
+      data: { lastAccessAt: new Date() },
+    });
+    return isUpdated ? true : false;
+  }
+
+  async create(membership: Membership): Promise<Membership> {
+    const data = PrismaMembershipMapper.toPersistent(membership);
+    const dbMembership = await this.prisma.usersOnTenants.create({ data });
+    return PrismaMembershipMapper.toDomain(dbMembership);
+  }
+
+  async save(membership: Membership): Promise<void> {
+    const data = PrismaMembershipMapper.toPersistent(membership);
+    await this.prisma.usersOnTenants.update({
+      where: { id: membership.id.toValue() },
+      data,
+    });
+  }
+
+  async delete(membership: Membership): Promise<boolean> {
+    const deletedMembership = await this.prisma.usersOnTenants.delete({
+      where: { id: membership.id.toString() },
+    });
+    return deletedMembership !== null;
+  }
+}

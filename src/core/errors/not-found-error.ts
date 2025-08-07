@@ -1,7 +1,9 @@
-export class NotFoundError extends Error {
-  public name: string = "ResourceNotFoundError";
+import { BaseError } from "./base-error";
+
+export class NotFoundError extends BaseError {
+  public name: string = "NotFoundError";
 
   constructor(message?: string) {
-    super(message ?? "Resource not found.");
+    super(404, message ?? "Resource not found.");
   }
 }

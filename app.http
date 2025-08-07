@@ -1,13 +1,16 @@
-@baseUrl = http://localhost:3333
-@authToken = {{logar.response.body.token}}
+@baseUrl=http://localhost:{{$dotenv PORT}}
+@authToken={{logar.response.body.token}}
+
+@userEmail=teste@teste.com
+@userPasswd=teste@123
 
 # @name logar
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "teste@teste.com",
-  "senha": "teste@123"
+  "email": "{{userEmail}}",
+  "password": "{{userPasswd}}"
 }
 
 ###
@@ -17,8 +20,7 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "nome": "Teste Teste",
-  "email": "teste@teste.com",
-  "senha": "teste@123",
-  "empresaId": "5ae34279-3466-4863-8596-5390d7fa3d61"
+  "name": "Teste Teste",
+  "email": "{{userEmail}}",
+  "password": "{{userPasswd}}"
 }

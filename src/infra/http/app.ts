@@ -1,6 +1,8 @@
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
+import multipart from "@fastify/multipart";
 import sensible from "@fastify/sensible";
+import fastifyStatic from "@fastify/static";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import { config } from "dotenv";
@@ -11,10 +13,13 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import path from "node:path";
 import { env } from "src/core/env";
 import Logger from "src/core/lib/logger/logger";
 import z from "zod/v4";
 import { authRoutes } from "./controller/auth/@auth-routes";
+import { tenantsRoutes } from "./controller/tenants/@tenants-routes";
+import { usersRoutes } from "./controller/users/@users-routes";
 import { errorHandler } from "./error-handler";
 
 config();
@@ -24,6 +29,13 @@ export const app = Fastify().withTypeProvider<ZodTypeProvider>();
 app.register(cors);
 app.register(sensible);
 app.register(jwt, { secret: env.JWT_KEY });
+
+app.register(multipart, {
+  attachFieldsToBody: true,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB por arquivo
+  },
+});
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
@@ -69,7 +81,7 @@ app.addHook("onResponse", async (request, reply) => {
   );
 });
 
-/**health check */
+/** health check */
 app.get(
   "/ping",
   {
@@ -86,4 +98,13 @@ app.get(
   }
 );
 
+/** uploads */
+app.register(fastifyStatic, {
+  root: path.join(env.UPLOADS_PUBLIC_PATH),
+  prefix: "/uploads/",
+});
+
+/** Rotas da aplicação */
 app.register(authRoutes);
+app.register(tenantsRoutes);
+app.register(usersRoutes);

@@ -1,12 +1,14 @@
 import JWT from "jsonwebtoken";
 import z from "zod/v4";
 import { env } from "../env";
+import { StringHelper } from "./string-helper";
 
 const decodedSchema = z.object({
   id: z.uuid(),
   name: z.string(),
   email: z.email(),
-  role: z.enum(["user", "admin", "superAdmin"]),
+  tenantId: z.string(),
+  role: z.enum(["user", "admin", "superAdmin", ""]),
   iat: z.number().int().positive(),
   exp: z.number().int().positive(),
 });
@@ -17,6 +19,7 @@ export interface payloadToken {
   id: string;
   name: string;
   email: string;
+  tenantId: string;
   role: string;
 }
 
@@ -28,12 +31,13 @@ export class TokenHelper {
     return parsed.data;
   }
 
-  static singToken = ({ id, name, email, role }: payloadToken) => {
+  static singToken = ({ id, name, email, tenantId, role }: payloadToken) => {
     const token = JWT.sign(
       {
         id: id,
         name: name,
         email: email,
+        tenantId: tenantId,
         role: role,
       },
       env.JWT_KEY,
@@ -41,4 +45,16 @@ export class TokenHelper {
     );
     return token;
   };
+
+  static getAccessTokenKey(userId: string): string {
+    return `access-token:${StringHelper.stringToSlug(
+      env.PROJECT_NAME
+    )}:${userId}`;
+  }
+
+  static getRecoveryCodeKey(code: string): string {
+    return `recovery-code:${StringHelper.stringToSlug(
+      env.PROJECT_NAME
+    )}:${code}`;
+  }
 }

@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { User, UserProps } from "src/domain/auth/enterprise/entities/user";
+import { User, UserProps } from "src/domain/enterprise/entities/user";
 import { PrismaUserMapper } from "src/infra/database/repository/mappers/prisma-user-mapper";
 
 export function makeUser(
@@ -9,13 +9,14 @@ export function makeUser(
   id?: UniqueEntityId
 ) {
   const firstName = faker.person.firstName();
-  const fullName = faker.person.fullName({ firstName });
+  const lastName = faker.person.lastName();
   const newUser = User.create(
     {
-      name: fullName,
+      firstName: firstName,
+      lastName: lastName,
+      nickName: firstName,
       email: faker.internet.email({ firstName: firstName }),
       password: "p@s5Word123",
-      role: "user",
       ...override,
     },
     id
