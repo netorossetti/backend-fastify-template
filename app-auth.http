@@ -1,0 +1,61 @@
+@baseUrl=http://localhost:{{$dotenv PORT}}
+@authToken={{login.response.body.token}}
+
+@userEmail=joao.silva@example.com
+@userPasswd=Teste@2016
+
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPasswd}}"
+}
+
+
+###
+
+
+# @name logout
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{}
+
+###
+
+
+# @name refresh-token
+POST {{baseUrl}}/auth/refresh-token
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{}
+
+###
+
+
+# @name forgot-password
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}"
+}
+
+
+###
+
+
+# @name reset-password
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "recoveryCode": "VOKuDcHVpszGqoq",
+  "password": "2014@Recovery",
+  "passwordCheck": "2014@Recovery"
+}

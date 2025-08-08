@@ -1,0 +1,72 @@
+@baseUrl=http://localhost:{{$dotenv PORT}}
+@authToken={{login.response.body.token}}
+
+@userEmail=joao.silva@example.com
+@userPasswd=Teste@2016
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPasswd}}"
+}
+
+
+### 
+
+
+# @name create-tenant
+POST {{baseUrl}}/tenants
+Content-Type: application/json
+
+{
+  "firstName": "João",
+  "lastName": "Silva",
+  "nickName": "João",
+  "email": "joao.silva@example.com",
+  "password": "Teste@2016",
+  "organization": {
+    "name": "Organização Exemplo Dois",
+    "nickName": "OrgEx Dois",
+    "documentType": "CNPJ",
+    "documentNumber": "36.750.517/0001-45"
+  }
+}
+
+
+###
+
+
+# @name fetch-tenant
+GET {{baseUrl}}/tenants
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+
+###
+
+
+# @name select-tenant
+POST {{baseUrl}}/tenants/select/a01fa32d-b908-437e-aa04-6be198bf67ae
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{}
+
+
+###
+
+
+# @name update-tenant
+PATCH {{baseUrl}}/tenants/a01fa32d-b908-437e-aa04-6be198bf67ae
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Organização Exemplo Alterada",
+  "nickName": "OrgEx",
+  "documentType": "CNPJ",
+  "documentNumber": "36.750.517/0001-45"
+}

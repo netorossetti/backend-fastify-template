@@ -1,0 +1,51 @@
+@baseUrl=http://localhost:{{$dotenv PORT}}
+@authToken={{login.response.body.token}}
+
+@userEmail=joao.silva@example.com
+@userPasswd=Teste@2016
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPasswd}}"
+}
+
+
+### 
+
+
+# @name get-user-profile
+GET {{baseUrl}}/users/profile
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+
+###
+
+
+# @name update-user-profile
+PATCH {{baseUrl}}/users/profile
+Authorization: Bearer {{authToken}}
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< ./test/avatar/avatar.jpg
+--MyBoundary
+Content-Disposition: form-data; name="firstName"
+
+João Carlos
+--MyBoundary
+Content-Disposition: form-data; name="lastName"
+
+da Silva
+--MyBoundary
+Content-Disposition: form-data; name="nickName"
+
+Jão123
+--MyBoundary--
