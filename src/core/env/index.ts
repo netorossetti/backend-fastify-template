@@ -21,7 +21,7 @@ const envSchema = z.object({
         throw new Error("JWT_EXP: Valor inválido para ms.StringValue");
       }
     }),
-  LOGGER_FOLDER: zodIsFolderSchema({ allowRelativePath: true }).optional(),
+  LOGGER_FOLDER: zodIsFolderSchema().optional(),
   LOGGER_FILENAME: z.string().optional(),
   UPLOADS_PUBLIC_PATH: zodIsFolderSchema({ allowRelativePath: false }),
   UPLOADS_PRIVATE_PATH: zodIsFolderSchema({ allowRelativePath: false }),

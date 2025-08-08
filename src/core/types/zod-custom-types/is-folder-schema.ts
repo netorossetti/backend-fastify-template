@@ -6,25 +6,35 @@ export function zodIsFolderSchema(param?: {
   message?: string;
   allowRelativePath?: boolean;
 }) {
-  return z.string().refine(
-    (folderPath) => {
-      try {
-        // Verifica se o caminho é relativo e se isso é permitido
-        if (!param?.allowRelativePath && !path.isAbsolute(folderPath)) {
-          return false;
-        }
+  const permiteRelativo = param?.allowRelativePath ?? true;
 
-        const resolvePath = path.resolve(folderPath);
-        return (
-          fs.existsSync(resolvePath) && fs.statSync(resolvePath).isDirectory()
-        );
-      } catch (error) {
-        return false;
+  return z.string().superRefine((folderPath, ctx) => {
+    try {
+      const resolvePath = path.resolve(folderPath);
+      if (
+        !fs.existsSync(resolvePath) ||
+        !fs.statSync(resolvePath).isDirectory()
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: param?.message ?? "O diretório informado não é válido.",
+        });
+        return;
       }
-    },
-    {
-      message:
-        param?.message ?? "O caminho informado não é um diretório válido.",
+
+      // Se não permitir caminho relativo e o informado não for absoluto
+      if (!permiteRelativo && !path.isAbsolute(folderPath)) {
+        ctx.addIssue({
+          code: "custom",
+          message: "O diretório deve ser absoluto.",
+        });
+        return; // já adicionou erro, não precisa continuar
+      }
+    } catch {
+      ctx.addIssue({
+        code: "custom",
+        message: param?.message ?? "O diretório informado não é válido.",
+      });
     }
-  );
+  });
 }
