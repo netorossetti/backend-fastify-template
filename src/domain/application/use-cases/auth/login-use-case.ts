@@ -113,7 +113,7 @@ export class LoginUseCase {
       name: user.nickName,
       email: user.email,
       tenantId: lastTenantLogin?.id.toString() ?? "",
-      role: lastTenantLogin?.id.toString() ?? "",
+      role: lastTenantLogin?.role ?? "",
     });
 
     // Registrar token de acesso no cache do redis
