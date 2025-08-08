@@ -51,18 +51,14 @@ export class LoginUseCase {
     if (!user.password)
       return failure(new NotFoundError("Senha não definida."));
 
-    // Verificar se o usuário está ativo
-    if (!user.active) {
-      return failure(new NotAllowedError("Acesso negado. Usuário inátivado."));
-    }
-
     // Verificar senha
     const senhaValida = await this.hasher.compare(password, user.password);
     if (!senhaValida) return failure(new UnauthorizedError("Senha inválida."));
 
     // Recuperar Tenants do usuário
     const memberships = await this.membershipsRepository.findManyByUser(
-      user.id.toString()
+      user.id.toString(),
+      true
     );
     if (memberships.length === 0) {
       return failure(
@@ -77,7 +73,7 @@ export class LoginUseCase {
 
     for await (const membership of memberships) {
       const tenant = await this.tenantsRepository.findById(membership.tenantId);
-      if (!tenant) continue;
+      if (!tenant || !tenant.active) continue;
 
       tenants.push({ id: tenant.id.toString(), name: tenant.name });
 

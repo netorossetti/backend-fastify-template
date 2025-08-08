@@ -22,6 +22,7 @@ export async function updateTenant(app: FastifyTypedInstace) {
         body: z.object({
           name: zodNameSchema({
             description: "Nome",
+            maxSize: 255,
             allowHyphens: true,
             allowApostrophes: true,
             allowNumbers: true,

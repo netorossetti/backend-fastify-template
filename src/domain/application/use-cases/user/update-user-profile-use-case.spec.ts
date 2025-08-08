@@ -78,22 +78,4 @@ describe("Select Account Use Case", () => {
       expect(result.value.message).toBe("Usuário não encontrado.");
     }
   });
-
-  test("Não deve ser possível permitir atualização de usuário inativo", async () => {
-    const user = makeUser({ active: false });
-    inMemoryUsersRepository.items.push(user);
-
-    const result = await sut.execute({
-      userId: user.id.toString(),
-      firstName: "Fake",
-      lastName: "User",
-      nickName: "fakeuser",
-    });
-
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Usuário inativo.");
-    }
-  });
 });

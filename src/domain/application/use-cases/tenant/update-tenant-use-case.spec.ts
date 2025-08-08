@@ -45,7 +45,6 @@ describe("Select Account Use Case", () => {
     );
 
     const novoCnpj = fake({ alphanumeric: false, withMask: false });
-    console.log(novoCnpj);
     const result = await sut.execute({
       userId: user.id.toString(),
       tenantId: tenant.id.toString(),
@@ -98,7 +97,29 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Organização não localizado.");
+      expect(result.value.message).toBe("Organização não localizada.");
+    }
+  });
+
+  test("Não deve ser possível atualizar um tenant inátivado", async () => {
+    const user = makeUser();
+    inMemoryUsersRepository.items.push(user);
+
+    const tenant = makeTenant({ active: false });
+    inMemoryTenantsRepository.items.push(tenant);
+
+    const result = await sut.execute({
+      userId: user.id.toString(),
+      tenantId: tenant.id.toString(),
+      name: "Novo nome",
+      nickName: "apelido",
+      documentType: "CPF",
+      documentNumber: fake(),
+    });
+    expect(result.isFailure()).toBe(true);
+    if (result.isFailure()) {
+      expect(result.value).toBeInstanceOf(NotFoundError);
+      expect(result.value.message).toBe("Organização inativa.");
     }
   });
 
@@ -120,7 +141,37 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe("Usuário não pernete a organização.");
+      expect(result.value.message).toBe("Usuário não pertence a organização.");
+    }
+  });
+
+  test("Não deve ser possível atualizar um tenant com um usuário com permisão inativada", async () => {
+    const user = makeUser();
+    inMemoryUsersRepository.items.push(user);
+
+    const tenant = makeTenant();
+    inMemoryTenantsRepository.items.push(tenant);
+
+    inMemoryMembershipsRepository.items.push(
+      makeMembership({
+        tenantId: tenant.id.toString(),
+        userId: user.id.toString(),
+        active: false,
+      })
+    );
+
+    const result = await sut.execute({
+      userId: user.id.toString(),
+      tenantId: tenant.id.toString(),
+      name: "Novo nome",
+      nickName: "apelido",
+      documentType: "CPF",
+      documentNumber: fake(),
+    });
+    expect(result.isFailure()).toBe(true);
+    if (result.isFailure()) {
+      expect(result.value).toBeInstanceOf(NotAllowedError);
+      expect(result.value.message).toBe("Permissão de acesso inativada.");
     }
   });
 

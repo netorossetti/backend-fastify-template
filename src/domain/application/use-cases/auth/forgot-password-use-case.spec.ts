@@ -51,18 +51,4 @@ describe("Forgot Password Use Case", () => {
       expect(result.value.message).toBe("Usuário não localizado.");
     }
   });
-
-  test("Não deve ser possivel solicitar a recuperação de senha para um usuário inativo", async () => {
-    const user = makeUser({ active: false });
-    inMemoryUsersRepository.items.push(user);
-
-    const result = await sut.execute({
-      email: user.email,
-    });
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Usuário inativado.");
-    }
-  });
 });

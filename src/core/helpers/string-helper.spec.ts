@@ -12,6 +12,11 @@ describe("String Helper", () => {
     expect(StringHelper.isValidColumnName("coluna@invalida")).toBe(false);
   });
 
+  test("Truncate", () => {
+    expect(StringHelper.truncate("Olá mundo", 5)).toEqual("Olá m");
+    expect(StringHelper.truncate("Olá mundo", 255)).toEqual("Olá mundo");
+  });
+
   test("Clean SQL", () => {
     const sql = /**sql */ `
           SELECT A

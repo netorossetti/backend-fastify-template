@@ -12,6 +12,7 @@ export interface MembershipProps {
   role: RoleUserType;
   permissions?: Json | null;
   lastAccessAt?: Date | null;
+  active: boolean;
   createdAt: Date;
   updatedAt?: Date | null;
 }
@@ -48,6 +49,17 @@ export class Membership extends Entity<MembershipProps> {
     }
   }
 
+  get active() {
+    return this.props.active;
+  }
+
+  set active(active) {
+    if (active !== this.props.active) {
+      this.props.active = active;
+      this.touch();
+    }
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -61,12 +73,13 @@ export class Membership extends Entity<MembershipProps> {
   }
 
   static create(
-    props: Optional<MembershipProps, "createdAt" | "owner">,
+    props: Optional<MembershipProps, "createdAt" | "owner" | "active">,
     id?: UniqueEntityId
   ) {
     const instance = new Membership(
       {
         ...props,
+        active: props.active ?? true,
         owner: props.owner ?? false,
         createdAt: props.createdAt ?? new Date(),
       },

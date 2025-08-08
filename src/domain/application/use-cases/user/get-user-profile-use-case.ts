@@ -1,5 +1,6 @@
 import { NotFoundError } from "@core/errors/not-found-error";
 import { Result, failure, success } from "@core/result";
+import { NotAllowedError } from "src/core/errors/not-allowed-error";
 import { User } from "src/domain/enterprise/entities/user";
 import { MembershipsRepository } from "../../repositories/memberships-repository";
 import { TenantsRepository } from "../../repositories/tenants-repository";
@@ -10,7 +11,10 @@ interface GetUserProfileUseCaseRequest {
   tenantId: string;
 }
 
-type GetUserProfileUseCaseResponse = Result<NotFoundError, { user: User }>;
+type GetUserProfileUseCaseResponse = Result<
+  NotFoundError | NotAllowedError,
+  { user: User }
+>;
 
 export class GetUserProfileUseCase {
   constructor(
@@ -25,18 +29,21 @@ export class GetUserProfileUseCase {
   }: GetUserProfileUseCaseRequest): Promise<GetUserProfileUseCaseResponse> {
     const user = await this.usersRepository.findById(userId);
     if (!user) return failure(new NotFoundError("Usuário não localizado."));
-    if (!user.active) return failure(new NotFoundError("Usuário inativo."));
 
     const tenant = await this.tenantsRepository.findById(tenantId);
     if (!tenant)
       return failure(new NotFoundError("Organização não localizada."));
+    if (!tenant.active)
+      return failure(new NotFoundError("Organização inativa."));
 
     const membership = await this.membershipsRepository.findByUserAndTenant(
       userId,
       tenantId
     );
     if (!membership)
-      return failure(new NotFoundError("Permisão de acesso não localizada."));
+      return failure(new NotAllowedError("Permisão de acesso não localizada."));
+    if (!membership.active)
+      return failure(new NotAllowedError("Permisão de acesso inativada."));
 
     return success({ user });
   }

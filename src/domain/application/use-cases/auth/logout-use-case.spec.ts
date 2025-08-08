@@ -39,7 +39,6 @@ describe("Login Use Case", () => {
       userId: user.id.toString(),
     });
     const noKey = await fakeRedisServices.get(keyAccessToken);
-    console.log(noKey);
     expect(noKey).toBe(null);
 
     expect(result.isSuccess()).toBe(true);

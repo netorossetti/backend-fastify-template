@@ -79,21 +79,6 @@ describe("Login Use Case", () => {
     }
   });
 
-  test("Não deve ser possivel realizar um login de usuário inativado", async () => {
-    const passwordHash = await fakeHasher.hash("teste@1234");
-    const user = makeUser({ password: passwordHash, active: false });
-    inMemoryUsersRepository.items.push(user);
-    const result = await sut.execute({
-      email: user.email,
-      password: "teste@1234",
-    });
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe("Acesso negado. Usuário inátivado.");
-    }
-  });
-
   test("Não deve ser possivel realizar um login de usuário com senha inválida", async () => {
     const passwordHash = await fakeHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });

@@ -46,11 +46,14 @@ export class SelectTenantUseCase {
     }
 
     const tenant = await this.tenantsRepository.findById(tenantId);
-    if (!tenant) {
+    if (!tenant)
       return failure(new NotFoundError("Organização não localizada."));
-    }
+    if (!tenant.active)
+      return failure(new NotFoundError("Organização inativa."));
+
     const allMemberships = await this.membershipsRepository.findManyByUser(
-      userId
+      userId,
+      true
     );
     if (!allMemberships.length) {
       return failure(

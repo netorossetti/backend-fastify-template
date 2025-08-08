@@ -19,13 +19,31 @@ export class InMemoryMembershipsRepository implements MembershipsRepository {
     return membership ?? null;
   }
 
-  async findManyByUser(userId: string): Promise<Membership[]> {
-    const memberships = this.items.filter((u) => u.userId === userId);
+  async findManyByUser(
+    userId: string,
+    active?: boolean
+  ): Promise<Membership[]> {
+    const memberships = this.items.filter((u) => {
+      let inFilter = u.userId === userId;
+      if (inFilter && active !== undefined) {
+        inFilter = u.active === active;
+      }
+      return inFilter;
+    });
     return memberships;
   }
 
-  async findManyByTenant(tenantId: string): Promise<Membership[]> {
-    const memberships = this.items.filter((u) => u.tenantId === tenantId);
+  async findManyByTenant(
+    tenantId: string,
+    active?: boolean
+  ): Promise<Membership[]> {
+    const memberships = this.items.filter((u) => {
+      let inFilter = u.tenantId === tenantId;
+      if (inFilter && active !== undefined) {
+        inFilter = u.active === active;
+      }
+      return inFilter;
+    });
     return memberships;
   }
 

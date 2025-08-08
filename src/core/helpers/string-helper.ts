@@ -22,6 +22,10 @@ export class StringHelper {
     return value === null || value === undefined || value.trim() === "";
   }
 
+  static truncate(str: string, maxLength: number) {
+    return str.length > maxLength ? str.slice(0, maxLength) : str;
+  }
+
   static cleanSQL(sql: string): string {
     return (
       sql

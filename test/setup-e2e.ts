@@ -15,8 +15,13 @@ const tmpBaseDir = path.join(
   "temp",
   `e2e-uploads-${schemaId}`
 );
+
 const tmpPublicPath = path.join(tmpBaseDir, "public");
 const tmpPrivatePath = path.join(tmpBaseDir, "private");
+
+// Criar diretórios temporários
+mkdirSync(tmpPublicPath, { recursive: true });
+mkdirSync(tmpPrivatePath, { recursive: true });
 
 function generateUniqueDatabaseURL(schemaId: string) {
   if (!process.env.DATABASE_URL) {
@@ -38,10 +43,6 @@ process.env.UPLOADS_PUBLIC_PATH = tmpPublicPath;
 process.env.UPLOADS_PRIVATE_PATH = tmpPrivatePath;
 
 beforeAll(async () => {
-  // Criar diretórios temporários
-  mkdirSync(tmpPublicPath, { recursive: true });
-  mkdirSync(tmpPrivatePath, { recursive: true });
-
   // Executar as migrations do prisma no novo esquema gerado
   execSync("npx prisma migrate deploy");
 });

@@ -1,3 +1,4 @@
+import { NotAllowedError } from "src/core/errors/not-allowed-error";
 import { NotFoundError } from "src/core/errors/not-found-error";
 import { makeGetUserProfileUseCase } from "src/infra/factories/user/make-get-user-profile-use-case";
 import z from "zod/v4";
@@ -37,6 +38,7 @@ export async function getUserProfile(app: FastifyTypedInstace) {
         const error = response.value;
         switch (error.constructor) {
           case NotFoundError:
+          case NotAllowedError:
             reply.status(error.statusCode).send({
               statusCode: error.statusCode,
               message: error.message,

@@ -29,7 +29,6 @@ export class UpdateUserProfileUseCase {
   }: UpdateUserProfileUseCaseRequest): Promise<UpdateUserProfileUseCaseResponse> {
     const user = await this.usersRepository.findById(userId);
     if (!user) return failure(new NotFoundError("Usuário não encontrado."));
-    if (!user.active) return failure(new NotFoundError("Usuário inativo."));
 
     // Atualizar dados do usuário
     user.firstName = firstName;

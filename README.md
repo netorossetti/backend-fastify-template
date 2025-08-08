@@ -66,13 +66,14 @@ Este template segue boas práticas e padrões de projeto como:
 
 ### 🏢 Conta / Tenant (`/tenants`)
 
-| ✅  | Token | Método | Rota              | Descrição                                                |
-| --- | ----- | ------ | ----------------- | -------------------------------------------------------- |
-| ✅  | 🔐    | GET    | `/tenants`        | Lista as contas do usuário proprietário ou administrador |
-| ✅  | 🌐    | POST   | `/tenants`        | Cria uma nova conta                                      |
-| ✅  | 🔐    | POST   | `/tenants/select` | Seleciona nova conta para a sessão atual                 |
-| ✅  | 🔐    | PATCH  | `/tenants/:id`    | Atualiza informações da conta                            |
-| ❌  | 🔐    | DELETE | `/tenants/:id`    | Cancelar conta                                           |
+| ✅  | Token | Método | Rota                       | Descrição                                                |
+| --- | ----- | ------ | -------------------------- | -------------------------------------------------------- |
+| ✅  | 🔐    | GET    | `/tenants`                 | Lista as contas do usuário proprietário ou administrador |
+| ✅  | 🌐    | POST   | `/tenants`                 | Cria uma nova conta                                      |
+| ✅  | 🔐    | POST   | `/tenants/select`          | Seleciona nova conta para a sessão atual                 |
+| ✅  | 🔐    | PATCH  | `/tenants/:id`             | Atualiza informações da conta                            |
+| ✅  | 🔐    | POST   | `/tenants/:id/inactivate`  | Cancelar conta                                           |
+| ✅  | 🔐    | POST   | `/tenants/:id/reactivate ` | Reativar uma conta                                       |
 
 ---
 

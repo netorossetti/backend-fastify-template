@@ -23,16 +23,22 @@ export class PrismaMembershipsRepository implements MembershipsRepository {
     return PrismaMembershipMapper.toDomain(dbMembership);
   }
 
-  async findManyByUser(userId: string): Promise<Membership[]> {
+  async findManyByUser(
+    userId: string,
+    active?: boolean
+  ): Promise<Membership[]> {
     const dbMemberships = await this.prisma.usersOnTenants.findMany({
-      where: { userId },
+      where: { userId, active: active !== undefined ? active : undefined },
     });
     return dbMemberships.map(PrismaMembershipMapper.toDomain);
   }
 
-  async findManyByTenant(tenantId: string): Promise<Membership[]> {
+  async findManyByTenant(
+    tenantId: string,
+    active?: boolean
+  ): Promise<Membership[]> {
     const dbMemberships = await this.prisma.usersOnTenants.findMany({
-      where: { tenantId },
+      where: { tenantId, active: active !== undefined ? active : undefined },
     });
     return dbMemberships.map(PrismaMembershipMapper.toDomain);
   }

@@ -56,7 +56,6 @@ export class ResetPasswordUseCase {
     // Recuperar informações do usuário
     const user = await this.usersRepository.findById(userId);
     if (!user) return failure(new NotFoundError("Usuário não encontrado."));
-    if (!user.active) return failure(new NotFoundError("Usuário inativado."));
 
     // Alterar senha do usuário
     user.password = await this.hashGenerator.hash(password);

@@ -92,7 +92,7 @@ describe("Reset Password Use Case", () => {
   });
 
   test("Não deve ser possivel redefinir uma senha para um usuário não cadastrado", async () => {
-    const user = makeUser({ active: false });
+    const user = makeUser();
     const recoveryCode = makeRecoveryCode(user, fakeRedisServices);
 
     const result = await sut.execute({
@@ -108,30 +108,11 @@ describe("Reset Password Use Case", () => {
     }
   });
 
-  test("Não deve ser possivel redefinir uma senha para um usuário inativo", async () => {
-    const user = makeUser({ active: false });
-    inMemoryUsersRepository.items.push(user);
-
-    const recoveryCode = makeRecoveryCode(user, fakeRedisServices);
-
-    const result = await sut.execute({
-      recoveryCode: recoveryCode,
-      password: "Teste@2014",
-      passwordCheck: "Teste@2014",
-    });
-
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Usuário inativado.");
-    }
-  });
-
   test("Não deve ser possível redefinir uma senha com um link expirado", async () => {
     const date = new Date();
     vi.setSystemTime(date);
 
-    const user = makeUser({ active: false });
+    const user = makeUser();
     inMemoryUsersRepository.items.push(user);
 
     const recoveryCode = makeRecoveryCode(user, fakeRedisServices);

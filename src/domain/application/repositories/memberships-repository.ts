@@ -5,8 +5,8 @@ export interface MembershipsRepository {
     userId: string,
     tenantId: string
   ): Promise<Membership | null>;
-  findManyByUser(userId: string): Promise<Membership[]>;
-  findManyByTenant(tenantId: string): Promise<Membership[]>;
+  findManyByUser(userId: string, active?: boolean): Promise<Membership[]>;
+  findManyByTenant(tenantId: string, active?: boolean): Promise<Membership[]>;
   updateLastAccess(userId: string, tenantId: string): Promise<boolean>;
   create(membership: Membership): Promise<Membership>;
   save(membership: Membership): Promise<void>;

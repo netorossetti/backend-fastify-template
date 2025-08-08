@@ -7,121 +7,36 @@ import { makeUser } from "test/factories/make-user";
 import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
 import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
 import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { GetUserProfileUseCase } from "./get-user-profile-use-case";
+import { ReactivateTenantUseCase } from "./reactivate-tenant-use-case";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
 let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
-let sut: GetUserProfileUseCase;
+let sut: ReactivateTenantUseCase;
 
 describe("Select Account Use Case", () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository();
     inMemoryTenantsRepository = new InMemoryTenantsRepository();
     inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
-    sut = new GetUserProfileUseCase(
+
+    sut = new ReactivateTenantUseCase(
       inMemoryUsersRepository,
-      inMemoryMembershipsRepository,
-      inMemoryTenantsRepository
+      inMemoryTenantsRepository,
+      inMemoryMembershipsRepository
     );
   });
 
-  test("Deve ser possível recuperar o perfil do usuário", async () => {
-    const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-
+  test("Deve ser possível reativar um tenant", async () => {
     const user = makeUser();
     inMemoryUsersRepository.items.push(user);
 
-    inMemoryMembershipsRepository.items.push(
-      makeMembership({
-        tenantId: tenant.id.toString(),
-        userId: user.id.toString(),
-      })
-    );
-
-    const result = await sut.execute({
-      userId: user.id.toString(),
-      tenantId: tenant.id.toString(),
-    });
-    expect(result.isSuccess()).toBe(true);
-    if (result.isSuccess()) {
-      expect(result.value).toEqual(
-        expect.objectContaining({
-          user: expect.objectContaining({ id: user.id }),
-        })
-      );
-    }
-  });
-
-  test("Não deve ser possível recuperar o perfil de um usuário inválido", async () => {
-    const result = await sut.execute({
-      userId: faker.string.uuid(),
-      tenantId: faker.string.uuid(),
-    });
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Usuário não localizado.");
-    }
-  });
-
-  test("Não deve ser possível recuperar o perfil de um usuário para um tenant não localizado", async () => {
-    const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-
-    const result = await sut.execute({
-      userId: user.id.toString(),
-      tenantId: faker.string.uuid(),
-    });
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Organização não localizada.");
-    }
-  });
-
-  test("Não deve ser possível recuperar o perfil de um usuário para um tenant inátivado", async () => {
-    const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    const otherUser1 = makeUser();
+    inMemoryUsersRepository.items.push(otherUser1);
+    const otherUser2 = makeUser();
+    inMemoryUsersRepository.items.push(otherUser2);
 
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
-
-    const result = await sut.execute({
-      userId: user.id.toString(),
-      tenantId: tenant.id.toString(),
-    });
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe("Organização inativa.");
-    }
-  });
-
-  test("Não deve ser possível recuperar o perfil de um usuário sem permisão para o tenant", async () => {
-    const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-
-    const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-
-    const result = await sut.execute({
-      userId: user.id.toString(),
-      tenantId: tenant.id.toString(),
-    });
-    expect(result.isFailure()).toBe(true);
-    if (result.isFailure()) {
-      expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe("Permisão de acesso não localizada.");
-    }
-  });
-
-  test("Não deve ser possível recuperar o perfil de um usuário com permisão de acesso inativada para o tenant", async () => {
-    const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-
-    const tenant = makeTenant();
     inMemoryTenantsRepository.items.push(tenant);
 
     inMemoryMembershipsRepository.items.push(
@@ -132,6 +47,88 @@ describe("Select Account Use Case", () => {
       })
     );
 
+    inMemoryMembershipsRepository.items.push(
+      makeMembership({
+        tenantId: tenant.id.toString(),
+        userId: otherUser1.id.toString(),
+        owner: false,
+        role: "user",
+        active: false,
+      })
+    );
+
+    inMemoryMembershipsRepository.items.push(
+      makeMembership({
+        tenantId: tenant.id.toString(),
+        userId: otherUser2.id.toString(),
+        owner: false,
+        role: "user",
+        active: false,
+      })
+    );
+    const result = await sut.execute({
+      userId: user.id.toString(),
+      tenantId: tenant.id.toString(),
+    });
+    expect(result.isSuccess()).toBe(true);
+    if (result.isSuccess()) {
+      expect(result.value.tenant.active).toBe(true);
+      const membershipInactive = inMemoryMembershipsRepository.items.filter(
+        (i) => i.active
+      );
+      expect(membershipInactive.length).toEqual(1);
+    }
+  });
+
+  test("Não deve ser possível reativar um tenant inválido", async () => {
+    const result = await sut.execute({
+      userId: faker.string.uuid(),
+      tenantId: faker.string.uuid(),
+    });
+    expect(result.isFailure()).toBe(true);
+    if (result.isFailure()) {
+      expect(result.value).toBeInstanceOf(NotFoundError);
+      expect(result.value.message).toBe("Organização não localizada.");
+    }
+  });
+
+  test("Não deve ser possível reativar um tenant já inativado", async () => {
+    const tenant = makeTenant();
+    inMemoryTenantsRepository.items.push(tenant);
+
+    const result = await sut.execute({
+      userId: faker.string.uuid(),
+      tenantId: tenant.id.toString(),
+    });
+    expect(result.isFailure()).toBe(true);
+    if (result.isFailure()) {
+      expect(result.value).toBeInstanceOf(NotFoundError);
+      expect(result.value.message).toBe("Organização já esta ativa.");
+    }
+  });
+
+  test("Não deve ser possível reativar um tenant com um usuário inválido.", async () => {
+    const tenant = makeTenant({ active: false });
+    inMemoryTenantsRepository.items.push(tenant);
+
+    const result = await sut.execute({
+      userId: faker.string.uuid(),
+      tenantId: tenant.id.toString(),
+    });
+    expect(result.isFailure()).toBe(true);
+    if (result.isFailure()) {
+      expect(result.value).toBeInstanceOf(NotFoundError);
+      expect(result.value.message).toBe("Usuário não localizado.");
+    }
+  });
+
+  test("Não deve ser possível reativar um tenant com um usuário não pertencente a organização.", async () => {
+    const tenant = makeTenant({ active: false });
+    inMemoryTenantsRepository.items.push(tenant);
+
+    const user = makeUser();
+    inMemoryUsersRepository.items.push(user);
+
     const result = await sut.execute({
       userId: user.id.toString(),
       tenantId: tenant.id.toString(),
@@ -139,7 +136,36 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe("Permisão de acesso inativada.");
+      expect(result.value.message).toBe("Usuário não pertence a organização.");
+    }
+  });
+
+  test("Não deve ser possível reativar um tenant com um usuário sem privilégio de acesso necessário.", async () => {
+    const tenant = makeTenant({ active: false });
+    inMemoryTenantsRepository.items.push(tenant);
+
+    const user = makeUser();
+    inMemoryUsersRepository.items.push(user);
+
+    inMemoryMembershipsRepository.items.push(
+      makeMembership({
+        tenantId: tenant.id.toString(),
+        userId: user.id.toString(),
+        owner: false,
+        role: "admin",
+      })
+    );
+
+    const result = await sut.execute({
+      userId: user.id.toString(),
+      tenantId: tenant.id.toString(),
+    });
+    expect(result.isFailure()).toBe(true);
+    if (result.isFailure()) {
+      expect(result.value).toBeInstanceOf(NotAllowedError);
+      expect(result.value.message).toBe(
+        "Usuário não tem permisão necessária para alterar dados da organização."
+      );
     }
   });
 });

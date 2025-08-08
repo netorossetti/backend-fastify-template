@@ -30,7 +30,6 @@ export class ForgotPasswordUseCase {
     // Recuperar usuário
     const user = await this.usersRepository.findByEmail(email);
     if (!user) return failure(new NotFoundError("Usuário não localizado."));
-    if (!user.active) return failure(new NotFoundError("Usuário inativado."));
 
     // Gerar código de recuperação de senha
     const recoveryCode = StringHelper.generateRandomCode(15);

@@ -16,6 +16,7 @@ export class PrismaMembershipMapper {
         role: raw.role as RoleUserType,
         permissions: raw.permissions as Json,
         lastAccessAt: raw.lastAccessAt,
+        active: raw.active,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
@@ -36,6 +37,7 @@ export class PrismaMembershipMapper {
         ? { set: null }
         : { set: membership.permissions as Prisma.JsonValue },
       lastAccessAt: membership.lastAccessAt,
+      active: membership.active,
       createdAt: membership.createdAt,
       updatedAt: membership.updatedAt,
     };

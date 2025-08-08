@@ -7,7 +7,6 @@ export interface UserProps {
   lastName: string;
   nickName: string;
   email: string;
-  active: boolean;
   avatarUrl?: string | null;
   password: string;
   createdAt: Date;
@@ -63,17 +62,6 @@ export class User extends Entity<UserProps> {
     }
   }
 
-  get active() {
-    return this.props.active;
-  }
-
-  set active(active) {
-    if (active !== this.props.active) {
-      this.props.active = active;
-      this.touch();
-    }
-  }
-
   get avatarUrl() {
     return this.props.avatarUrl;
   }
@@ -109,13 +97,12 @@ export class User extends Entity<UserProps> {
   }
 
   static create(
-    props: Optional<UserProps, "active" | "avatarUrl" | "createdAt">,
+    props: Optional<UserProps, "avatarUrl" | "createdAt">,
     id?: UniqueEntityId
   ) {
     const user = new User(
       {
         ...props,
-        active: props.active ?? true,
         avatarUrl: props.avatarUrl ?? null,
         createdAt: props.createdAt ?? new Date(),
       },

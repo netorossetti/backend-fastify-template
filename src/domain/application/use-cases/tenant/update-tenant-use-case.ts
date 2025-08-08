@@ -39,13 +39,16 @@ export class UpdateTenantUseCase {
     name,
     nickName,
   }: UpdateTenantUseCaseRequest): Promise<UpdateTenantUseCaseResponse> {
+    // Recuperar usuário
     const user = await this.usersRepository.findById(userId);
     if (!user) return failure(new NotFoundError("Usuário não localizado."));
 
     // Recuperar o tenant
     const tenant = await this.tenantsRepository.findById(tenantId);
     if (!tenant)
-      return failure(new NotFoundError("Organização não localizado."));
+      return failure(new NotFoundError("Organização não localizada."));
+    if (!tenant.active)
+      return failure(new NotFoundError("Organização inativa."));
 
     // Validar se usuário pertence a organização
     const membership = await this.membershipsRepository.findByUserAndTenant(
@@ -53,7 +56,11 @@ export class UpdateTenantUseCase {
       tenantId
     );
     if (!membership)
-      return failure(new NotAllowedError("Usuário não pernete a organização."));
+      return failure(
+        new NotAllowedError("Usuário não pertence a organização.")
+      );
+    if (!membership.active)
+      return failure(new NotAllowedError("Permissão de acesso inativada."));
 
     // Validar se usuário pode alterar o tenant (owner or 'ADMIN'/'SUPERADMIN')
     if (
