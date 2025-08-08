@@ -3,6 +3,9 @@ import ms from "ms";
 import { z } from "zod/v4";
 import { zodIsFolderSchema } from "../types/zod-custom-types/is-folder-schema";
 
+// configure English locale (default)
+z.config(z.locales.pt());
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "production"]).default("dev"),
   PORT: z.coerce.number().default(3333),
