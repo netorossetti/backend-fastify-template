@@ -17,14 +17,31 @@ export async function createTenant(app: FastifyTypedInstace) {
         tags: ["App: Tenant"],
         operationId: "tenant_createTenant",
         body: z.object({
-          firstName: zodNameSchema("Nome"),
-          lastName: zodNameSchema("Sobrenome"),
-          nickName: zodNameSchema("Apelido").optional(),
+          firstName: zodNameSchema({
+            description: "Nome",
+          }),
+          lastName: zodNameSchema({ description: "Sobrenome" }),
+          nickName: zodNameSchema({
+            description: "Apelido",
+            allowHyphens: true,
+            allowApostrophes: true,
+            allowNumbers: true,
+          }).optional(),
           email: z.email(),
           password: zodPasswordSchema("password"),
           organization: z.object({
-            name: zodNameSchema("Nome"),
-            nickName: zodNameSchema("Nome Fantasia"),
+            name: zodNameSchema({
+              description: "Nome",
+              allowHyphens: true,
+              allowApostrophes: true,
+              allowNumbers: true,
+            }),
+            nickName: zodNameSchema({
+              description: "Nome Fantasia",
+              allowHyphens: true,
+              allowApostrophes: true,
+              allowNumbers: true,
+            }),
             documentType: z.enum(["CNH", "CPF", "CNPJ"]),
             documentNumber: z.string(),
           }),

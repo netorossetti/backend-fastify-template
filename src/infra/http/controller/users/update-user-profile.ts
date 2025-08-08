@@ -17,9 +17,14 @@ import { auth } from "../../middleware/auth";
 
 const MAX_FILE_SIZE_MB = 2;
 const schemaFormBody = z.object({
-  firstName: zodNameSchema("Nome"),
-  lastName: zodNameSchema("Sobrenome"),
-  nickName: zodNameSchema("Apelido"),
+  firstName: zodNameSchema({ description: "Nome" }),
+  lastName: zodNameSchema({ description: "Sobrenome" }),
+  nickName: zodNameSchema({
+    description: "Apelido",
+    allowApostrophes: true,
+    allowHyphens: true,
+    allowNumbers: true,
+  }),
   avatar: zodFileSchema({
     acceptedMimeTypes: acceptedAvatarsMimeTypes,
     maxSizeMB: MAX_FILE_SIZE_MB,
@@ -38,8 +43,14 @@ export async function updateUserProfile(app: FastifyTypedInstace) {
         security: [{ bearerAuth: [] }],
         consumes: ["multipart/form-data"],
         body: z.object({
-          firstName: zodNameSchema("Nome"),
-          lastName: zodNameSchema("Sobrenome"),
+          firstName: zodNameSchema({ description: "Nome" }),
+          lastName: zodNameSchema({ description: "Sobrenome" }),
+          nickName: zodNameSchema({
+            description: "Apelido",
+            allowApostrophes: true,
+            allowHyphens: true,
+            allowNumbers: true,
+          }),
           avatar: z.file().optional().meta({
             description:
               "Imagem do avatar do usuário. Formatos aceitos: .png, .jpeg.webp",

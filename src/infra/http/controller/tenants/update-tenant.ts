@@ -20,8 +20,18 @@ export async function updateTenant(app: FastifyTypedInstace) {
         operationId: "tenant_updateTenant",
         params: z.object({ tenantId: z.uuid() }),
         body: z.object({
-          name: zodNameSchema("Nome"),
-          nickName: zodNameSchema("Nome Fantasia"),
+          name: zodNameSchema({
+            description: "Nome",
+            allowHyphens: true,
+            allowApostrophes: true,
+            allowNumbers: true,
+          }),
+          nickName: zodNameSchema({
+            description: "Nome Fantasia",
+            allowHyphens: true,
+            allowApostrophes: true,
+            allowNumbers: true,
+          }),
           documentType: z.enum(["CNH", "CPF", "CNPJ"]),
           documentNumber: z.string(),
         }),
