@@ -1,6 +1,7 @@
 import "dotenv/config";
 import ms from "ms";
 import { z } from "zod/v4";
+import { zodIsFolderSchema } from "../types/zod-custom-types/is-folder-schema";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "production"]).default("dev"),
@@ -20,10 +21,10 @@ const envSchema = z.object({
         throw new Error("JWT_EXP: Valor inválido para ms.StringValue");
       }
     }),
-  LOGGER_FOLDER: z.string().optional(),
+  LOGGER_FOLDER: zodIsFolderSchema({ allowRelativePath: true }).optional(),
   LOGGER_FILENAME: z.string().optional(),
-  UPLOADS_PUBLIC_PATH: z.string(),
-  UPLOADS_PRIVATE_PATH: z.string(),
+  UPLOADS_PUBLIC_PATH: zodIsFolderSchema({ allowRelativePath: false }),
+  UPLOADS_PRIVATE_PATH: zodIsFolderSchema({ allowRelativePath: false }),
   ENCRYPTION_KEY: z.string().min(10),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.coerce.number(),

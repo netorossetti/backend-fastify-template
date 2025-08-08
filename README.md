@@ -71,7 +71,7 @@ Este template segue boas práticas e padrões de projeto como:
 | ✅  | 🔐    | GET    | `/tenants`        | Lista as contas do usuário proprietário ou administrador |
 | ✅  | 🌐    | POST   | `/tenants`        | Cria uma nova conta                                      |
 | ✅  | 🔐    | POST   | `/tenants/select` | Seleciona nova conta para a sessão atual                 |
-| ❌  | 🔐    | PATCH  | `/tenants/:id`    | Atualiza informações da conta                            |
+| ✅  | 🔐    | PATCH  | `/tenants/:id`    | Atualiza informações da conta                            |
 | ❌  | 🔐    | DELETE | `/tenants/:id`    | Cancelar conta                                           |
 
 ---
