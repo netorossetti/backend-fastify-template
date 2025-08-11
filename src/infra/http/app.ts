@@ -26,7 +26,10 @@ config();
 
 export const app = Fastify().withTypeProvider<ZodTypeProvider>();
 
-app.register(cors);
+app.register(cors, {
+  origin: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+});
 app.register(sensible);
 app.register(jwt, { secret: env.JWT_KEY });
 
