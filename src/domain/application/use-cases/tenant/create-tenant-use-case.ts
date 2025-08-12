@@ -128,7 +128,7 @@ export class CreateTenantUseCase {
     const membership = Membership.create({
       userId: user.id.toString(),
       tenantId: newTenant.id.toString(),
-      role: "admin",
+      role: "superAdmin",
       owner: true,
     });
 

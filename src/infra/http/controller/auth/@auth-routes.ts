@@ -1,4 +1,5 @@
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
+import { changePassword } from "./change-password";
 import { forgotPassword } from "./forgot-password";
 import { login } from "./login";
 import { logout } from "./logout";
@@ -11,4 +12,5 @@ export async function authRoutes(app: FastifyTypedInstace) {
   app.register(refreshToken);
   app.register(forgotPassword);
   app.register(resetPassword);
+  app.register(changePassword);
 }

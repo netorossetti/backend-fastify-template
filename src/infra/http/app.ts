@@ -18,6 +18,7 @@ import { env } from "src/core/env";
 import Logger from "src/core/lib/logger/logger";
 import z from "zod/v4";
 import { authRoutes } from "./controller/auth/@auth-routes";
+import { membershipsRoutes } from "./controller/memberships/@memberships-routes";
 import { tenantsRoutes } from "./controller/tenants/@tenants-routes";
 import { usersRoutes } from "./controller/users/@users-routes";
 import { errorHandler } from "./error-handler";
@@ -110,4 +111,5 @@ app.register(fastifyStatic, {
 /** Rotas da aplicação */
 app.register(authRoutes);
 app.register(tenantsRoutes);
+app.register(membershipsRoutes);
 app.register(usersRoutes);

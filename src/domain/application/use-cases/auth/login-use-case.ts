@@ -29,6 +29,9 @@ type LoginUseCaseResponse = Result<
     tenants: {
       id: string;
       name: string;
+      owner: boolean;
+      role: string;
+      active: boolean;
     }[];
   }
 >;
@@ -56,10 +59,14 @@ export class LoginUseCase {
     if (!senhaValida) return failure(new UnauthorizedError("Senha inválida."));
 
     // Recuperar Tenants do usuário
-    const memberships = await this.membershipsRepository.findManyByUser(
-      user.id.toString(),
-      true
+    const allMemberships = await this.membershipsRepository.findManyByUser(
+      user.id.toString()
     );
+
+    const memberships = allMemberships.filter(
+      (m) => m.active || m.owner || m.role === "superAdmin"
+    );
+
     if (memberships.length === 0) {
       return failure(
         new NotAllowedError("Acesso negado. Usuário sem vinculo de acesso.")
@@ -69,13 +76,25 @@ export class LoginUseCase {
     let lastAccess: Date | null = null;
     let lastTenantLogin: { id: string; name: string; role: string } | null =
       null;
-    const tenants: { id: string; name: string }[] = [];
+    const tenants: {
+      id: string;
+      name: string;
+      owner: boolean;
+      role: string;
+      active: boolean;
+    }[] = [];
 
     for await (const membership of memberships) {
       const tenant = await this.tenantsRepository.findById(membership.tenantId);
       if (!tenant || !tenant.active) continue;
 
-      tenants.push({ id: tenant.id.toString(), name: tenant.name });
+      tenants.push({
+        id: tenant.id.toString(),
+        name: tenant.name,
+        owner: membership.owner,
+        role: membership.role,
+        active: tenant.active,
+      });
 
       if (
         membership.lastAccessAt &&

@@ -20,7 +20,7 @@ export function makeTenant(
       active: true,
       ...override,
     },
-    id
+    id ?? new UniqueEntityId()
   );
   return newTenant;
 }

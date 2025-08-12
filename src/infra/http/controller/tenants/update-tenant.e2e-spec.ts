@@ -38,6 +38,7 @@ describe("Tenant - UpdateTenant (e2e)", () => {
     const membership = await membershipFactory.makePrismaMembership({
       userId: user.id.toString(),
       tenantId: tenant.id.toString(),
+      role: "admin",
     });
 
     // Autenticar no tenant 1

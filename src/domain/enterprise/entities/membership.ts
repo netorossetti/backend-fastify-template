@@ -34,6 +34,13 @@ export class Membership extends Entity<MembershipProps> {
     return this.props.role;
   }
 
+  set role(role) {
+    if (role !== this.props.role) {
+      this.props.role = role;
+      this.touch();
+    }
+  }
+
   get permissions() {
     return this.props.permissions;
   }

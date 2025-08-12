@@ -11,7 +11,7 @@ export async function logout(app: FastifyTypedInstace) {
     {
       schema: {
         summary: "Logout",
-        description: "Sair da aplicação",
+        description: "Exit the application",
         tags: ["App: Authenticate"],
         operationId: "auth_logout",
         security: [{ bearerAuth: [] }],

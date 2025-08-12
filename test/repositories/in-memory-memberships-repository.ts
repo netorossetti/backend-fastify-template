@@ -1,8 +1,16 @@
 import { MembershipsRepository } from "src/domain/application/repositories/memberships-repository";
 import { Membership } from "src/domain/enterprise/entities/membership";
+import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership";
+import { InMemoryUsersRepository } from "./in-memory-users-repository";
 
 export class InMemoryMembershipsRepository implements MembershipsRepository {
   public items: Membership[] = [];
+
+  private usersRepository?: InMemoryUsersRepository;
+
+  setUsersRepository(repo: InMemoryUsersRepository) {
+    this.usersRepository = repo;
+  }
 
   async findById(id: string): Promise<Membership | null> {
     const membership = this.items.find((u) => u.id.toString() === id);
@@ -45,6 +53,59 @@ export class InMemoryMembershipsRepository implements MembershipsRepository {
       return inFilter;
     });
     return memberships;
+  }
+
+  async listUsersByTenant(tenantId: string): Promise<UserWithMembership[]> {
+    if (!this.usersRepository)
+      throw new Error(
+        "InMemoryMembershipsRepository: usersRepository not provider."
+      );
+
+    const memberships = await this.items.filter((i) => i.tenantId === tenantId);
+
+    const users: UserWithMembership[] = [];
+    for (const membership of memberships) {
+      const user = this.usersRepository.items.find(
+        (u) => u.id.toString() === membership.userId
+      );
+      if (!user)
+        throw new Error(
+          "InMemoryMembershipsRepository: usersRepository not have user with membership."
+        );
+
+      users.push(
+        UserWithMembership.create({
+          userId: membership.userId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          nickName: user.nickName,
+          email: user.email,
+          avatarUrl: user.avatarUrl,
+          owner: membership.owner,
+          role: membership.role,
+          permissions: membership.permissions,
+          lastAccessAt: membership.lastAccessAt,
+          active: membership.active,
+        })
+      );
+    }
+
+    return users;
+  }
+
+  async verifyPermissionAdmin(
+    tenantId: string,
+    userId: string
+  ): Promise<boolean> {
+    const membership = this.items.find(
+      (i) => i.tenantId === tenantId && i.userId === userId
+    );
+    if (!membership) return false;
+    return (
+      membership.owner ||
+      membership.role === "superAdmin" ||
+      membership.role === "admin"
+    );
   }
 
   async updateLastAccess(userId: string, tenantId: string): Promise<boolean> {

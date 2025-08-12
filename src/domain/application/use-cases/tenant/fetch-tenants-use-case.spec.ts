@@ -44,12 +44,16 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant1.id.toString(),
         userId: user.id.toString(),
+        owner: true,
+        role: "admin",
       })
     );
     inMemoryMembershipsRepository.items.push(
       makeMembership({
         tenantId: tenant2.id.toString(),
         userId: user.id.toString(),
+        owner: true,
+        role: "admin",
       })
     );
     inMemoryMembershipsRepository.items.push(

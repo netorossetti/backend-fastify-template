@@ -25,6 +25,9 @@ type SelectTenantUseCaseResponse = Result<
     tenants: {
       id: string;
       name: string;
+      owner: boolean;
+      role: string;
+      active: boolean;
     }[];
   }
 >;
@@ -52,18 +55,18 @@ export class SelectTenantUseCase {
       return failure(new NotFoundError("Organização inativa."));
 
     const allMemberships = await this.membershipsRepository.findManyByUser(
-      userId,
-      true
+      userId
     );
-    if (!allMemberships.length) {
+    const memberships = allMemberships.filter(
+      (m) => m.active || m.owner || m.role === "superAdmin"
+    );
+    if (!memberships.length) {
       return failure(
         new NotFoundError("Usuário não pertence a nenhuma organização.")
       );
     }
 
-    const targetMembership = allMemberships.find(
-      (m) => m.tenantId === tenantId
-    );
+    const targetMembership = memberships.find((m) => m.tenantId === tenantId);
     if (!targetMembership) {
       return failure(
         new NotAllowedError("Usuário não pertence à organização selecionada.")
@@ -74,12 +77,24 @@ export class SelectTenantUseCase {
     await this.membershipsRepository.updateLastAccess(userId, tenantId);
 
     // Monta lista de tenants
-    const tenants: { id: string; name: string }[] = [];
+    const tenants: {
+      id: string;
+      name: string;
+      owner: boolean;
+      role: string;
+      active: boolean;
+    }[] = [];
 
-    for (const membership of allMemberships) {
+    for (const membership of memberships) {
       const tenant = await this.tenantsRepository.findById(membership.tenantId);
       if (tenant) {
-        tenants.push({ id: tenant.id.toString(), name: tenant.name });
+        tenants.push({
+          id: tenant.id.toString(),
+          name: tenant.name,
+          owner: membership.owner,
+          role: membership.role,
+          active: tenant.active,
+        });
       }
     }
 

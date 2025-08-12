@@ -17,7 +17,7 @@ export async function refreshToken(app: FastifyTypedInstace) {
     {
       schema: {
         summary: "Refresh Token",
-        description: "Atualização de token do usuário",
+        description: "User Token Refresh",
         tags: ["App: Authenticate"],
         operationId: "auth_refreshToken",
         security: [{ bearerAuth: [] }],

@@ -70,3 +70,23 @@ Authorization: Bearer {{authToken}}
   "documentType": "CNPJ",
   "documentNumber": "36.750.517/0001-45"
 }
+
+###
+
+
+# @name inactivate-tenant
+POST {{baseUrl}}/tenants/a01fa32d-b908-437e-aa04-6be198bf67ae/inactivate
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{}
+
+###
+
+
+# @name reactivate-tenant
+POST {{baseUrl}}/tenants/a01fa32d-b908-437e-aa04-6be198bf67ae/reactivate
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{}

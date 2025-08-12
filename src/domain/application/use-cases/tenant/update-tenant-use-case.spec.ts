@@ -41,6 +41,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
+        role: "admin",
       })
     );
 
@@ -189,6 +190,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
+        role: "admin",
       })
     );
 
@@ -220,6 +222,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
+        role: "admin",
       })
     );
 
@@ -251,6 +254,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
+        role: "admin",
       })
     );
 
@@ -282,6 +286,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
+        role: "admin",
       })
     );
 

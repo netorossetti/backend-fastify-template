@@ -59,3 +59,18 @@ Content-Type: application/json
   "password": "2014@Recovery",
   "passwordCheck": "2014@Recovery"
 }
+
+
+###
+
+
+# @name change-password
+POST {{baseUrl}}/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "password": "{{userPasswd}}",
+  "nemPassword": "2014@Recovery",
+  "nemPasswordCheck": "2014@Recovery"
+}

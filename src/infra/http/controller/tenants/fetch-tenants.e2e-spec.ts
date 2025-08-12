@@ -35,6 +35,8 @@ describe("Tenant - FetchTenant (e2e)", () => {
     const membership1 = await membershipFactory.makePrismaMembership({
       userId: user.id.toString(),
       tenantId: tenant1.id.toString(),
+      owner: true,
+      role: "superAdmin",
     });
 
     const tenant2 = await tenantFactory.makePrismaTenant();
@@ -48,6 +50,7 @@ describe("Tenant - FetchTenant (e2e)", () => {
     await membershipFactory.makePrismaMembership({
       userId: user.id.toString(),
       tenantId: tenant3.id.toString(),
+      owner: false,
       role: "user",
     });
 
@@ -62,8 +65,7 @@ describe("Tenant - FetchTenant (e2e)", () => {
       .send();
 
     expect(response.statusCode).toEqual(200);
-    const body = response.body;
-    expect(body).toEqual(
+    expect(response.body).toEqual(
       expect.objectContaining({
         tenants: expect.arrayContaining([
           {
@@ -81,14 +83,6 @@ describe("Tenant - FetchTenant (e2e)", () => {
             documentType: tenant2.documentType,
             documentNumber: tenant2.documentNumber,
             active: tenant2.active,
-          },
-          {
-            id: tenant3.id.toString(),
-            name: tenant3.name,
-            nickName: tenant3.nickName,
-            documentType: tenant3.documentType,
-            documentNumber: tenant3.documentNumber,
-            active: tenant3.active,
           },
         ]),
       })

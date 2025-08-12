@@ -17,7 +17,7 @@ export async function login(app: FastifyTypedInstace) {
     {
       schema: {
         summary: "Login",
-        description: "Autenticação de usuários",
+        description: "User authentication",
         tags: ["App: Authenticate"],
         operationId: "auth_login",
         body: z.object({

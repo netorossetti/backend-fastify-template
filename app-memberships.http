@@ -1,0 +1,75 @@
+@baseUrl=http://localhost:{{$dotenv PORT}}
+@authToken={{login.response.body.token}}
+
+@userEmail=joao.silva@example.com
+@userPasswd=Teste@2016
+
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPasswd}}"
+}
+
+
+### 
+
+
+# @name create-new-user-access
+post {{baseUrl}}/memberships/users
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "Nome",
+  "lastName": "Sobrenome do Individuo",
+  "nickName": "novo usuario",
+  "email": "email@novo.usuario.com",
+  "role": "user"
+}
+
+
+
+### 
+
+
+# @name remove-user-access
+DELETE {{baseUrl}}/memberships/users/b2263d7b-2537-4aaa-b7be-2c4304b1841a
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "firstName": "Nome",
+  "lastName": "Sobrenome do Individuo",
+  "nickName": "novo usuario",
+  "email": "email@novo.usuario.com",
+  "role": "user"
+}
+
+
+### 
+
+
+# @name update-user-access
+PATCH  {{baseUrl}}/memberships/users/b2263d7b-2537-4aaa-b7be-2c4304b1841a
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "active": true,
+  "role": "user"
+}
+
+
+### 
+
+
+# @name list-user-access
+GET  {{baseUrl}}/memberships/users
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+
+

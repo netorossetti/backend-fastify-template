@@ -10,7 +10,7 @@ export async function forgotPassword(app: FastifyTypedInstace) {
     {
       schema: {
         summary: "Forgot Password",
-        description: "Recuperar senha do usuário",
+        description: "Recover user password",
         tags: ["App: Authenticate"],
         operationId: "auth_forgotPassword",
         body: z.object({

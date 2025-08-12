@@ -15,11 +15,11 @@ export function makeMembership(
     {
       userId: faker.string.uuid(),
       tenantId: faker.string.uuid(),
-      owner: true,
-      role: "admin",
+      owner: false,
+      role: "user",
       ...override,
     },
-    id
+    id ?? new UniqueEntityId()
   );
   return newMembership;
 }

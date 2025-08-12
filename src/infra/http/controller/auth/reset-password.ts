@@ -11,7 +11,7 @@ export async function resetPassword(app: FastifyTypedInstace) {
     {
       schema: {
         summary: "Reset Password",
-        description: "Redefinir senha do usuário",
+        description: "Reset user password",
         tags: ["App: Authenticate"],
         operationId: "auth_resetPassword",
         body: z

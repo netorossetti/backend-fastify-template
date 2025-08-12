@@ -19,7 +19,7 @@ export function makeUser(
       password: "p@s5Word123",
       ...override,
     },
-    id
+    id ?? new UniqueEntityId()
   );
   return newUser;
 }
