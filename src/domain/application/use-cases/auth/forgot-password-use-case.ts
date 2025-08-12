@@ -49,7 +49,7 @@ export class ForgotPasswordUseCase {
 
     // Gerar link de recuperação de senha
     const url = new URL("/login", env.PROJECT_WEBSITE);
-    url.searchParams.set("code", keyRecoveryCode);
+    url.searchParams.set("code", recoveryCode);
     const link = url.toString();
     await this.mailSender.sendEmail({
       fromName: env.SMTP_NAME,
