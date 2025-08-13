@@ -55,7 +55,7 @@ describe("Users - UpdateUserProfile (e2e)", () => {
     );
 
     const response = await request(app.server)
-      .patch("/users/profile")
+      .put("/users/profile")
       .set("Authorization", `Bearer ${accessToken}`)
       .attach("avatar", createReadStream(avatarPath)) // upload do arquivo
       .field("firstName", "Jonathan")

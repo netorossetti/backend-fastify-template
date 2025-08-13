@@ -32,7 +32,7 @@ const schemaFormBody = z.object({
 });
 
 export async function updateUserProfile(app: FastifyTypedInstace) {
-  app.register(auth).patch(
+  app.register(auth).put(
     "/users/profile",
     {
       schema: {

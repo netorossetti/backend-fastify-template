@@ -10,7 +10,7 @@ import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
 import { auth } from "../../middleware/auth";
 
 export async function updateTenant(app: FastifyTypedInstace) {
-  app.register(auth).patch(
+  app.register(auth).put(
     "/tenants/:tenantId",
     {
       schema: {

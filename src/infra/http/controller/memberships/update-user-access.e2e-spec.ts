@@ -59,7 +59,7 @@ describe("Membership - UpdateUserAccess (e2e)", () => {
     const accessToken = await authTokenFactory.makeAuthToken(user, membership);
 
     const response = await request(app.server)
-      .patch(`/memberships/users/${user2.id.toString()}`)
+      .put(`/memberships/users/${user2.id.toString()}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .send({
         active: true,

@@ -46,7 +46,7 @@ describe("Tenant - UpdateTenant (e2e)", () => {
     const accessToken = await authTokenFactory.makeAuthToken(user, membership);
 
     const response = await request(app.server)
-      .patch(`/tenants/${tenant.id.toString()}`)
+      .put(`/tenants/${tenant.id.toString()}`)
       .set("Authorization", `Bearer ${accessToken}`)
       .send({
         name: StringHelper.truncate(faker.person.fullName(), 200),

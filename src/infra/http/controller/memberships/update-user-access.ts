@@ -11,7 +11,7 @@ export async function updateUserAccess(app: FastifyTypedInstace) {
   app
     .register(auth)
     .register(verifyRoleAdmin)
-    .patch(
+    .put(
       "/memberships/users/:userId",
       {
         schema: {
