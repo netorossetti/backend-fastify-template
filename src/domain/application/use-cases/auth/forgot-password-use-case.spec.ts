@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { env } from "src/core/env";
 import { NotFoundError } from "src/core/errors/not-found-error";
 import { makeUser } from "test/factories/make-user";
 import { InMemoryMailSender } from "test/lib/faker-mail-sender";
@@ -37,7 +38,7 @@ describe("Forgot Password Use Case", () => {
     });
     expect(fakeMailSender.getSentMails()).toHaveLength(1);
     expect(fakeMailSender.getSentMails()[0].subject).toBe(
-      "Meu Projeto - Recuperação de Senha"
+      `${env.PROJECT_NAME} - Recuperação de Senha`
     );
   });
 
