@@ -21,6 +21,7 @@ export async function createNewUserAccess(app: FastifyTypedInstace) {
           description: "Create a new user access on tenant",
           tags: ["App: Membership"],
           operationId: "membership_createNewUserAccess",
+          security: [{ bearerAuth: [] }],
           body: z.object({
             firstName: zodNameSchema({
               description: "Nome",

@@ -19,6 +19,7 @@ export async function inactivateTenant(app: FastifyTypedInstace) {
           description: "Inactivate tenant",
           tags: ["App: Tenant"],
           operationId: "tenant_inactivateTenant",
+          security: [{ bearerAuth: [] }],
           params: z.object({ tenantId: z.uuid() }),
           response: {
             204: z.null(),

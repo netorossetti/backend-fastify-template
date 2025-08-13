@@ -16,6 +16,7 @@ export async function changePassword(app: FastifyTypedInstace) {
         description: "Change user password",
         tags: ["App: Authenticate"],
         operationId: "auth_changePassword",
+        security: [{ bearerAuth: [] }],
         body: z
           .object({
             password: zodPasswordSchema("password"),

@@ -19,6 +19,7 @@ export async function updateUserAccess(app: FastifyTypedInstace) {
           description: "Update user access on tenant",
           tags: ["App: Membership"],
           operationId: "membership_updateUserAccess",
+          security: [{ bearerAuth: [] }],
           params: z.object({ userId: z.uuid() }),
           body: z.object({
             active: z.boolean(),

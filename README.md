@@ -54,14 +54,14 @@ Este template segue boas práticas e padrões de projeto como:
 
 ### 🔐 Autenticação (`/auth`)
 
-| ✅  | Token | Método | Rota                        | Descrição                               |
-| --- | ----- | ------ | --------------------------- | --------------------------------------- |
-| ✅  | 🌐    | POST   | `/auth/login`               | Autentica o usuário e retorna o token   |
-| ✅  | 🔐    | POST   | `/auth/refresh-token`       | Gera novo token com refresh token       |
-| ✅  | 🔐    | POST   | `/auth/logout`              | Encerra a sessão atual                  |
-| ✅  | 🌐    | POST   | `/auth/forgot-password`     | Inicia fluxo de recuperação de senha    |
-| ✅  | 🌐    | POST   | `/auth/reset-password`      | Redefine senha com token de recuperação |
-| ✅  | 🔐    | PUT    | `/users/me/change-password` | Alterar senha do usuário                |
+| ✅  | Token | Método | Rota                    | Descrição                               |
+| --- | ----- | ------ | ----------------------- | --------------------------------------- |
+| ✅  | 🌐    | POST   | `/auth/login`           | Autentica o usuário e retorna o token   |
+| ✅  | 🔐    | POST   | `/auth/refresh-token`   | Gera novo token com refresh token       |
+| ✅  | 🔐    | POST   | `/auth/logout`          | Encerra a sessão atual                  |
+| ✅  | 🌐    | POST   | `/auth/forgot-password` | Inicia fluxo de recuperação de senha    |
+| ✅  | 🌐    | POST   | `/auth/reset-password`  | Redefine senha com token de recuperação |
+| ✅  | 🔐    | PUT    | `/auth/change-password` | Alterar senha do usuário                |
 
 ---
 

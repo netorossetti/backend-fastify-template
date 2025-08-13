@@ -23,6 +23,7 @@ export async function listUsersAccess(app: FastifyTypedInstace) {
           description: "List user access on tenant",
           tags: ["App: Membership"],
           operationId: "membership_listUserAccess",
+          security: [{ bearerAuth: [] }],
           response: {
             200: z.object({ users: z.array(schemaUserMembershipPresenter) }),
             401: schemaResponseError,
@@ -53,11 +54,9 @@ export async function listUsersAccess(app: FastifyTypedInstace) {
           return;
         }
 
-        reply
-          .status(200)
-          .send({
-            users: response.value.users.map(UserMembershipPresenter.toHttp),
-          });
+        reply.status(200).send({
+          users: response.value.users.map(UserMembershipPresenter.toHttp),
+        });
       }
     );
 }

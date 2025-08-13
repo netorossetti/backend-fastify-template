@@ -46,31 +46,33 @@ app.setSerializerCompiler(serializerCompiler);
 app.setErrorHandler(errorHandler);
 
 /** SWAGGER DOCUMENTARION */
-app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: "Template Backend Fastify",
-      description: "Documentação das funcionalidades da aplicação",
-      version: "1.0.0",
-      contact: {
-        name: "Neto Rossetti",
-        email: "netinho.rossetti@gmail.com",
+if (env.NODE_ENV === "dev") {
+  app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: "Template Backend Fastify",
+        description: "Documentação das funcionalidades da aplicação",
+        version: "1.0.0",
+        contact: {
+          name: "Neto Rossetti",
+          email: "netinho.rossetti@gmail.com",
+        },
       },
-    },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
         },
       },
     },
-  },
-  transform: jsonSchemaTransform,
-});
+    transform: jsonSchemaTransform,
+  });
 
-app.register(fastifySwaggerUI, { routePrefix: "/docs" });
+  app.register(fastifySwaggerUI, { routePrefix: "/docs" });
+}
 
 /**ROTAS DA APLICAÇÃO */
 const logger = Logger.getInstance("fasity-app");

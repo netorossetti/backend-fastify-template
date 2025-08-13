@@ -19,6 +19,7 @@ export async function removeUserAccess(app: FastifyTypedInstace) {
           description: "Remove user access on tenant",
           tags: ["App: Membership"],
           operationId: "membership_removeUserAccess",
+          security: [{ bearerAuth: [] }],
           params: z.object({ userId: z.uuid() }),
           response: {
             204: z.null(),

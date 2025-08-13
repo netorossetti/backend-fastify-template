@@ -18,6 +18,7 @@ export async function updateTenant(app: FastifyTypedInstace) {
         description: "Update new tenant",
         tags: ["App: Tenant"],
         operationId: "tenant_updateTenant",
+        security: [{ bearerAuth: [] }],
         params: z.object({ tenantId: z.uuid() }),
         body: z.object({
           name: zodNameSchema({
