@@ -109,4 +109,16 @@ describe("Date Helper", () => {
     const result3 = DateHelper.parseDateString("20-01-2022T10:10:10");
     expect(result3).toBe(null);
   });
+
+  test("Get month calendar range date", () => {
+    const result = DateHelper.getMonthCalendarRange(2025, 5);
+    expect(result.start).toEqual(new Date(2025, 3, 27));
+    expect(result.end).toEqual(new Date(2025, 5, 7, 23, 59, 59, 999));
+  });
+
+  test("Get week calendar range date", () => {
+    const result = DateHelper.getWeekCalendarRange(2025, 4, 1);
+    expect(result.start).toEqual(new Date(2025, 2, 30));
+    expect(result.end).toEqual(new Date(2025, 3, 5, 23, 59, 59, 999));
+  });
 });

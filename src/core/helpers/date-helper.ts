@@ -242,4 +242,65 @@ export class DateHelper {
       seconds <= 59
     );
   }
+
+  /**
+   * Retorna o intervalo do calendário semanal baseado em 6 semanas (domingo a sábado)
+   */
+  static getWeekCalendarRange(
+    year: number,
+    month: number,
+    weekOfMonth: number
+  ): { start: Date; end: Date } {
+    // Atenção: `month - 1` porque `new Date` usa índice 0 para janeiro
+    const firstDayOfMonth = dayjs(new Date(year, month - 1, 1));
+
+    // Primeiro domingo igual ou antes do primeiro dia do mês
+    const firstSunday = firstDayOfMonth.startOf("week");
+
+    // Adiciona (semana - 1) * 7 dias para chegar à semana desejada
+    const start = firstSunday.add((weekOfMonth - 1) * 7, "day");
+    const end = start.add(6, "day").endOf("day");
+
+    return {
+      start: new Date(start.year(), start.month(), start.date(), 0, 0, 0, 0),
+      end: new Date(end.year(), end.month(), end.date(), 23, 59, 59, 999),
+    };
+  }
+
+  /**
+   * Retorna o intervalo do calendário mensal baseado em 6 semanas (domingo a sábado)
+   */
+  static getMonthCalendarRange(
+    year: number,
+    month: number
+  ): { start: Date; end: Date } {
+    const firstDayOfMonth = dayjs(new Date(year, month - 1, 1));
+
+    // Domingo da primeira semana do mês
+    const calendarStart = firstDayOfMonth.startOf("week");
+
+    // Sábado da sexta semana (6 semanas * 7 dias = 42 dias)
+    const calendarEnd = calendarStart.add(6 * 7 - 1, "day").endOf("day");
+
+    return {
+      start: new Date(
+        calendarStart.year(),
+        calendarStart.month(),
+        calendarStart.date(),
+        0,
+        0,
+        0,
+        0
+      ),
+      end: new Date(
+        calendarEnd.year(),
+        calendarEnd.month(),
+        calendarEnd.date(),
+        23,
+        59,
+        59,
+        999
+      ),
+    };
+  }
 }
