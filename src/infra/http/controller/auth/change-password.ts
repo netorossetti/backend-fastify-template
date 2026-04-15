@@ -32,6 +32,7 @@ export async function changePassword(app: FastifyTypedInstace) {
             message: z.string(),
           }),
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
@@ -63,6 +64,6 @@ export async function changePassword(app: FastifyTypedInstace) {
       }
 
       reply.status(200).send({ message: "Senha alterada com sucesso!" });
-    }
+    },
   );
 }

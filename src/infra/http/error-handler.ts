@@ -7,6 +7,7 @@ import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
 import { ForbiddenError } from "src/core/errors/forbidden-error";
 import Logger from "src/core/lib/logger/logger";
 import { ZodError } from "zod/v4";
+import { isFastifyValidationError } from "./@types/fastify-validation-error";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 
@@ -22,8 +23,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
 
   // Usando switch para identificar o tipo de erro
   switch (true) {
-    case error instanceof BadRequestQueryError &&
-      error.name === "BadRequestQueryError":
+    case error instanceof BadRequestQueryError && error.name === "BadRequestQueryError":
       erroName = "BadRequestQueryError";
 
       responseBody = {
@@ -42,13 +42,12 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
       };
       break;
 
-    case error.code === "FST_ERR_VALIDATION":
+    case isFastifyValidationError(error): {
       erroName = "ValidationError";
       const issues: Record<string, string[]> = {};
       if (Array.isArray(error.validation)) {
         for (const validationError of error.validation) {
-          const path =
-            validationError.instancePath?.replace(/^\//, "") || "root";
+          const path = validationError.instancePath?.replace(/^\//, "") || "root";
           if (!issues[path]) issues[path] = [];
           issues[path].push(validationError.message || "Campo inválido");
         }
@@ -59,6 +58,7 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
         issues,
       };
       break;
+    }
 
     case error instanceof Prisma.PrismaClientValidationError:
       erroName = "PrismaClientValidationError";

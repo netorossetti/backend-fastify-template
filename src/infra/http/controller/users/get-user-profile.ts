@@ -23,6 +23,7 @@ export async function getUserProfile(app: FastifyTypedInstace) {
         response: {
           200: z.object({ user: schemaUserProfilePresenter }),
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
@@ -50,9 +51,7 @@ export async function getUserProfile(app: FastifyTypedInstace) {
         return;
       }
 
-      reply
-        .status(200)
-        .send({ user: UserProfilePresenter.toHttp(response.value.user) });
-    }
+      reply.status(200).send({ user: UserProfilePresenter.toHttp(response.value.user) });
+    },
   );
 }

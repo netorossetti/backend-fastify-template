@@ -49,12 +49,12 @@ export async function createTenant(app: FastifyTypedInstace) {
         response: {
           204: z.null(),
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
     async (request, reply) => {
-      const { firstName, lastName, nickName, email, password, organization } =
-        request.body;
+      const { firstName, lastName, nickName, email, password, organization } = request.body;
 
       const useCase = makeCreateTenantUseCase();
       const response = await useCase.execute({
@@ -88,7 +88,7 @@ export async function createTenant(app: FastifyTypedInstace) {
         return;
       }
 
-      reply.status(204).send();
-    }
+      reply.status(204).send(null);
+    },
   );
 }

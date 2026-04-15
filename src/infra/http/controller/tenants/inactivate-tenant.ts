@@ -24,6 +24,7 @@ export async function inactivateTenant(app: FastifyTypedInstace) {
           response: {
             204: z.null(),
             401: schemaResponseError,
+            default: schemaResponseError,
           },
         },
       },
@@ -53,7 +54,7 @@ export async function inactivateTenant(app: FastifyTypedInstace) {
           return;
         }
 
-        reply.status(204).send();
-      }
+        reply.status(204).send(null);
+      },
     );
 }

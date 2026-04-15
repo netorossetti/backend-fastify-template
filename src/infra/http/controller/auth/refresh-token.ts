@@ -24,6 +24,7 @@ export async function refreshToken(app: FastifyTypedInstace) {
         response: {
           200: responseOkSchema,
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
@@ -59,6 +60,6 @@ export async function refreshToken(app: FastifyTypedInstace) {
       }
 
       reply.status(200).send(response.value);
-    }
+    },
   );
 }

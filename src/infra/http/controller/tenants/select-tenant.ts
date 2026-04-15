@@ -5,10 +5,7 @@ import z from "zod/v4";
 import { schemaResponseError } from "../../@schema-errors/response-error-schema";
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
 import { auth } from "../../middleware/auth";
-import {
-  LoginPresenter,
-  schemaLoginPresenter,
-} from "../../presenter/login-presenter";
+import { LoginPresenter, schemaLoginPresenter } from "../../presenter/login-presenter";
 
 export async function selectTenant(app: FastifyTypedInstace) {
   app.register(auth).post(
@@ -26,6 +23,7 @@ export async function selectTenant(app: FastifyTypedInstace) {
         response: {
           200: schemaLoginPresenter,
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
@@ -56,6 +54,6 @@ export async function selectTenant(app: FastifyTypedInstace) {
       }
 
       reply.status(200).send(LoginPresenter.toHttp(response.value));
-    }
+    },
   );
 }

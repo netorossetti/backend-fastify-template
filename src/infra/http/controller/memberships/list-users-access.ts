@@ -27,6 +27,7 @@ export async function listUsersAccess(app: FastifyTypedInstace) {
           response: {
             200: z.object({ users: z.array(schemaUserMembershipPresenter) }),
             401: schemaResponseError,
+            default: schemaResponseError,
           },
         },
       },
@@ -57,6 +58,6 @@ export async function listUsersAccess(app: FastifyTypedInstace) {
         reply.status(200).send({
           users: response.value.users.map(UserMembershipPresenter.toHttp),
         });
-      }
+      },
     );
 }

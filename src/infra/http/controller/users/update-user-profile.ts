@@ -9,10 +9,7 @@ import { makeUpdateUserProfileUseCase } from "src/infra/factories/user/make-upda
 import z from "zod/v4";
 import { schemaResponseError } from "../../@schema-errors/response-error-schema";
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import {
-  isMultipartBody,
-  transformMultipartBody,
-} from "../../@utils/transform-multipart-body";
+import { isMultipartBody, transformMultipartBody } from "../../@utils/transform-multipart-body";
 import { auth } from "../../middleware/auth";
 
 const MAX_FILE_SIZE_MB = 2;
@@ -52,13 +49,13 @@ export async function updateUserProfile(app: FastifyTypedInstace) {
             allowNumbers: true,
           }),
           avatar: z.file().optional().meta({
-            description:
-              "Imagem do avatar do usuário. Formatos aceitos: .png, .jpeg.webp",
+            description: "Imagem do avatar do usuário. Formatos aceitos: .png, .jpeg.webp",
           }),
         }),
         response: {
           204: z.null(),
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
       validatorCompiler: () => {
@@ -70,7 +67,7 @@ export async function updateUserProfile(app: FastifyTypedInstace) {
     async (request, reply) => {
       if (!isMultipartBody(request.body)) {
         throw new BadRequestError(
-          'Formato do corpo inválido. Formato esperado: "multipart/form-data".'
+          'Formato do corpo inválido. Formato esperado: "multipart/form-data".',
         );
       }
 
@@ -102,7 +99,7 @@ export async function updateUserProfile(app: FastifyTypedInstace) {
         return;
       }
 
-      reply.status(204).send();
-    }
+      reply.status(204).send(null);
+    },
   );
 }

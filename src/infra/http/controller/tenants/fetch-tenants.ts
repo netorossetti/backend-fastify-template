@@ -4,10 +4,7 @@ import { z } from "zod/v4";
 import { schemaResponseError } from "../../@schema-errors/response-error-schema";
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
 import { auth } from "../../middleware/auth";
-import {
-  TenantPresenter,
-  schemaTenantPresenter,
-} from "../../presenter/tenant-presenter";
+import { TenantPresenter, schemaTenantPresenter } from "../../presenter/tenant-presenter";
 
 export async function fetchTenants(app: FastifyTypedInstace) {
   app.register(auth).get(
@@ -15,8 +12,7 @@ export async function fetchTenants(app: FastifyTypedInstace) {
     {
       schema: {
         summary: "Fetch Tenants",
-        description:
-          "List tenants for users when user is owner or role is admin",
+        description: "List tenants for users when user is owner or role is admin",
         tags: ["App: Tenant"],
         operationId: "tenant_fetchTenants",
         security: [{ bearerAuth: [] }],
@@ -25,6 +21,7 @@ export async function fetchTenants(app: FastifyTypedInstace) {
             tenants: z.array(schemaTenantPresenter),
           }),
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
@@ -53,6 +50,6 @@ export async function fetchTenants(app: FastifyTypedInstace) {
       reply.status(200).send({
         tenants: response.value.tenants.map(TenantPresenter.toHttp),
       });
-    }
+    },
   );
 }

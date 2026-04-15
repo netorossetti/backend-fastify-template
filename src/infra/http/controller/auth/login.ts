@@ -6,10 +6,7 @@ import { makeLoginUseCase } from "src/infra/factories/auth/make-login-use-case";
 import z from "zod/v4";
 import { schemaResponseError } from "../../@schema-errors/response-error-schema";
 import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import {
-  LoginPresenter,
-  schemaLoginPresenter,
-} from "../../presenter/login-presenter";
+import { LoginPresenter, schemaLoginPresenter } from "../../presenter/login-presenter";
 
 export async function login(app: FastifyTypedInstace) {
   app.post(
@@ -27,6 +24,7 @@ export async function login(app: FastifyTypedInstace) {
         response: {
           200: schemaLoginPresenter,
           401: schemaResponseError,
+          default: schemaResponseError,
         },
       },
     },
@@ -62,6 +60,6 @@ export async function login(app: FastifyTypedInstace) {
       }
 
       reply.status(200).send(LoginPresenter.toHttp(response.value));
-    }
+    },
   );
 }
