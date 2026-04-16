@@ -1,0 +1,14 @@
+model Tenant {
+  id             String           @id @default(uuid())
+  name           String
+  nickName       String           @map("nick_name")
+  documentType   enumDocumentType @map("document_type")
+  documentNumber String           @unique @map("document_number")
+  active         Boolean
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime?        @updatedAt @map("updated_at")
+
+  users UsersOnTenants[]
+
+  @@map("tenant")
+}

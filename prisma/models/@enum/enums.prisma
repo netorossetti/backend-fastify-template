@@ -1,0 +1,7 @@
+enum enumDocumentType {
+  CNH
+  CPF
+  CNPJ
+
+  @@map("enum_document_type")
+}
