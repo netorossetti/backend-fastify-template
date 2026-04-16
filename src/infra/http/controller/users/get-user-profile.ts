@@ -1,10 +1,10 @@
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeGetUserProfileUseCase } from "src/infra/factories/user/make-get-user-profile-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeGetUserProfileUseCase } from "src/infra/factories/user/make-get-user-profile-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
 import {
   schemaUserProfilePresenter,
   UserProfilePresenter,

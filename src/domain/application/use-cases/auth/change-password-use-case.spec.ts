@@ -1,10 +1,10 @@
 import { faker } from "@faker-js/faker";
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeUser } from "test/factories/make-user";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { ChangePasswordUseCase } from "./change-password-use-case";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { ChangePasswordUseCase } from "./change-password-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let fakerHash: FakeHasher;
@@ -30,15 +30,10 @@ describe("Select Account Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    const updatedUser = inMemoryUsersRepository.items.find(
-      (u) => u.id === user.id
-    );
+    const updatedUser = inMemoryUsersRepository.items.find((u) => u.id === user.id);
     expect(updatedUser).not.toBe(null);
     if (updatedUser) {
-      const compare = await fakerHash.compare(
-        "Test@2026",
-        updatedUser.password
-      );
+      const compare = await fakerHash.compare("Test@2026", updatedUser.password);
       expect(compare).toBe(true);
     }
   });
@@ -53,9 +48,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "A senha de confirmação está diferente da nova senha."
-      );
+      expect(result.value.message).toBe("A senha de confirmação está diferente da nova senha.");
     }
   });
 
@@ -73,10 +66,8 @@ describe("Select Account Use Case", () => {
       if (result.value instanceof BadRequestError) {
         expect(result.value.issues).toEqual(
           expect.objectContaining({
-            password: expect.arrayContaining([
-              "A senha deve ter pelo menos 8 caracteres.",
-            ]),
-          })
+            password: expect.arrayContaining(["A senha deve ter pelo menos 8 caracteres."]),
+          }),
         );
       }
     }

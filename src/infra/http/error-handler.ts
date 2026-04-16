@@ -1,13 +1,13 @@
-import { BadRequestError } from "@core/errors/bad-request-error";
-import { NotAllowedError } from "@core/errors/not-allowed-error";
-import { UnauthorizedError } from "@core/errors/unauthorized-error";
-import { Prisma } from "@prisma/client";
 import { FastifyInstance } from "fastify";
-import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
-import { ForbiddenError } from "src/core/errors/forbidden-error";
-import Logger from "src/core/lib/logger/logger";
+import { Prisma } from "prisma/generated/prisma/client";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { BadRequestQueryError } from "src/core/errors/bad-request-query-error.js";
+import { ForbiddenError } from "src/core/errors/forbidden-error.js";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import Logger from "src/core/lib/logger/logger.js";
 import { ZodError } from "zod/v4";
-import { isFastifyValidationError } from "./@types/fastify-validation-error";
+import { isFastifyValidationError } from "./@types/fastify-validation-error.js";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 

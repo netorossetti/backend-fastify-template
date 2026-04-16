@@ -1,7 +1,7 @@
-import { MembershipsRepository } from "src/domain/application/repositories/memberships-repository";
-import { Membership } from "src/domain/enterprise/entities/membership";
-import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership";
-import { InMemoryUsersRepository } from "./in-memory-users-repository";
+import { MembershipsRepository } from "src/domain/application/repositories/memberships-repository.js";
+import { Membership } from "src/domain/enterprise/entities/membership.js";
+import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership.js";
+import { InMemoryUsersRepository } from "./in-memory-users-repository.js";
 
 export class InMemoryMembershipsRepository implements MembershipsRepository {
   public items: Membership[] = [];
@@ -17,20 +17,12 @@ export class InMemoryMembershipsRepository implements MembershipsRepository {
     return membership ?? null;
   }
 
-  async findByUserAndTenant(
-    userId: string,
-    tenantId: string
-  ): Promise<Membership | null> {
-    const membership = this.items.find(
-      (u) => u.userId === userId && u.tenantId === tenantId
-    );
+  async findByUserAndTenant(userId: string, tenantId: string): Promise<Membership | null> {
+    const membership = this.items.find((u) => u.userId === userId && u.tenantId === tenantId);
     return membership ?? null;
   }
 
-  async findManyByUser(
-    userId: string,
-    active?: boolean
-  ): Promise<Membership[]> {
+  async findManyByUser(userId: string, active?: boolean): Promise<Membership[]> {
     const memberships = this.items.filter((u) => {
       let inFilter = u.userId === userId;
       if (inFilter && active !== undefined) {
@@ -41,10 +33,7 @@ export class InMemoryMembershipsRepository implements MembershipsRepository {
     return memberships;
   }
 
-  async findManyByTenant(
-    tenantId: string,
-    active?: boolean
-  ): Promise<Membership[]> {
+  async findManyByTenant(tenantId: string, active?: boolean): Promise<Membership[]> {
     const memberships = this.items.filter((u) => {
       let inFilter = u.tenantId === tenantId;
       if (inFilter && active !== undefined) {
@@ -57,20 +46,16 @@ export class InMemoryMembershipsRepository implements MembershipsRepository {
 
   async listUsersByTenant(tenantId: string): Promise<UserWithMembership[]> {
     if (!this.usersRepository)
-      throw new Error(
-        "InMemoryMembershipsRepository: usersRepository not provider."
-      );
+      throw new Error("InMemoryMembershipsRepository: usersRepository not provider.");
 
     const memberships = await this.items.filter((i) => i.tenantId === tenantId);
 
     const users: UserWithMembership[] = [];
     for (const membership of memberships) {
-      const user = this.usersRepository.items.find(
-        (u) => u.id.toString() === membership.userId
-      );
+      const user = this.usersRepository.items.find((u) => u.id.toString() === membership.userId);
       if (!user)
         throw new Error(
-          "InMemoryMembershipsRepository: usersRepository not have user with membership."
+          "InMemoryMembershipsRepository: usersRepository not have user with membership.",
         );
 
       users.push(
@@ -86,32 +71,21 @@ export class InMemoryMembershipsRepository implements MembershipsRepository {
           permissions: membership.permissions,
           lastAccessAt: membership.lastAccessAt,
           active: membership.active,
-        })
+        }),
       );
     }
 
     return users;
   }
 
-  async verifyPermissionAdmin(
-    tenantId: string,
-    userId: string
-  ): Promise<boolean> {
-    const membership = this.items.find(
-      (i) => i.tenantId === tenantId && i.userId === userId
-    );
+  async verifyPermissionAdmin(tenantId: string, userId: string): Promise<boolean> {
+    const membership = this.items.find((i) => i.tenantId === tenantId && i.userId === userId);
     if (!membership) return false;
-    return (
-      membership.owner ||
-      membership.role === "superAdmin" ||
-      membership.role === "admin"
-    );
+    return membership.owner || membership.role === "superAdmin" || membership.role === "admin";
   }
 
   async updateLastAccess(userId: string, tenantId: string): Promise<boolean> {
-    const itemIndex = this.items.findIndex(
-      (u) => u.userId === userId && u.tenantId === tenantId
-    );
+    const itemIndex = this.items.findIndex((u) => u.userId === userId && u.tenantId === tenantId);
     if (itemIndex !== -1) {
       this.items[itemIndex].lastAccessAt = new Date();
       return true;

@@ -1,13 +1,13 @@
-import { ConflictError } from "src/core/errors/conflict-error";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema";
-import { makeCreateNewUserAccessUseCase } from "src/infra/factories/membership/make-create-new-user-access-use-case";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema.js";
+import { makeCreateNewUserAccessUseCase } from "src/infra/factories/membership/make-create-new-user-access-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
-import { verifyRoleAdmin } from "../../middleware/verify-role-admin";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
+import { verifyRoleAdmin } from "../../middleware/verify-role-admin.js";
 
 export async function createNewUserAccess(app: FastifyTypedInstace) {
   app

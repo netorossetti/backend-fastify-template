@@ -1,8 +1,8 @@
-import { NotFoundError } from "@core/errors/not-found-error";
-import { Uploader } from "@core/lib/uploader/uploader";
-import { Result, failure, success } from "@core/result";
-import { FileField } from "src/core/types/zod-custom-types/file-schema";
-import { UsersRepository } from "../../repositories/users-repository";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { Uploader } from "src/core/lib/uploader/uploader.js";
+import { Result, failure, success } from "src/core/result.js";
+import { FileField } from "src/core/types/zod-custom-types/file-schema.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface UpdateUserProfileUseCaseRequest {
   userId: string;
@@ -17,7 +17,7 @@ type UpdateUserProfileUseCaseResponse = Result<NotFoundError, {}>;
 export class UpdateUserProfileUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private uploader: Uploader
+    private uploader: Uploader,
   ) {}
 
   async execute({

@@ -1,11 +1,11 @@
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { StringHelper } from "src/core/helpers/string-helper";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import { HashGenerator } from "src/core/lib/criptography/hash-generator";
-import { IRedisService } from "src/core/lib/redis/redis-services";
-import { failure, Result, success } from "src/core/result";
-import { UsersRepository } from "../../repositories/users-repository";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { HashGenerator } from "src/core/lib/criptography/hash-generator.js";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import { failure, Result, success } from "src/core/result.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface ResetPasswordUseCaseRequest {
   recoveryCode: string;
@@ -19,7 +19,7 @@ export class ResetPasswordUseCase {
   constructor(
     private usersRepository: UsersRepository,
     private redisServices: IRedisService,
-    private hashGenerator: HashGenerator
+    private hashGenerator: HashGenerator,
   ) {}
 
   async execute({
@@ -29,11 +29,7 @@ export class ResetPasswordUseCase {
   }: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
     // Verifica se pode alterar
     if (password != passwordCheck)
-      return failure(
-        new BadRequestError(
-          "A senha de confirmação está diferente da nova senha."
-        )
-      );
+      return failure(new BadRequestError("A senha de confirmação está diferente da nova senha."));
 
     // Verifica senha
     const passwordRequirements = StringHelper.passwordRequirements(password);
@@ -41,14 +37,13 @@ export class ResetPasswordUseCase {
       return failure(
         new BadRequestError("Senha inválida.", {
           password: passwordRequirements,
-        })
+        }),
       );
     }
 
     const keyRecoveryCode = TokenHelper.getRecoveryCodeKey(recoveryCode);
     const dataCache = await this.redisServices.get(keyRecoveryCode);
-    if (!dataCache)
-      return failure(new NotFoundError("Link de recuperação expirado."));
+    if (!dataCache) return failure(new NotFoundError("Link de recuperação expirado."));
 
     // Recuperar id do usuario no link de recuperação
     const userId = dataCache as string;

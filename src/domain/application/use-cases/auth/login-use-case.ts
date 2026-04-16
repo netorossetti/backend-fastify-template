@@ -1,14 +1,14 @@
-import { env } from "src/core/env";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { UnauthorizedError } from "src/core/errors/unauthorized-error";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import { HashCompare } from "src/core/lib/criptography/hash-compare";
-import { IRedisService } from "src/core/lib/redis/redis-services";
-import { Result, failure, success } from "src/core/result";
-import { MembershipsRepository } from "../../repositories/memberships-repository";
-import { TenantsRepository } from "../../repositories/tenants-repository";
-import { UsersRepository } from "../../repositories/users-repository";
+import { env } from "src/core/env/index.js";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { HashCompare } from "src/core/lib/criptography/hash-compare.js";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import { Result, failure, success } from "src/core/result.js";
+import { MembershipsRepository } from "../../repositories/memberships-repository.js";
+import { TenantsRepository } from "../../repositories/tenants-repository.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface LoginUseCaseRequest {
   email: string;
@@ -42,40 +42,31 @@ export class LoginUseCase {
     private tenantsRepository: TenantsRepository,
     private membershipsRepository: MembershipsRepository,
     private hasher: HashCompare,
-    private redisServices: IRedisService
+    private redisServices: IRedisService,
   ) {}
-  async execute({
-    email,
-    password,
-  }: LoginUseCaseRequest): Promise<LoginUseCaseResponse> {
+  async execute({ email, password }: LoginUseCaseRequest): Promise<LoginUseCaseResponse> {
     // Recuperar usuário
     const user = await this.usersRepository.findByEmail(email);
     if (!user) return failure(new NotFoundError("E-mail inválido."));
-    if (!user.password)
-      return failure(new NotFoundError("Senha não definida."));
+    if (!user.password) return failure(new NotFoundError("Senha não definida."));
 
     // Verificar senha
     const senhaValida = await this.hasher.compare(password, user.password);
     if (!senhaValida) return failure(new UnauthorizedError("Senha inválida."));
 
     // Recuperar Tenants do usuário
-    const allMemberships = await this.membershipsRepository.findManyByUser(
-      user.id.toString()
-    );
+    const allMemberships = await this.membershipsRepository.findManyByUser(user.id.toString());
 
     const memberships = allMemberships.filter(
-      (m) => m.active || m.owner || m.role === "superAdmin"
+      (m) => m.active || m.owner || m.role === "superAdmin",
     );
 
     if (memberships.length === 0) {
-      return failure(
-        new NotAllowedError("Acesso negado. Usuário sem vinculo de acesso.")
-      );
+      return failure(new NotAllowedError("Acesso negado. Usuário sem vinculo de acesso."));
     }
 
     let lastAccess: Date | null = null;
-    let lastTenantLogin: { id: string; name: string; role: string } | null =
-      null;
+    let lastTenantLogin: { id: string; name: string; role: string } | null = null;
     const tenants: {
       id: string;
       name: string;
@@ -96,10 +87,7 @@ export class LoginUseCase {
         active: tenant.active,
       });
 
-      if (
-        membership.lastAccessAt &&
-        (!lastAccess || membership.lastAccessAt > lastAccess)
-      ) {
+      if (membership.lastAccessAt && (!lastAccess || membership.lastAccessAt > lastAccess)) {
         lastAccess = membership.lastAccessAt;
         lastTenantLogin = {
           id: tenant.id.toString(),
@@ -112,9 +100,7 @@ export class LoginUseCase {
     // Fallback caso nenhum tenant tenha lastAccessAt
     if (!lastTenantLogin && tenants.length > 0) {
       const fallback = memberships[0];
-      const fallbackTenant = await this.tenantsRepository.findById(
-        fallback.tenantId
-      );
+      const fallbackTenant = await this.tenantsRepository.findById(fallback.tenantId);
       lastTenantLogin = {
         id: fallbackTenant!.id.toString(),
         name: fallbackTenant!.name,

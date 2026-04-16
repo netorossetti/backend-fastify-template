@@ -1,13 +1,13 @@
-import { env } from "src/core/env";
-import { UnauthorizedError } from "src/core/errors/unauthorized-error";
-import { DateHelper } from "src/core/helpers/date-helper";
-import { makeAuthToken } from "test/factories/make-auth-token";
-import { makeMembership } from "test/factories/make-membership";
-import { makeUser } from "test/factories/make-user";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher";
-import { FakeRedisServices } from "test/lib/faker-redis-services";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { RefreshTokenUseCase } from "./refresh-token-use-case";
+import { env } from "src/core/env/index.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import { DateHelper } from "src/core/helpers/date-helper.js";
+import { makeAuthToken } from "test/factories/make-auth-token.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
+import { FakeRedisServices } from "test/lib/faker-redis-services.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { RefreshTokenUseCase } from "./refresh-token-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let fakeHasher: FakeHasher;
@@ -43,9 +43,7 @@ describe("Refresh Token Use Case", () => {
 
     expect(result.isSuccess()).toBe(true);
     if (result.isSuccess()) {
-      expect(result.value).toEqual(
-        expect.objectContaining({ token: expect.any(String) })
-      );
+      expect(result.value).toEqual(expect.objectContaining({ token: expect.any(String) }));
       expect(result.value.token).toEqual(token);
     }
   });
@@ -69,9 +67,7 @@ describe("Refresh Token Use Case", () => {
 
     expect(result.isSuccess()).toBe(true);
     if (result.isSuccess()) {
-      expect(result.value).toEqual(
-        expect.objectContaining({ token: expect.any(String) })
-      );
+      expect(result.value).toEqual(expect.objectContaining({ token: expect.any(String) }));
       expect(result.value.token).not.toEqual(token);
     }
   });

@@ -1,11 +1,11 @@
-import { env } from "src/core/env";
-import { CreateNewUserAccessUseCase } from "src/domain/application/use-cases/membership/create-new-user-access-use-case";
-import { PrismaMembershipsRepository } from "src/infra/database/repository/prisma-memberships-repository";
-import { PrismaTenantsRepository } from "src/infra/database/repository/prisma-tenants-repository";
-import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository";
-import { BcryptHasher } from "src/infra/lib/criptography/bcrypt-hasher";
-import { LocalUploader } from "src/infra/lib/uploader/local-uploader";
-import { prisma } from "../../database/prisma";
+import { env } from "src/core/env/index.js";
+import { CreateNewUserAccessUseCase } from "src/domain/application/use-cases/membership/create-new-user-access-use-case.js";
+import { PrismaMembershipsRepository } from "src/infra/database/repository/prisma-memberships-repository.js";
+import { PrismaTenantsRepository } from "src/infra/database/repository/prisma-tenants-repository.js";
+import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository.js";
+import { BcryptHasher } from "src/infra/lib/criptography/bcrypt-hasher.js";
+import { LocalUploader } from "src/infra/lib/uploader/local-uploader.js";
+import { prisma } from "../../database/prisma.js";
 
 export function makeCreateNewUserAccessUseCase() {
   const usersRepository = new PrismaUsersRepository(prisma);
@@ -19,6 +19,6 @@ export function makeCreateNewUserAccessUseCase() {
     tenantsRepository,
     membershipsRepository,
     localUploader,
-    bcryptHasher
+    bcryptHasher,
   );
 }

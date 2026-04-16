@@ -14,14 +14,14 @@ import {
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import path from "node:path";
-import { env } from "src/core/env";
-import Logger from "src/core/lib/logger/logger";
+import { env } from "src/core/env/index.js";
+import Logger from "src/core/lib/logger/logger.js";
 import z from "zod/v4";
-import { authRoutes } from "./controller/auth/@auth-routes";
-import { membershipsRoutes } from "./controller/memberships/@memberships-routes";
-import { tenantsRoutes } from "./controller/tenants/@tenants-routes";
-import { usersRoutes } from "./controller/users/@users-routes";
-import { errorHandler } from "./error-handler";
+import { authRoutes } from "./controller/auth/@auth-routes.js";
+import { membershipsRoutes } from "./controller/memberships/@memberships-routes.js";
+import { tenantsRoutes } from "./controller/tenants/@tenants-routes.js";
+import { usersRoutes } from "./controller/users/@users-routes.js";
+import { errorHandler } from "./error-handler.js";
 
 config();
 
@@ -83,7 +83,7 @@ app.addHook("onResponse", async (request, reply) => {
   logger.info(
     `RESPONSE: [${request.method}] ${request.url}, status(${
       reply.statusCode
-    }) ${reply.elapsedTime.toFixed(2)}ms`
+    }) ${reply.elapsedTime.toFixed(2)}ms`,
   );
 });
 
@@ -101,7 +101,7 @@ app.get(
   },
   (_, reply) => {
     reply.status(200).send({ message: "pong" });
-  }
+  },
 );
 
 /** uploads */

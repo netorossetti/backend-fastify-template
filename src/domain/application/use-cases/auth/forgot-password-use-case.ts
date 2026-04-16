@@ -1,11 +1,11 @@
-import { env } from "src/core/env";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { StringHelper } from "src/core/helpers/string-helper";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import { MailSender } from "src/core/lib/mail-sender/mail-sender";
-import { IRedisService } from "src/core/lib/redis/redis-services";
-import { Result, failure, success } from "src/core/result";
-import { UsersRepository } from "../../repositories/users-repository";
+import { env } from "src/core/env/index.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { MailSender } from "src/core/lib/mail-sender/mail-sender.js";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import { Result, failure, success } from "src/core/result.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface ForgotPasswordUseCaseRequest {
   email: string;
@@ -22,11 +22,9 @@ export class ForgotPasswordUseCase {
   constructor(
     private usersRepository: UsersRepository,
     private redisServices: IRedisService,
-    private mailSender: MailSender
+    private mailSender: MailSender,
   ) {}
-  async execute({
-    email,
-  }: ForgotPasswordUseCaseRequest): Promise<ForgotPasswordUseCaseResponse> {
+  async execute({ email }: ForgotPasswordUseCaseRequest): Promise<ForgotPasswordUseCaseResponse> {
     // Recuperar usuário
     const user = await this.usersRepository.findByEmail(email);
     if (!user) return failure(new NotFoundError("Usuário não localizado."));
@@ -41,11 +39,7 @@ export class ForgotPasswordUseCase {
     // incluir cache de código de recuperação de senha
     const trintaMinutosEmSegundos = 60 * 30;
     const keyRecoveryCode = TokenHelper.getRecoveryCodeKey(recoveryCode);
-    await this.redisServices.set(
-      keyRecoveryCode,
-      user.id.toString(),
-      trintaMinutosEmSegundos
-    );
+    await this.redisServices.set(keyRecoveryCode, user.id.toString(), trintaMinutosEmSegundos);
 
     // Gerar link de recuperação de senha
     const url = new URL("/login", env.PROJECT_WEBSITE);

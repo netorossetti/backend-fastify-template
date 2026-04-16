@@ -1,16 +1,16 @@
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
 import {
   acceptedAvatarsMimeTypes,
   zodFileSchema,
-} from "src/core/types/zod-custom-types/file-schema";
-import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema";
-import { makeUpdateUserProfileUseCase } from "src/infra/factories/user/make-update-user-profile-use-case";
+} from "src/core/types/zod-custom-types/file-schema.js";
+import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema.js";
+import { makeUpdateUserProfileUseCase } from "src/infra/factories/user/make-update-user-profile-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { isMultipartBody, transformMultipartBody } from "../../@utils/transform-multipart-body";
-import { auth } from "../../middleware/auth";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { isMultipartBody, transformMultipartBody } from "../../@utils/transform-multipart-body.js";
+import { auth } from "../../middleware/auth.js";
 
 const MAX_FILE_SIZE_MB = 2;
 const schemaFormBody = z.object({

@@ -1,4 +1,4 @@
-import { Tenant } from "src/domain/enterprise/entities/tenant";
+import { Tenant } from "src/domain/enterprise/entities/tenant.js";
 
 export interface TenantsRepository {
   findById(id: string): Promise<Tenant | null>;

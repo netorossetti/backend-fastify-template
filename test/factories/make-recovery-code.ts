@@ -1,8 +1,8 @@
-import { env } from "src/core/env";
-import { StringHelper } from "src/core/helpers/string-helper";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import { IRedisService } from "src/core/lib/redis/redis-services";
-import { User } from "src/domain/enterprise/entities/user";
+import { env } from "src/core/env/index.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import { User } from "src/domain/enterprise/entities/user.js";
 
 export function makeRecoveryCode(user: User, redisService: IRedisService) {
   // Registrar token de acesso no cache do redis

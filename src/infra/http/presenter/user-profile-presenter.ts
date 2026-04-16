@@ -1,4 +1,4 @@
-import { User } from "src/domain/enterprise/entities/user";
+import { User } from "src/domain/enterprise/entities/user.js";
 import z from "zod/v4";
 
 export class UserProfilePresenter {

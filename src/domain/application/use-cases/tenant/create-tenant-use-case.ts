@@ -1,15 +1,15 @@
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { ConflictError } from "src/core/errors/conflict-error";
-import { StringHelper } from "src/core/helpers/string-helper";
-import { HashGenerator } from "src/core/lib/criptography/hash-generator";
-import { Result, failure, success } from "src/core/result";
-import { Membership } from "src/domain/enterprise/entities/membership";
-import { DocumentType, Tenant } from "src/domain/enterprise/entities/tenant";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import { HashGenerator } from "src/core/lib/criptography/hash-generator.js";
+import { Result, failure, success } from "src/core/result.js";
+import { Membership } from "src/domain/enterprise/entities/membership.js";
+import { DocumentType, Tenant } from "src/domain/enterprise/entities/tenant.js";
 import { isCNH, isCNPJ, isCPF } from "validation-br";
-import { User } from "../../../enterprise/entities/user";
-import { MembershipsRepository } from "../../repositories/memberships-repository";
-import { TenantsRepository } from "../../repositories/tenants-repository";
-import { UsersRepository } from "../../repositories/users-repository";
+import { User } from "../../../enterprise/entities/user.js";
+import { MembershipsRepository } from "../../repositories/memberships-repository.js";
+import { TenantsRepository } from "../../repositories/tenants-repository.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface CreateTenantUseCaseRequest {
   firstName: string;
@@ -35,7 +35,7 @@ export class CreateTenantUseCase {
     private tenantsRepository: TenantsRepository,
     private usersRepository: UsersRepository,
     private membershipsRepository: MembershipsRepository,
-    private hasher: HashGenerator
+    private hasher: HashGenerator,
   ) {}
   async execute({
     firstName,
@@ -47,44 +47,28 @@ export class CreateTenantUseCase {
   }: CreateTenantUseCaseRequest): Promise<CreateTenantUseCaseResponse> {
     // Verificar se o tenant já existe
     let documentOnlyNumbers = StringHelper.onlyNumbers(tenant.documentNumber);
-    const tenantAlreadyExists = await this.tenantsRepository.findByDocument(
-      documentOnlyNumbers
-    );
+    const tenantAlreadyExists = await this.tenantsRepository.findByDocument(documentOnlyNumbers);
     if (tenantAlreadyExists)
-      return failure(
-        new ConflictError(
-          "Organização já foi registrada com o documento informado."
-        )
-      );
+      return failure(new ConflictError("Organização já foi registrada com o documento informado."));
 
     switch (tenant.documentType) {
       case "CPF":
         if (!isCPF(documentOnlyNumbers)) {
-          return failure(
-            new BadRequestError(
-              "Numero do documento informado não é um CPF válido."
-            )
-          );
+          return failure(new BadRequestError("Numero do documento informado não é um CPF válido."));
         }
         break;
 
       case "CNPJ":
         if (!isCNPJ(documentOnlyNumbers)) {
           return failure(
-            new BadRequestError(
-              "Numero do documento informado não é um CNPJ válido."
-            )
+            new BadRequestError("Numero do documento informado não é um CNPJ válido."),
           );
         }
         break;
 
       case "CNH":
         if (!isCNH(documentOnlyNumbers)) {
-          return failure(
-            new BadRequestError(
-              "Numero do documento informado não é um CNH válido."
-            )
-          );
+          return failure(new BadRequestError("Numero do documento informado não é um CNH válido."));
         }
         break;
 
@@ -117,7 +101,7 @@ export class CreateTenantUseCase {
       return failure(
         new BadRequestError("Senha inválida.", {
           password: passwordRequirements,
-        })
+        }),
       );
     }
 

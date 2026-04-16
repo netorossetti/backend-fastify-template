@@ -1,26 +1,20 @@
 {
   "compilerOptions": {
-    "lib": ["es2022"],
-    "module": "node16",
-    "target": "es2022",
-
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
     "strict": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true,
+    "lib": ["es2022"],
+    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
-
     "paths": {
       "src/*": ["./src/*"],
       "test/*": ["./test/*"],
-      "prisma/*": ["./prisma/*"],
-      "@core/*": ["./src/core/*"],
-      "@domain/*": ["./src/domain/*"],
-      "@infra/*": ["./src/infra/*"]
+      "prisma/*": ["./prisma/*"]
     },
-
     "types": ["vitest/globals"]
   },
-
   "include": ["src", "test"]
 }

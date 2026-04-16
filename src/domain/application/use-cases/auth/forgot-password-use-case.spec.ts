@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { env } from "src/core/env";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeUser } from "test/factories/make-user";
-import { InMemoryMailSender } from "test/lib/faker-mail-sender";
-import { FakeRedisServices } from "test/lib/faker-redis-services";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { ForgotPasswordUseCase } from "./forgot-password-use-case";
+import { env } from "src/core/env/index.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeUser } from "test/factories/make-user.js";
+import { InMemoryMailSender } from "test/lib/faker-mail-sender.js";
+import { FakeRedisServices } from "test/lib/faker-redis-services.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { ForgotPasswordUseCase } from "./forgot-password-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let fakeRedisServices: FakeRedisServices;
@@ -17,11 +17,7 @@ describe("Forgot Password Use Case", () => {
     fakeRedisServices = new FakeRedisServices();
     inMemoryUsersRepository = new InMemoryUsersRepository();
     fakeMailSender = new InMemoryMailSender();
-    sut = new ForgotPasswordUseCase(
-      inMemoryUsersRepository,
-      fakeRedisServices,
-      fakeMailSender
-    );
+    sut = new ForgotPasswordUseCase(inMemoryUsersRepository, fakeRedisServices, fakeMailSender);
   });
 
   test("Deve ser possivel solicitar a recuperação de senha", async () => {
@@ -38,7 +34,7 @@ describe("Forgot Password Use Case", () => {
     });
     expect(fakeMailSender.getSentMails()).toHaveLength(1);
     expect(fakeMailSender.getSentMails()[0].subject).toBe(
-      `${env.PROJECT_NAME} - Recuperação de Senha`
+      `${env.PROJECT_NAME} - Recuperação de Senha`,
     );
   });
 

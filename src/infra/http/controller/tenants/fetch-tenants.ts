@@ -1,10 +1,10 @@
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeFetchTenantsUseCase } from "src/infra/factories/tenant/make-fetch-tenants-use-case";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeFetchTenantsUseCase } from "src/infra/factories/tenant/make-fetch-tenants-use-case.js";
 import { z } from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
-import { TenantPresenter, schemaTenantPresenter } from "../../presenter/tenant-presenter";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
+import { TenantPresenter, schemaTenantPresenter } from "../../presenter/tenant-presenter.js";
 
 export async function fetchTenants(app: FastifyTypedInstace) {
   app.register(auth).get(

@@ -1,10 +1,7 @@
-import { Prisma, UsersOnTenants as PrismaMembership } from "@prisma/client";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { Json } from "src/core/types/json";
-import {
-  Membership,
-  RoleUserType,
-} from "src/domain/enterprise/entities/membership";
+import { Prisma, UsersOnTenants as PrismaMembership } from "prisma/generated/prisma/client";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { Json } from "src/core/types/json.js";
+import { Membership, RoleUserType } from "src/domain/enterprise/entities/membership.js";
 
 export class PrismaMembershipMapper {
   static toDomain(raw: PrismaMembership): Membership {
@@ -20,13 +17,11 @@ export class PrismaMembershipMapper {
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
-      new UniqueEntityId(raw.id)
+      new UniqueEntityId(raw.id),
     );
   }
 
-  static toPersistent(
-    membership: Membership
-  ): Prisma.UsersOnTenantsUncheckedCreateInput {
+  static toPersistent(membership: Membership): Prisma.UsersOnTenantsUncheckedCreateInput {
     return {
       id: membership.id.toString(),
       userId: membership.userId,

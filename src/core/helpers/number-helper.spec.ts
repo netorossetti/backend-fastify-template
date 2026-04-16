@@ -1,4 +1,4 @@
-import { NumberHelper } from "./number-helper";
+import { NumberHelper } from "./number-helper.js";
 
 describe("Number Helper", () => {
   test("Round to", () => {

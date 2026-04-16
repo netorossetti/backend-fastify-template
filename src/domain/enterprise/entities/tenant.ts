@@ -1,6 +1,6 @@
-import { Entity } from "src/core/entities/entity-uuid";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { Optional } from "src/core/types/optional";
+import { Entity } from "src/core/entities/entity-uuid.js";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { Optional } from "src/core/types/optional.js";
 
 export type DocumentType = "CNH" | "CPF" | "CNPJ";
 
@@ -82,17 +82,14 @@ export class Tenant extends Entity<TenantProps> {
     if (!this.isNew()) this.props.updatedAt = new Date();
   }
 
-  static create(
-    props: Optional<TenantProps, "active" | "createdAt">,
-    id?: UniqueEntityId
-  ) {
+  static create(props: Optional<TenantProps, "active" | "createdAt">, id?: UniqueEntityId) {
     const tenant = new Tenant(
       {
         ...props,
         active: props.active ?? true,
         createdAt: props.createdAt ?? new Date(),
       },
-      id
+      id,
     );
     return tenant;
   }

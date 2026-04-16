@@ -1,11 +1,11 @@
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { ConflictError } from "src/core/errors/conflict-error";
-import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema";
-import { zodPasswordSchema } from "src/core/types/zod-custom-types/password-schema";
-import { makeCreateTenantUseCase } from "src/infra/factories/tenant/make-create-tenant-use-case";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema.js";
+import { zodPasswordSchema } from "src/core/types/zod-custom-types/password-schema.js";
+import { makeCreateTenantUseCase } from "src/infra/factories/tenant/make-create-tenant-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
 
 export async function createTenant(app: FastifyTypedInstace) {
   app.post(

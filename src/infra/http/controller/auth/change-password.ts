@@ -1,11 +1,11 @@
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { zodPasswordSchema } from "src/core/types/zod-custom-types/password-schema";
-import { makeChangePasswordUseCase } from "src/infra/factories/auth/make-change-password-use-case";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { zodPasswordSchema } from "src/core/types/zod-custom-types/password-schema.js";
+import { makeChangePasswordUseCase } from "src/infra/factories/auth/make-change-password-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
 
 export async function changePassword(app: FastifyTypedInstace) {
   app.register(auth).post(

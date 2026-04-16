@@ -1,6 +1,6 @@
-import { Prisma, User as PrismaUser } from "@prisma/client";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { User } from "src/domain/enterprise/entities/user";
+import { Prisma, User as PrismaUser } from "prisma/generated/prisma/client";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { User } from "src/domain/enterprise/entities/user.js";
 
 export class PrismaUserMapper {
   static toDomain(raw: PrismaUser): User {
@@ -15,7 +15,7 @@ export class PrismaUserMapper {
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
-      new UniqueEntityId(raw.id)
+      new UniqueEntityId(raw.id),
     );
   }
 

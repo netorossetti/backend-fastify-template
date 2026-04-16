@@ -1,11 +1,8 @@
-import { Membership } from "src/domain/enterprise/entities/membership";
-import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership";
+import { Membership } from "src/domain/enterprise/entities/membership.js";
+import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership.js";
 
 export interface MembershipsRepository {
-  findByUserAndTenant(
-    userId: string,
-    tenantId: string
-  ): Promise<Membership | null>;
+  findByUserAndTenant(userId: string, tenantId: string): Promise<Membership | null>;
   findManyByUser(userId: string, active?: boolean): Promise<Membership[]>;
   findManyByTenant(tenantId: string, active?: boolean): Promise<Membership[]>;
   listUsersByTenant(tenantId: string): Promise<UserWithMembership[]>;

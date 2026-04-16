@@ -1,7 +1,7 @@
 import "dotenv/config";
 import ms from "ms";
 import { z } from "zod/v4";
-import { zodIsFolderSchema } from "../types/zod-custom-types/is-folder-schema";
+import { zodIsFolderSchema } from "../types/zod-custom-types/is-folder-schema.js";
 
 // configure English locale (default)
 z.config(z.locales.pt());
@@ -15,15 +15,13 @@ const envSchema = z.object({
   PROJECT_WEBSITE: z.url(),
   DATABASE_URL: z.url(),
   JWT_KEY: z.string().min(10),
-  JWT_EXP: z
-    .union([z.coerce.number(), z.string().regex(/^[0-9]+[smhd]$/)])
-    .transform((val) => {
-      try {
-        if (typeof val === "string") return ms(val as ms.StringValue) / 1000;
-      } catch (error) {
-        throw new Error("JWT_EXP: Valor inválido para ms.StringValue");
-      }
-    }),
+  JWT_EXP: z.union([z.coerce.number(), z.string().regex(/^[0-9]+[smhd]$/)]).transform((val) => {
+    try {
+      if (typeof val === "string") return ms(val as ms.StringValue) / 1000;
+    } catch (error) {
+      throw new Error("JWT_EXP: Valor inválido para ms.StringValue");
+    }
+  }),
   LOGGER_FOLDER: zodIsFolderSchema().optional(),
   LOGGER_FILENAME: z.string().optional(),
   UPLOADS_PUBLIC_PATH: zodIsFolderSchema({ allowRelativePath: false }),

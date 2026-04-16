@@ -1,5 +1,5 @@
 // test/repositories/in-memory-uploader.ts
-import { Uploader, UploadParams } from "@core/lib/uploader/uploader";
+import { Uploader, UploadParams } from "src/core/lib/uploader/uploader.js";
 
 export class FakerUploader implements Uploader {
   uploaded: UploadParams[] = [];

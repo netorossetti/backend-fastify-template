@@ -1,8 +1,7 @@
 import JWT from "jsonwebtoken";
+import { env } from "src/core/env/index.js";
 import z from "zod/v4";
-import { env } from "../env";
-import { StringHelper } from "./string-helper";
-
+import { StringHelper } from "./string-helper.js";
 const decodedSchema = z.object({
   id: z.uuid(),
   name: z.string(),
@@ -41,20 +40,16 @@ export class TokenHelper {
         role: role,
       },
       env.JWT_KEY,
-      { expiresIn: env.JWT_EXP }
+      { expiresIn: env.JWT_EXP },
     );
     return token;
   };
 
   static getAccessTokenKey(userId: string): string {
-    return `access-token:${StringHelper.stringToSlug(
-      env.PROJECT_NAME
-    )}:${userId}`;
+    return `access-token:${StringHelper.stringToSlug(env.PROJECT_NAME)}:${userId}`;
   }
 
   static getRecoveryCodeKey(code: string): string {
-    return `recovery-code:${StringHelper.stringToSlug(
-      env.PROJECT_NAME
-    )}:${code}`;
+    return `recovery-code:${StringHelper.stringToSlug(env.PROJECT_NAME)}:${code}`;
   }
 }

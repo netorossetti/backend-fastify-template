@@ -1,8 +1,8 @@
-import { UnauthorizedError } from "@core/errors/unauthorized-error";
 import { fastifyPlugin } from "fastify-plugin";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import redisServices from "src/core/lib/redis/redis-services";
-import { FastifyTypedInstace } from "../@types/fastify-typed-instance";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import redisServices from "src/core/lib/redis/redis-services.js";
+import { FastifyTypedInstace } from "../@types/fastify-typed-instance.js";
 
 export const auth = fastifyPlugin(async (app: FastifyTypedInstace) => {
   app.addHook("onRequest", async (request, response) => {

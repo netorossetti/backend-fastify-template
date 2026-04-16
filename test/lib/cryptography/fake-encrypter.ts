@@ -1,5 +1,5 @@
-import { Decrypter } from "src/core/lib/criptography/decrypter";
-import { Encrypter } from "src/core/lib/criptography/encrypter";
+import { Decrypter } from "src/core/lib/criptography/decrypter.js";
+import { Encrypter } from "src/core/lib/criptography/encrypter.js";
 
 export class FakeEncrypter implements Encrypter, Decrypter {
   async encrypt(payload: Record<string, unknown>): Promise<string> {

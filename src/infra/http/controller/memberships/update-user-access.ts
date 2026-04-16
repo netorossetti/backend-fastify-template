@@ -1,11 +1,11 @@
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeUpdateUserAccessUseCase } from "src/infra/factories/membership/make-update-user-access-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeUpdateUserAccessUseCase } from "src/infra/factories/membership/make-update-user-access-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
-import { verifyRoleAdmin } from "../../middleware/verify-role-admin";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
+import { verifyRoleAdmin } from "../../middleware/verify-role-admin.js";
 
 export async function updateUserAccess(app: FastifyTypedInstace) {
   app

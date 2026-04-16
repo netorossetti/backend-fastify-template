@@ -1,12 +1,12 @@
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { UnauthorizedError } from "src/core/errors/unauthorized-error";
-import Logger from "src/core/lib/logger/logger";
-import { makeLoginUseCase } from "src/infra/factories/auth/make-login-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import Logger from "src/core/lib/logger/logger.js";
+import { makeLoginUseCase } from "src/infra/factories/auth/make-login-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { LoginPresenter, schemaLoginPresenter } from "../../presenter/login-presenter";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { LoginPresenter, schemaLoginPresenter } from "../../presenter/login-presenter.js";
 
 export async function login(app: FastifyTypedInstace) {
   app.post(

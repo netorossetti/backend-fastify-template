@@ -1,6 +1,6 @@
-import { Prisma, Tenant as PrismaTenant } from "@prisma/client";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { Tenant } from "src/domain/enterprise/entities/tenant";
+import { Prisma, Tenant as PrismaTenant } from "prisma/generated/prisma/client";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { Tenant } from "src/domain/enterprise/entities/tenant.js";
 
 export class PrismaTenantMapper {
   static toDomain(raw: PrismaTenant): Tenant {
@@ -14,7 +14,7 @@ export class PrismaTenantMapper {
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
       },
-      new UniqueEntityId(raw.id)
+      new UniqueEntityId(raw.id),
     );
   }
 

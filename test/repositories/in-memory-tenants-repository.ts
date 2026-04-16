@@ -1,6 +1,6 @@
-import { TenantsRepository } from "src/domain/application/repositories/tenants-repository";
-import { Tenant } from "src/domain/enterprise/entities/tenant";
-import { InMemoryMembershipsRepository } from "./in-memory-memberships-repository";
+import { TenantsRepository } from "src/domain/application/repositories/tenants-repository.js";
+import { Tenant } from "src/domain/enterprise/entities/tenant.js";
+import { InMemoryMembershipsRepository } from "./in-memory-memberships-repository.js";
 
 export class InMemoryTenantsRepository implements TenantsRepository {
   public items: Tenant[] = [];
@@ -23,9 +23,7 @@ export class InMemoryTenantsRepository implements TenantsRepository {
 
   async findManyByUser(userId: string): Promise<Tenant[]> {
     if (!this.membershipsRepository)
-      throw new Error(
-        "InMemoryTenantsRepository: membershipsRepository not provider."
-      );
+      throw new Error("InMemoryTenantsRepository: membershipsRepository not provider.");
 
     const tenantsIds = this.membershipsRepository.items
       .filter((i) => i.userId === userId)
@@ -39,9 +37,7 @@ export class InMemoryTenantsRepository implements TenantsRepository {
         return acc;
       }, []);
 
-    const tenants = this.items.filter((i) =>
-      tenantsIds.includes(i.id.toString())
-    );
+    const tenants = this.items.filter((i) => tenantsIds.includes(i.id.toString()));
     return tenants;
   }
 

@@ -1,15 +1,15 @@
 import { faker } from "@faker-js/faker";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { UnauthorizedError } from "src/core/errors/unauthorized-error";
-import { makeMembership } from "test/factories/make-membership";
-import { makeUser } from "test/factories/make-user";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher";
-import { FakeRedisServices } from "test/lib/faker-redis-services";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { LoginUseCase } from "./login-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
+import { FakeRedisServices } from "test/lib/faker-redis-services.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { LoginUseCase } from "./login-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -30,7 +30,7 @@ describe("Login Use Case", () => {
       inMemoryTenantsRepository,
       inMemoryMembershipsRepository,
       fakeHasher,
-      fakeRedisServices
+      fakeRedisServices,
     );
   });
 
@@ -41,16 +41,14 @@ describe("Login Use Case", () => {
     inMemoryMembershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
-      })
+      }),
     );
     const result = await sut.execute({
       email: user.email,
       password: "teste@1234",
     });
     expect(result.isSuccess()).toBe(true);
-    expect(result.value).toEqual(
-      expect.objectContaining({ token: expect.any(String) })
-    );
+    expect(result.value).toEqual(expect.objectContaining({ token: expect.any(String) }));
   });
 
   test("Não deve ser possivel realizar um login de usuário não cadastrado", async () => {
@@ -102,9 +100,7 @@ describe("Login Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe(
-        "Acesso negado. Usuário sem vinculo de acesso."
-      );
+      expect(result.value.message).toBe("Acesso negado. Usuário sem vinculo de acesso.");
     }
   });
 });

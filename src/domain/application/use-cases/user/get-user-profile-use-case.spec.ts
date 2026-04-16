@@ -1,13 +1,13 @@
 import { faker } from "@faker-js/faker";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeMembership } from "test/factories/make-membership";
-import { makeTenant } from "test/factories/make-tenant";
-import { makeUser } from "test/factories/make-user";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { GetUserProfileUseCase } from "./get-user-profile-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeTenant } from "test/factories/make-tenant.js";
+import { makeUser } from "test/factories/make-user.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { GetUserProfileUseCase } from "./get-user-profile-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -22,7 +22,7 @@ describe("Select Account Use Case", () => {
     sut = new GetUserProfileUseCase(
       inMemoryUsersRepository,
       inMemoryMembershipsRepository,
-      inMemoryTenantsRepository
+      inMemoryTenantsRepository,
     );
   });
 
@@ -37,7 +37,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -49,7 +49,7 @@ describe("Select Account Use Case", () => {
       expect(result.value).toEqual(
         expect.objectContaining({
           user: expect.objectContaining({ id: user.id }),
-        })
+        }),
       );
     }
   });
@@ -129,7 +129,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         active: false,
-      })
+      }),
     );
 
     const result = await sut.execute({

@@ -1,13 +1,13 @@
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { ConflictError } from "src/core/errors/conflict-error";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema";
-import { makeUpdateTenantUseCase } from "src/infra/factories/tenant/make-update-tenant-use-case";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { zodNameSchema } from "src/core/types/zod-custom-types/name-schema.js";
+import { makeUpdateTenantUseCase } from "src/infra/factories/tenant/make-update-tenant-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
 
 export async function updateTenant(app: FastifyTypedInstace) {
   app.register(auth).put(

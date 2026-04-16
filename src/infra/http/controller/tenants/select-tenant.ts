@@ -1,11 +1,11 @@
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeSelectTenantUseCase } from "src/infra/factories/tenant/make-select-tenant-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeSelectTenantUseCase } from "src/infra/factories/tenant/make-select-tenant-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
-import { LoginPresenter, schemaLoginPresenter } from "../../presenter/login-presenter";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
+import { LoginPresenter, schemaLoginPresenter } from "../../presenter/login-presenter.js";
 
 export async function selectTenant(app: FastifyTypedInstace) {
   app.register(auth).post(

@@ -1,14 +1,10 @@
-import { env } from "src/core/env";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import { IRedisService } from "src/core/lib/redis/redis-services";
-import { Membership } from "src/domain/enterprise/entities/membership";
-import { User } from "src/domain/enterprise/entities/user";
+import { env } from "src/core/env/index.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import { Membership } from "src/domain/enterprise/entities/membership.js";
+import { User } from "src/domain/enterprise/entities/user.js";
 
-export function makeAuthToken(
-  user: User,
-  menbership: Membership,
-  redisService: IRedisService
-) {
+export function makeAuthToken(user: User, menbership: Membership, redisService: IRedisService) {
   // Geração do token
   const token = TokenHelper.singToken({
     id: user.id.toString(),

@@ -1,4 +1,4 @@
-import Logger from "../logger/logger";
+import Logger from "../logger/logger.js";
 
 export class ProcessingQueue {
   private logger: Logger;
@@ -13,16 +13,15 @@ export class ProcessingQueue {
   private runningProcessKeys: Set<string> = new Set(); // 🔥 Agora suporta múltiplos processos
   private maxConcurrency: number; // 🔥 Número máximo de processos simultâneos
 
-  constructor(private name: string, maxConcurrency: number = 1) {
+  constructor(
+    private name: string,
+    maxConcurrency: number = 1,
+  ) {
     this.logger = Logger.getInstance(this.name);
     this.maxConcurrency = maxConcurrency;
   }
 
-  public push(
-    key: string,
-    func: () => Promise<void>,
-    reprocessCaseFailed: number = 0
-  ): void {
+  public push(key: string, func: () => Promise<void>, reprocessCaseFailed: number = 0): void {
     this.queue.push({ key, func, reprocessCaseFailed });
     if (!this.processing) {
       this.processNext();
@@ -30,10 +29,7 @@ export class ProcessingQueue {
   }
 
   public async processNext(): Promise<void> {
-    while (
-      this.queue.length > 0 &&
-      this.activeProcesses < this.maxConcurrency
-    ) {
+    while (this.queue.length > 0 && this.activeProcesses < this.maxConcurrency) {
       const nextQueueJob = this.queue.shift();
       if (!nextQueueJob) return;
 
@@ -53,10 +49,7 @@ export class ProcessingQueue {
             reprocessCaseFailed: nextQueueJob.reprocessCaseFailed - 1,
           });
         } else {
-          const message =
-            error instanceof Error
-              ? error.message
-              : "Process queue job failure.";
+          const message = error instanceof Error ? error.message : "Process queue job failure.";
           this.logger.error(`Erro no job ${nextQueueJob.key}: ${message}`, {
             error,
           });

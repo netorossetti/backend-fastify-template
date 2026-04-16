@@ -1,4 +1,4 @@
-import { env } from "@core/env";
+import { env } from "src/core/env/index.js";
 import * as winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 
@@ -16,14 +16,10 @@ class Logger {
       level: "debug",
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.printf(
-          ({ timestamp, level, message, service, ...meta }) => {
-            const metaString = Object.keys(meta).length
-              ? JSON.stringify(meta)
-              : "";
-            return `[${timestamp}] [${service}] ${level}: ${message} ${metaString}`;
-          }
-        )
+        winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+          const metaString = Object.keys(meta).length ? JSON.stringify(meta) : "";
+          return `[${timestamp}] [${service}] ${level}: ${message} ${metaString}`;
+        }),
       ),
       defaultMeta: { service: contextName },
       transports: this.getTransports(),
@@ -32,9 +28,7 @@ class Logger {
   }
 
   private getLoggerLevels(): LoggerLevel[] {
-    return env.NODE_ENV === "production"
-      ? ["warn", "error"]
-      : ["info", "debug", "warn", "error"];
+    return env.NODE_ENV === "production" ? ["warn", "error"] : ["info", "debug", "warn", "error"];
   }
 
   private getTransports(): winston.transport[] {
@@ -66,11 +60,7 @@ class Logger {
     return Logger.instances[contextName];
   }
 
-  log(
-    level: LoggerLevel,
-    message: string,
-    meta?: Record<string, unknown>
-  ): void {
+  log(level: LoggerLevel, message: string, meta?: Record<string, unknown>): void {
     if (this.loggerLevel.includes(level)) {
       this.logger.log(level, message, meta);
     }

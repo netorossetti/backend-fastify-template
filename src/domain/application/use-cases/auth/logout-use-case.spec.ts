@@ -1,13 +1,13 @@
 import { faker } from "@faker-js/faker";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { TokenHelper } from "src/core/helpers/token-helper";
-import { makeAuthToken } from "test/factories/make-auth-token";
-import { makeMembership } from "test/factories/make-membership";
-import { makeUser } from "test/factories/make-user";
-import { FakeRedisServices } from "test/lib/faker-redis-services";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { LogoutUseCase } from "./logout-use-case";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { makeAuthToken } from "test/factories/make-auth-token.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeRedisServices } from "test/lib/faker-redis-services.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { LogoutUseCase } from "./logout-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryMembershipsRepository: InMemoryMembershipsRepository;

@@ -1,13 +1,10 @@
 import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { User, UserProps } from "src/domain/enterprise/entities/user";
-import { PrismaUserMapper } from "src/infra/database/repository/mappers/prisma-user-mapper";
+import { PrismaClient } from "prisma/generated/prisma/client";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { User, UserProps } from "src/domain/enterprise/entities/user.js";
+import { PrismaUserMapper } from "src/infra/database/repository/mappers/prisma-user-mapper.js";
 
-export function makeUser(
-  override: Partial<UserProps> = {},
-  id?: UniqueEntityId
-) {
+export function makeUser(override: Partial<UserProps> = {}, id?: UniqueEntityId) {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
   const newUser = User.create(
@@ -19,7 +16,7 @@ export function makeUser(
       password: "p@s5Word123",
       ...override,
     },
-    id ?? new UniqueEntityId()
+    id ?? new UniqueEntityId(),
   );
   return newUser;
 }

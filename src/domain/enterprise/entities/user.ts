@@ -1,6 +1,6 @@
-import { Entity } from "src/core/entities/entity-uuid";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { Optional } from "src/core/types/optional";
+import { Entity } from "src/core/entities/entity-uuid.js";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { Optional } from "src/core/types/optional.js";
 
 export interface UserProps {
   firstName: string;
@@ -96,17 +96,14 @@ export class User extends Entity<UserProps> {
     if (!this.isNew()) this.props.updatedAt = new Date();
   }
 
-  static create(
-    props: Optional<UserProps, "avatarUrl" | "createdAt">,
-    id?: UniqueEntityId
-  ) {
+  static create(props: Optional<UserProps, "avatarUrl" | "createdAt">, id?: UniqueEntityId) {
     const user = new User(
       {
         ...props,
         avatarUrl: props.avatarUrl ?? null,
         createdAt: props.createdAt ?? new Date(),
       },
-      id
+      id,
     );
     return user;
   }

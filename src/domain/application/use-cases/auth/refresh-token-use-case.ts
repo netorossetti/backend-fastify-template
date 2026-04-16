@@ -1,19 +1,16 @@
-import { env } from "src/core/env";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { UnauthorizedError } from "src/core/errors/unauthorized-error";
-import { InfoToken, TokenHelper } from "src/core/helpers/token-helper";
-import { IRedisService } from "src/core/lib/redis/redis-services";
-import { failure, Result, success } from "src/core/result";
+import { env } from "src/core/env/index.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import { InfoToken, TokenHelper } from "src/core/helpers/token-helper.js";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import { failure, Result, success } from "src/core/result.js";
 
 interface RefreshTokenUseCaseRequest {
   usuarioId: string;
   token: string;
 }
 
-type RefreshTokenUseCaseResponse = Result<
-  NotFoundError | UnauthorizedError,
-  { token: string }
->;
+type RefreshTokenUseCaseResponse = Result<NotFoundError | UnauthorizedError, { token: string }>;
 
 export class RefreshTokenUseCase {
   constructor(private redisServices: IRedisService) {}

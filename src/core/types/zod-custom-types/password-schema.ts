@@ -1,4 +1,4 @@
-import { StringHelper } from "src/core/helpers/string-helper";
+import { StringHelper } from "src/core/helpers/string-helper.js";
 import z from "zod/v4";
 
 /**
@@ -13,7 +13,7 @@ export function zodPasswordSchema(path: string = "password") {
           code: "custom",
           message: mensagem,
           path: [path],
-        }))
+        })),
       );
     }
     return true;

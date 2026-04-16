@@ -1,7 +1,7 @@
-import redisServices from "src/core/lib/redis/redis-services";
-import { LogoutUseCase } from "src/domain/application/use-cases/auth/logout-use-case";
-import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository";
-import { prisma } from "../../database/prisma";
+import redisServices from "src/core/lib/redis/redis-services.js";
+import { LogoutUseCase } from "src/domain/application/use-cases/auth/logout-use-case.js";
+import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository.js";
+import { prisma } from "../../database/prisma.js";
 
 export function makeLogoutUseCase() {
   const usersRepository = new PrismaUsersRepository(prisma);

@@ -1,10 +1,10 @@
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { createTenant } from "./create-tenant";
-import { fetchTenants } from "./fetch-tenants";
-import { inactivateTenant } from "./inactivate-tenant";
-import { reactivateTenant } from "./reactivate-tenant";
-import { selectTenant } from "./select-tenant";
-import { updateTenant } from "./update-tenant";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { createTenant } from "./create-tenant.js";
+import { fetchTenants } from "./fetch-tenants.js";
+import { inactivateTenant } from "./inactivate-tenant.js";
+import { reactivateTenant } from "./reactivate-tenant.js";
+import { selectTenant } from "./select-tenant.js";
+import { updateTenant } from "./update-tenant.js";
 
 export async function tenantsRoutes(app: FastifyTypedInstace) {
   app.register(fetchTenants);

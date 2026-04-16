@@ -1,11 +1,11 @@
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { UnauthorizedError } from "src/core/errors/unauthorized-error";
-import Logger from "src/core/lib/logger/logger";
-import { makeRefreshTokenUseCase } from "src/infra/factories/auth/make-refresh-token-use-case";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import Logger from "src/core/lib/logger/logger.js";
+import { makeRefreshTokenUseCase } from "src/infra/factories/auth/make-refresh-token-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
 
 const responseOkSchema = z.object({
   token: z.string(),

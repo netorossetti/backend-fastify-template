@@ -1,13 +1,13 @@
 import { faker } from "@faker-js/faker";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeMembership } from "test/factories/make-membership";
-import { makeTenant } from "test/factories/make-tenant";
-import { makeUser } from "test/factories/make-user";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { UpdateUserAccessUseCase } from "./update-user-access-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeTenant } from "test/factories/make-tenant.js";
+import { makeUser } from "test/factories/make-user.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { UpdateUserAccessUseCase } from "./update-user-access-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -22,7 +22,7 @@ describe("Update User Access Use Case", () => {
     sut = new UpdateUserAccessUseCase(
       inMemoryUsersRepository,
       inMemoryTenantsRepository,
-      inMemoryMembershipsRepository
+      inMemoryMembershipsRepository,
     );
   });
 
@@ -36,7 +36,7 @@ describe("Update User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const otherUser = makeUser();
@@ -46,7 +46,7 @@ describe("Update User Access Use Case", () => {
         userId: otherUser.id.toString(),
         tenantId: tenant.id.toString(),
         role: "user",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -62,9 +62,7 @@ describe("Update User Access Use Case", () => {
     expect(result.isSuccess()).toBe(true);
     expect(inMemoryUsersRepository.items.length).toEqual(2);
     expect(inMemoryMembershipsRepository.items.length).toEqual(2);
-    expect(
-      inMemoryMembershipsRepository.items.filter((i) => !i.active).length
-    ).toEqual(1);
+    expect(inMemoryMembershipsRepository.items.filter((i) => !i.active).length).toEqual(1);
   });
 
   test("Não deve ser possível altera o acesso de um usuário com um usuário inválido", async () => {
@@ -166,9 +164,7 @@ describe("Update User Access Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe(
-        "Acesso negado. Usuário sem vinculo de acesso."
-      );
+      expect(result.value.message).toBe("Acesso negado. Usuário sem vinculo de acesso.");
     }
   });
 
@@ -182,7 +178,7 @@ describe("Update User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         active: false,
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -211,7 +207,7 @@ describe("Update User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "user",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -227,7 +223,7 @@ describe("Update User Access Use Case", () => {
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
       expect(result.value.message).toBe(
-        "Usuário não tem permisão necessária para atualiza acesso de um usuário."
+        "Usuário não tem permisão necessária para atualiza acesso de um usuário.",
       );
     }
   });
@@ -242,7 +238,7 @@ describe("Update User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const result = await sut.execute({

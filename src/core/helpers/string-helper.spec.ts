@@ -1,4 +1,4 @@
-import { StringHelper } from "./string-helper";
+import { StringHelper } from "./string-helper.js";
 
 describe("String Helper", () => {
   test("String to slug", () => {
@@ -28,7 +28,7 @@ describe("String Helper", () => {
 
     const result = StringHelper.cleanSQL(sql);
     expect(result).toEqual(
-      'SELECT A, B, C as "ceTaDoido" FROM tabela JOIN tabela2 as tab2 ON tabela.id = tab2.idTabela'
+      'SELECT A, B, C as "ceTaDoido" FROM tabela JOIN tabela2 as tab2 ON tabela.id = tab2.idTabela',
     );
   });
 
@@ -41,34 +41,24 @@ describe("String Helper", () => {
   test("Verify password requirements", () => {
     let result: string[] | null = null;
     result = StringHelper.passwordRequirements("123");
-    expect(result).toEqual(
-      expect.arrayContaining(["A senha deve ter pelo menos 8 caracteres."])
-    );
+    expect(result).toEqual(expect.arrayContaining(["A senha deve ter pelo menos 8 caracteres."]));
 
     result = StringHelper.passwordRequirements("1234567890");
     expect(result).toEqual(
-      expect.arrayContaining([
-        "A senha deve conter pelo menos uma letra maiúscula.",
-      ])
+      expect.arrayContaining(["A senha deve conter pelo menos uma letra maiúscula."]),
     );
 
     result = StringHelper.passwordRequirements("A234567890");
     expect(result).toEqual(
-      expect.arrayContaining([
-        "A senha deve conter pelo menos uma letra minúscula.",
-      ])
+      expect.arrayContaining(["A senha deve conter pelo menos uma letra minúscula."]),
     );
 
     result = StringHelper.passwordRequirements("Abcdefghi");
-    expect(result).toEqual(
-      expect.arrayContaining(["A senha deve conter pelo menos um número."])
-    );
+    expect(result).toEqual(expect.arrayContaining(["A senha deve conter pelo menos um número."]));
 
     result = StringHelper.passwordRequirements("Ab34567890");
     expect(result).toEqual(
-      expect.arrayContaining([
-        "A senha deve conter pelo menos um caractere especial (@$!%*?&).",
-      ])
+      expect.arrayContaining(["A senha deve conter pelo menos um caractere especial (@$!%*?&)."]),
     );
 
     result = StringHelper.passwordRequirements("Ab@4567890");

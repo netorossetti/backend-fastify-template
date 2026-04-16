@@ -1,9 +1,9 @@
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { zodPasswordSchema } from "src/core/types/zod-custom-types/password-schema";
-import { makeResetPasswordUseCase } from "src/infra/factories/auth/make-reset-password-use-case";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { zodPasswordSchema } from "src/core/types/zod-custom-types/password-schema.js";
+import { makeResetPasswordUseCase } from "src/infra/factories/auth/make-reset-password-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
 
 export async function resetPassword(app: FastifyTypedInstace) {
   app.post(

@@ -1,16 +1,16 @@
 import { faker } from "@faker-js/faker";
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { ConflictError } from "src/core/errors/conflict-error";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeMembership } from "test/factories/make-membership";
-import { makeTenant } from "test/factories/make-tenant";
-import { makeUser } from "test/factories/make-user";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeTenant } from "test/factories/make-tenant.js";
+import { makeUser } from "test/factories/make-user.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { fake } from "validation-br/dist/cnpj";
-import { UpdateTenantUseCase } from "./update-tenant-use-case";
+import { UpdateTenantUseCase } from "./update-tenant-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -26,7 +26,7 @@ describe("Select Account Use Case", () => {
     sut = new UpdateTenantUseCase(
       inMemoryUsersRepository,
       inMemoryTenantsRepository,
-      inMemoryMembershipsRepository
+      inMemoryMembershipsRepository,
     );
   });
 
@@ -42,7 +42,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const novoCnpj = fake({ alphanumeric: false, withMask: false });
@@ -62,7 +62,7 @@ describe("Select Account Use Case", () => {
           nickName: "apelido",
           documentType: "CNPJ",
           documentNumber: novoCnpj,
-        })
+        }),
       );
     }
   });
@@ -158,7 +158,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         active: false,
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -191,7 +191,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -205,9 +205,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(ConflictError);
-      expect(result.value.message).toBe(
-        "Organização já foi registrada com o documento informado."
-      );
+      expect(result.value.message).toBe("Organização já foi registrada com o documento informado.");
     }
   });
 
@@ -223,7 +221,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -237,9 +235,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "Numero do documento informado não é um CPF válido."
-      );
+      expect(result.value.message).toBe("Numero do documento informado não é um CPF válido.");
     }
   });
 
@@ -255,7 +251,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -269,9 +265,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "Numero do documento informado não é um CNPJ válido."
-      );
+      expect(result.value.message).toBe("Numero do documento informado não é um CNPJ válido.");
     }
   });
 
@@ -287,7 +281,7 @@ describe("Select Account Use Case", () => {
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -301,9 +295,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "Numero do documento informado não é um CNH válido."
-      );
+      expect(result.value.message).toBe("Numero do documento informado não é um CNH válido.");
     }
   });
 });

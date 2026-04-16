@@ -1,4 +1,4 @@
-import { IRedisService } from "src/core/lib/redis/redis-services";
+import { IRedisService } from "src/core/lib/redis/redis-services.js";
 
 export class FakeRedisServices implements IRedisService {
   private store: Map<string, { value: any; expireAt?: number }> = new Map();

@@ -1,13 +1,13 @@
 import { faker } from "@faker-js/faker";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeMembership } from "test/factories/make-membership";
-import { makeTenant } from "test/factories/make-tenant";
-import { makeUser } from "test/factories/make-user";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { SelectTenantUseCase } from "./select-tenant-use-case";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeTenant } from "test/factories/make-tenant.js";
+import { makeUser } from "test/factories/make-user.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { SelectTenantUseCase } from "./select-tenant-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -22,7 +22,7 @@ describe("Select Account Use Case", () => {
     sut = new SelectTenantUseCase(
       inMemoryUsersRepository,
       inMemoryMembershipsRepository,
-      inMemoryTenantsRepository
+      inMemoryTenantsRepository,
     );
   });
 
@@ -39,7 +39,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant1.id.toString(),
         userId: user.id.toString(),
-      })
+      }),
     );
     inMemoryMembershipsRepository.items.push(
       makeMembership({
@@ -47,7 +47,7 @@ describe("Select Account Use Case", () => {
         userId: user.id.toString(),
         owner: false,
         role: "user",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -76,10 +76,10 @@ describe("Select Account Use Case", () => {
               name: tenant2.name,
             }),
           ]),
-        })
+        }),
       );
       const lastAccess = inMemoryMembershipsRepository.items.find(
-        (i) => i.tenantId === tenant2.id.toString()
+        (i) => i.tenantId === tenant2.id.toString(),
       );
       expect(lastAccess?.lastAccessAt).instanceOf(Date);
     }
@@ -144,9 +144,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotFoundError);
-      expect(result.value.message).toBe(
-        "Usuário não pertence a nenhuma organização."
-      );
+      expect(result.value.message).toBe("Usuário não pertence a nenhuma organização.");
     }
   });
 
@@ -163,7 +161,7 @@ describe("Select Account Use Case", () => {
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -173,9 +171,7 @@ describe("Select Account Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe(
-        "Usuário não pertence à organização selecionada."
-      );
+      expect(result.value.message).toBe("Usuário não pertence à organização selecionada.");
     }
   });
 });

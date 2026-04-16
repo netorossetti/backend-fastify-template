@@ -1,4 +1,4 @@
-import { QuarterHelper } from "src/core/helpers/quadrimestre-helper";
+import { QuarterHelper } from "src/core/helpers/quadrimestre-helper.js";
 
 export class Quarter {
   private _value: string;
@@ -19,11 +19,9 @@ export class Quarter {
 
   constructor(value?: string | Date) {
     if (!value) this._value = QuarterHelper.toQuarter(new Date());
-    else if (value instanceof Date)
-      this._value = QuarterHelper.toQuarter(value);
+    else if (value instanceof Date) this._value = QuarterHelper.toQuarter(value);
     else {
-      if (!QuarterHelper.isQuarter(value))
-        throw new Error(`${value} is not a quarter.`);
+      if (!QuarterHelper.isQuarter(value)) throw new Error(`${value} is not a quarter.`);
       this._value = value;
     }
     const { startDate, endDate } = QuarterHelper.toQuarterRange(this._value);

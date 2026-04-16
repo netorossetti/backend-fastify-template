@@ -1,21 +1,24 @@
 import { faker } from "@faker-js/faker";
-import { StringHelper } from "src/core/helpers/string-helper";
-import redisServices from "src/core/lib/redis/redis-services";
-import { prisma } from "src/infra/database/prisma";
+import { PrismaClient } from "prisma/generated/prisma/client.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import redisServices from "src/core/lib/redis/redis-services.js";
+import { getPrisma } from "src/infra/database/prisma.js";
 import request from "supertest";
-import { AuthTokenFactory } from "test/factories/make-auth-token";
-import { MembershipFactory } from "test/factories/make-membership";
-import { TenantFactory } from "test/factories/make-tenant";
-import { UserFactory } from "test/factories/make-user";
+import { AuthTokenFactory } from "test/factories/make-auth-token.js";
+import { MembershipFactory } from "test/factories/make-membership.js";
+import { TenantFactory } from "test/factories/make-tenant.js";
+import { UserFactory } from "test/factories/make-user.js";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { app } from "../../app";
+import { app } from "../../app.js";
 
 describe("Membership - RemoveUserAccess (e2e)", () => {
   let userFactory: UserFactory;
   let tenantFactory: TenantFactory;
   let membershipFactory: MembershipFactory;
+  let prisma: PrismaClient;
 
   beforeAll(async () => {
+    prisma = getPrisma();
     userFactory = new UserFactory(prisma);
     tenantFactory = new TenantFactory(prisma);
     membershipFactory = new MembershipFactory(prisma);

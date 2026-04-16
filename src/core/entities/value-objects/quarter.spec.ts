@@ -1,4 +1,4 @@
-import { Quarter } from "./quarter";
+import { Quarter } from "./quarter.js";
 
 describe("Class Quarter", () => {
   test("deve ser possivel instanciar um quadrimestre por uma string", () => {

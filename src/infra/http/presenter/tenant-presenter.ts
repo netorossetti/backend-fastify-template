@@ -1,4 +1,4 @@
-import { Tenant } from "src/domain/enterprise/entities/tenant";
+import { Tenant } from "src/domain/enterprise/entities/tenant.js";
 import z from "zod/v4";
 
 export class TenantPresenter {

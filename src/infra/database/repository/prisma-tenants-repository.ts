@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { TenantsRepository } from "src/domain/application/repositories/tenants-repository";
-import { Tenant } from "src/domain/enterprise/entities/tenant";
-import { PrismaTenantMapper } from "./mappers/prisma-tenant-mapper";
+import { PrismaClient } from "prisma/generated/prisma/client";
+import { TenantsRepository } from "src/domain/application/repositories/tenants-repository.js";
+import { Tenant } from "src/domain/enterprise/entities/tenant.js";
+import { PrismaTenantMapper } from "./mappers/prisma-tenant-mapper.js";
 
 export class PrismaTenantsRepository implements TenantsRepository {
   constructor(private prisma: PrismaClient) {}
@@ -30,10 +30,7 @@ export class PrismaTenantsRepository implements TenantsRepository {
                 userId: userId,
               },
               {
-                OR: [
-                  { owner: true },
-                  { role: { in: ["admin", "superAdmin"] } },
-                ],
+                OR: [{ owner: true }, { role: { in: ["admin", "superAdmin"] } }],
               },
             ],
           },

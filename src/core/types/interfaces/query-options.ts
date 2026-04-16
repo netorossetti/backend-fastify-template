@@ -1,6 +1,6 @@
-import { BadRequestQueryError } from "src/core/errors/bad-request-query-error";
+import { BadRequestQueryError } from "src/core/errors/bad-request-query-error.js";
 import { z } from "zod/v4";
-import { ReqQueryOptions } from "./request-query-options";
+import { ReqQueryOptions } from "./request-query-options.js";
 
 // Definindo os operadores válidos
 const validOperators = [
@@ -37,12 +37,9 @@ const schemaFilterOptions = z.record(
       in: z.array(z.any()).optional(),
       notIn: z.array(z.any()).optional(),
     })
-    .refine(
-      (obj) => Object.keys(obj).some((key) => validOperators.includes(key)),
-      {
-        message: "Pelo menos um operador válido deve ser fornecido",
-      }
-    )
+    .refine((obj) => Object.keys(obj).some((key) => validOperators.includes(key)), {
+      message: "Pelo menos um operador válido deve ser fornecido",
+    }),
 );
 
 // Definindo o esquema para as opções de paginação
@@ -88,8 +85,7 @@ export class QueryOptionsBuilder {
         sortBy: req.sortBy,
         sortOrder: req.sortOrder ?? "asc",
       });
-      if (!parsedSort.success)
-        throw new BadRequestQueryError("ordenação", parsedSort.error.issues);
+      if (!parsedSort.success) throw new BadRequestQueryError("ordenação", parsedSort.error.issues);
       sort = parsedSort.data;
     }
 
@@ -101,10 +97,7 @@ export class QueryOptionsBuilder {
         limit: req.limit ?? 20,
       });
       if (!parsedPagination.success)
-        throw new BadRequestQueryError(
-          "paginação",
-          parsedPagination.error.issues
-        );
+        throw new BadRequestQueryError("paginação", parsedPagination.error.issues);
       pagination = parsedPagination.data;
     }
 

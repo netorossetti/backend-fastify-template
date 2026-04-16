@@ -1,4 +1,4 @@
-import { Slug } from "./slug";
+import { Slug } from "./slug.js";
 
 test("deve ser possivel criar um slug de um texto", () => {
   const slug = Slug.createFromText("Teste de criação de uma slug.");

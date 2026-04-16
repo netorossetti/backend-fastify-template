@@ -1,10 +1,10 @@
-import { NotFoundError } from "@core/errors/not-found-error";
-import { Result, failure, success } from "@core/result";
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { StringHelper } from "src/core/helpers/string-helper";
-import { HashCompare } from "src/core/lib/criptography/hash-compare";
-import { HashGenerator } from "src/core/lib/criptography/hash-generator";
-import { UsersRepository } from "../../repositories/users-repository";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import { HashCompare } from "src/core/lib/criptography/hash-compare.js";
+import { HashGenerator } from "src/core/lib/criptography/hash-generator.js";
+import { Result, failure, success } from "src/core/result.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface ChangePasswordUseCaseRequest {
   userId: string;
@@ -13,15 +13,12 @@ interface ChangePasswordUseCaseRequest {
   newPasswordCheck: string;
 }
 
-type ChangePasswordUseCaseResponse = Result<
-  NotFoundError | BadRequestError,
-  {}
->;
+type ChangePasswordUseCaseResponse = Result<NotFoundError | BadRequestError, {}>;
 
 export class ChangePasswordUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private hasher: HashCompare & HashGenerator
+    private hasher: HashCompare & HashGenerator,
   ) {}
 
   async execute({
@@ -32,11 +29,7 @@ export class ChangePasswordUseCase {
   }: ChangePasswordUseCaseRequest): Promise<ChangePasswordUseCaseResponse> {
     // Validar nova senha e senha de confirmação
     if (newPassword !== newPasswordCheck)
-      return failure(
-        new BadRequestError(
-          "A senha de confirmação está diferente da nova senha."
-        )
-      );
+      return failure(new BadRequestError("A senha de confirmação está diferente da nova senha."));
 
     // Verifica senha
     const passwordRequirements = StringHelper.passwordRequirements(newPassword);
@@ -44,7 +37,7 @@ export class ChangePasswordUseCase {
       return failure(
         new BadRequestError("Senha inválida.", {
           password: passwordRequirements,
-        })
+        }),
       );
     }
 

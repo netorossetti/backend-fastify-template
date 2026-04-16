@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
-import { JsonObjectSchema } from "../types/json-object-schema/json-object-schema";
-import { JsonObjectSchemaList } from "../types/json-object-schema/json-object-schema-list";
-import { ZodHelper } from "./zod-helper";
+import { JsonObjectSchemaList } from "../types/json-object-schema/json-object-schema-list.js";
+import { JsonObjectSchema } from "../types/json-object-schema/json-object-schema.js";
+import { ZodHelper } from "./zod-helper.js";
 
 describe("Zod Helper", () => {
   test("Create DataSource Schema Object", async () => {
@@ -237,8 +237,7 @@ const objectTypeSchema = JsonObjectSchema.create({
   isCollection: true,
 });
 
-if (!objectTypeSchema.objectSchemas)
-  objectTypeSchema.objectSchemas = new JsonObjectSchemaList();
+if (!objectTypeSchema.objectSchemas) objectTypeSchema.objectSchemas = new JsonObjectSchemaList();
 
 objectTypeSchema.objectSchemas.add(
   JsonObjectSchema.create({
@@ -252,7 +251,7 @@ objectTypeSchema.objectSchemas.add(
     nullable: false,
     type: "INTEGER",
     parentSchemaId: objectTypeSchema.id,
-  })
+  }),
 );
 objectTypeSchema.objectSchemas.add(
   JsonObjectSchema.create({
@@ -266,7 +265,7 @@ objectTypeSchema.objectSchemas.add(
     nullable: false,
     type: "TEXT",
     parentSchemaId: objectTypeSchema.id,
-  })
+  }),
 );
 
 dbFormSchemas.push(objectTypeSchema);

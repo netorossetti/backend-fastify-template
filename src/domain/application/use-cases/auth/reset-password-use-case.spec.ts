@@ -1,13 +1,13 @@
-import { env } from "src/core/env";
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { DateHelper } from "src/core/helpers/date-helper";
-import { makeRecoveryCode } from "test/factories/make-recovery-code";
-import { makeUser } from "test/factories/make-user";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher";
-import { FakeRedisServices } from "test/lib/faker-redis-services";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { ResetPasswordUseCase } from "./reset-password-use-case";
+import { env } from "src/core/env/index.js";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { DateHelper } from "src/core/helpers/date-helper.js";
+import { makeRecoveryCode } from "test/factories/make-recovery-code.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
+import { FakeRedisServices } from "test/lib/faker-redis-services.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { ResetPasswordUseCase } from "./reset-password-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let fakeRedisServices: FakeRedisServices;
@@ -19,11 +19,7 @@ describe("Reset Password Use Case", () => {
     fakeHasher = new FakeHasher();
     fakeRedisServices = new FakeRedisServices();
     inMemoryUsersRepository = new InMemoryUsersRepository();
-    sut = new ResetPasswordUseCase(
-      inMemoryUsersRepository,
-      fakeRedisServices,
-      fakeHasher
-    );
+    sut = new ResetPasswordUseCase(inMemoryUsersRepository, fakeRedisServices, fakeHasher);
 
     // tell vitest we use mocked time
     vi.useFakeTimers();
@@ -49,9 +45,7 @@ describe("Reset Password Use Case", () => {
     expect(result.isSuccess()).toBe(true);
     expect(result.value).toEqual({});
     expect(inMemoryUsersRepository.items).toHaveLength(1);
-    expect(inMemoryUsersRepository.items[0].password).toEqual(
-      "Teste@2014-hashed"
-    );
+    expect(inMemoryUsersRepository.items[0].password).toEqual("Teste@2014-hashed");
   });
 
   test("Não deve ser possivel redefinir uma senha com confirmação inválida", async () => {
@@ -63,9 +57,7 @@ describe("Reset Password Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "A senha de confirmação está diferente da nova senha."
-      );
+      expect(result.value.message).toBe("A senha de confirmação está diferente da nova senha.");
     }
   });
 
@@ -82,10 +74,8 @@ describe("Reset Password Use Case", () => {
       if (result.value instanceof BadRequestError) {
         expect(result.value.issues).toEqual(
           expect.objectContaining({
-            password: expect.arrayContaining([
-              "A senha deve ter pelo menos 8 caracteres.",
-            ]),
-          })
+            password: expect.arrayContaining(["A senha deve ter pelo menos 8 caracteres."]),
+          }),
         );
       }
     }

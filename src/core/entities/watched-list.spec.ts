@@ -1,4 +1,4 @@
-import { WatchedList } from "./watched-list";
+import { WatchedList } from "./watched-list.js";
 
 // Exemplo de um item de teste com um id, nome e valor
 interface MyItem {

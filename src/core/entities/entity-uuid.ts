@@ -1,5 +1,5 @@
 import { z, ZodSchema } from "zod/v4";
-import { UniqueEntityId } from "./value-objects/unique-entity-id";
+import { UniqueEntityId } from "./value-objects/unique-entity-id.js";
 
 export class Entity<Props> {
   private _id: UniqueEntityId;
@@ -42,9 +42,7 @@ export class Entity<Props> {
     const schemaDefinition: Record<string, ZodSchema> = {};
 
     // Fazendo uma type assertion para tratar `this.props` como um objeto indexável
-    for (const [key, value] of Object.entries(
-      this.props as Record<string, unknown>
-    )) {
+    for (const [key, value] of Object.entries(this.props as Record<string, unknown>)) {
       schemaDefinition[key] = this.getZodType(value);
     }
 

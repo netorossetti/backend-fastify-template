@@ -1,7 +1,7 @@
-import { Entity } from "src/core/entities/entity-uuid";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { Json } from "src/core/types/json";
-import { Optional } from "src/core/types/optional";
+import { Entity } from "src/core/entities/entity-uuid.js";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { Json } from "src/core/types/json.js";
+import { Optional } from "src/core/types/optional.js";
 
 export type RoleUserType = "user" | "admin" | "superAdmin";
 
@@ -81,7 +81,7 @@ export class Membership extends Entity<MembershipProps> {
 
   static create(
     props: Optional<MembershipProps, "createdAt" | "owner" | "active">,
-    id?: UniqueEntityId
+    id?: UniqueEntityId,
   ) {
     const instance = new Membership(
       {
@@ -90,7 +90,7 @@ export class Membership extends Entity<MembershipProps> {
         owner: props.owner ?? false,
         createdAt: props.createdAt ?? new Date(),
       },
-      id
+      id,
     );
     return instance;
   }

@@ -1,7 +1,7 @@
-import { AggregateRoot } from "../entities/aggregate-root";
-import { DomainEvent } from "./domain-event";
-import { DomainEvents } from "./domain-events";
 import { vi } from "vitest";
+import { AggregateRoot } from "../entities/aggregate-root.js";
+import { DomainEvent } from "./domain-event.js";
+import { DomainEvents } from "./domain-events.js";
 
 class CustomAggregateCreated implements DomainEvent {
   public ocurredAt: Date;

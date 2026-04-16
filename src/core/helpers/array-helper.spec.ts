@@ -1,4 +1,4 @@
-import { ArrayHelper } from "./array-helper";
+import { ArrayHelper } from "./array-helper.js";
 
 describe("Array Helper", () => {
   test("Verifica campos duplicados", () => {
@@ -8,15 +8,9 @@ describe("Array Helper", () => {
       { campo: "valor3", valor: "12" },
       { campo: "valor4", valor: "10" },
     ];
-    const temDuplicatasCampo = ArrayHelper.verificarDuplicatas(
-      arrayDeObjetosDiferente,
-      "campo"
-    );
+    const temDuplicatasCampo = ArrayHelper.verificarDuplicatas(arrayDeObjetosDiferente, "campo");
 
-    const temDuplicatasValor = ArrayHelper.verificarDuplicatas(
-      arrayDeObjetosDiferente,
-      "valor"
-    );
+    const temDuplicatasValor = ArrayHelper.verificarDuplicatas(arrayDeObjetosDiferente, "valor");
 
     expect(temDuplicatasCampo).toBe(false);
     expect(temDuplicatasValor).toBe(true);

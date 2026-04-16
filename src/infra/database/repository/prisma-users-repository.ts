@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { UsersRepository } from "src/domain/application/repositories/users-repository";
-import { User } from "src/domain/enterprise/entities/user";
-import { PrismaUserMapper } from "./mappers/prisma-user-mapper";
+import { PrismaClient } from "prisma/generated/prisma/client";
+import { UsersRepository } from "src/domain/application/repositories/users-repository.js";
+import { User } from "src/domain/enterprise/entities/user.js";
+import { PrismaUserMapper } from "./mappers/prisma-user-mapper.js";
 
 export class PrismaUsersRepository implements UsersRepository {
   constructor(private prisma: PrismaClient) {}

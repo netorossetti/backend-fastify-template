@@ -1,10 +1,10 @@
-import { NotFoundError } from "@core/errors/not-found-error";
-import { TokenHelper } from "@core/helpers/token-helper";
-import { Result, failure, success } from "@core/result";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { MembershipsRepository } from "../../repositories/memberships-repository";
-import { TenantsRepository } from "../../repositories/tenants-repository";
-import { UsersRepository } from "../../repositories/users-repository";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { Result, failure, success } from "src/core/result.js";
+import { MembershipsRepository } from "../../repositories/memberships-repository.js";
+import { TenantsRepository } from "../../repositories/tenants-repository.js";
+import { UsersRepository } from "../../repositories/users-repository.js";
 
 interface SelectTenantUseCaseRequest {
   userId: string;
@@ -36,7 +36,7 @@ export class SelectTenantUseCase {
   constructor(
     private usersRepository: UsersRepository,
     private membershipsRepository: MembershipsRepository,
-    private tenantsRepository: TenantsRepository
+    private tenantsRepository: TenantsRepository,
   ) {}
 
   async execute({
@@ -49,28 +49,20 @@ export class SelectTenantUseCase {
     }
 
     const tenant = await this.tenantsRepository.findById(tenantId);
-    if (!tenant)
-      return failure(new NotFoundError("Organização não localizada."));
-    if (!tenant.active)
-      return failure(new NotFoundError("Organização inativa."));
+    if (!tenant) return failure(new NotFoundError("Organização não localizada."));
+    if (!tenant.active) return failure(new NotFoundError("Organização inativa."));
 
-    const allMemberships = await this.membershipsRepository.findManyByUser(
-      userId
-    );
+    const allMemberships = await this.membershipsRepository.findManyByUser(userId);
     const memberships = allMemberships.filter(
-      (m) => m.active || m.owner || m.role === "superAdmin"
+      (m) => m.active || m.owner || m.role === "superAdmin",
     );
     if (!memberships.length) {
-      return failure(
-        new NotFoundError("Usuário não pertence a nenhuma organização.")
-      );
+      return failure(new NotFoundError("Usuário não pertence a nenhuma organização."));
     }
 
     const targetMembership = memberships.find((m) => m.tenantId === tenantId);
     if (!targetMembership) {
-      return failure(
-        new NotAllowedError("Usuário não pertence à organização selecionada.")
-      );
+      return failure(new NotAllowedError("Usuário não pertence à organização selecionada."));
     }
 
     // Atualiza lastAccessAt para o tenant atual

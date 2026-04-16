@@ -1,9 +1,9 @@
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeLogoutUseCase } from "src/infra/factories/auth/make-logout-use-case";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeLogoutUseCase } from "src/infra/factories/auth/make-logout-use-case.js";
 import z from "zod/v4";
-import { schemaResponseError } from "../../@schema-errors/response-error-schema";
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { auth } from "../../middleware/auth";
+import { schemaResponseError } from "../../@schema-errors/response-error-schema.js";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { auth } from "../../middleware/auth.js";
 
 export async function logout(app: FastifyTypedInstace) {
   app.register(auth).post(

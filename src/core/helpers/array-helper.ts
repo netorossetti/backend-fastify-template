@@ -1,6 +1,6 @@
 // array-helper.ts
 
-import { QueryOptions } from "../types/interfaces/query-options";
+import { QueryOptions } from "../types/interfaces/query-options.js";
 
 export class ArrayHelper {
   // Método para verificar duplicatas em uma propriedade específica
@@ -46,41 +46,22 @@ export class ArrayHelper {
           conditions.in !== undefined &&
           conditions.in.every((val) => typeof val === "string") &&
           typeof value === "string" &&
-          !conditions.in.some(
-            (val) => val.toLowerCase() === value.toLowerCase()
-          )
+          !conditions.in.some((val) => val.toLowerCase() === value.toLowerCase())
         )
           return false;
 
-        if (
-          conditions.gt !== undefined &&
-          typeof value === "number" &&
-          value <= conditions.gt
-        )
+        if (conditions.gt !== undefined && typeof value === "number" && value <= conditions.gt)
           return false;
-        if (
-          conditions.gte !== undefined &&
-          typeof value === "number" &&
-          value < conditions.gte
-        )
+        if (conditions.gte !== undefined && typeof value === "number" && value < conditions.gte)
           return false;
-        if (
-          conditions.lt !== undefined &&
-          typeof value === "number" &&
-          value >= conditions.lt
-        )
+        if (conditions.lt !== undefined && typeof value === "number" && value >= conditions.lt)
           return false;
-        if (
-          conditions.lte !== undefined &&
-          typeof value === "number" &&
-          value > conditions.lte
-        )
+        if (conditions.lte !== undefined && typeof value === "number" && value > conditions.lte)
           return false;
 
         if (conditions.between) {
           const [min, max] = conditions.between;
-          if (typeof value === "number" && (value < min || value > max))
-            return false;
+          if (typeof value === "number" && (value < min || value > max)) return false;
         }
 
         if (
@@ -117,13 +98,7 @@ export class ArrayHelper {
           : bVal.toLowerCase().localeCompare(aVal.toLowerCase());
       }
 
-      return sortOrder === "asc"
-        ? aVal > bVal
-          ? 1
-          : -1
-        : aVal < bVal
-        ? 1
-        : -1;
+      return sortOrder === "asc" ? (aVal > bVal ? 1 : -1) : aVal < bVal ? 1 : -1;
     });
   }
 

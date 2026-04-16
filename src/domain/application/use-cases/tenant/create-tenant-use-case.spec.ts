@@ -1,15 +1,15 @@
 import { faker } from "@faker-js/faker";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { BadRequestError } from "src/core/errors/bad-request-error";
-import { ConflictError } from "src/core/errors/conflict-error";
-import { makeTenant } from "test/factories/make-tenant";
-import { makeUser } from "test/factories/make-user";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { BadRequestError } from "src/core/errors/bad-request-error.js";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { makeTenant } from "test/factories/make-tenant.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import * as cnpj from "validation-br/dist/cnpj";
-import { CreateTenantUseCase } from "./create-tenant-use-case";
+import { CreateTenantUseCase } from "./create-tenant-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -27,7 +27,7 @@ describe("Login Use Case", () => {
       inMemoryTenantsRepository,
       inMemoryUsersRepository,
       inMemoryMembershipsRepository,
-      fakeHasher
+      fakeHasher,
     );
   });
 
@@ -51,15 +51,13 @@ describe("Login Use Case", () => {
     expect(inMemoryTenantsRepository.items.length).toEqual(1);
     expect(inMemoryMembershipsRepository.items.length).toEqual(1);
     expect(inMemoryUsersRepository.items).toEqual(
-      expect.arrayContaining([expect.objectContaining({ nickName: firstName })])
+      expect.arrayContaining([expect.objectContaining({ nickName: firstName })]),
     );
   });
 
   test("Não deve ser possível criar um tenant com um mesmo numero de decumento", async () => {
     const documentNumber = cnpj.fake({ alphanumeric: false });
-    inMemoryTenantsRepository.items.push(
-      makeTenant({ documentType: "CNPJ", documentNumber })
-    );
+    inMemoryTenantsRepository.items.push(makeTenant({ documentType: "CNPJ", documentNumber }));
 
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
@@ -78,9 +76,7 @@ describe("Login Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(ConflictError);
-      expect(result.value.message).toBe(
-        "Organização já foi registrada com o documento informado."
-      );
+      expect(result.value.message).toBe("Organização já foi registrada com o documento informado.");
     }
   });
 
@@ -102,9 +98,7 @@ describe("Login Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "Numero do documento informado não é um CPF válido."
-      );
+      expect(result.value.message).toBe("Numero do documento informado não é um CPF válido.");
     }
   });
 
@@ -126,9 +120,7 @@ describe("Login Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "Numero do documento informado não é um CNPJ válido."
-      );
+      expect(result.value.message).toBe("Numero do documento informado não é um CNPJ válido.");
     }
   });
 
@@ -150,9 +142,7 @@ describe("Login Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(BadRequestError);
-      expect(result.value.message).toBe(
-        "Numero do documento informado não é um CNH válido."
-      );
+      expect(result.value.message).toBe("Numero do documento informado não é um CNH válido.");
     }
   });
 
@@ -166,7 +156,7 @@ describe("Login Use Case", () => {
         nickName: firstName,
         email: faker.internet.email({ firstName }),
       },
-      new UniqueEntityId()
+      new UniqueEntityId(),
     );
     inMemoryUsersRepository.items.push(user);
 
@@ -188,7 +178,7 @@ describe("Login Use Case", () => {
     expect(inMemoryTenantsRepository.items.length).toEqual(1);
     expect(inMemoryMembershipsRepository.items.length).toEqual(1);
     expect(inMemoryUsersRepository.items).toEqual(
-      expect.arrayContaining([expect.objectContaining({ nickName: firstName })])
+      expect.arrayContaining([expect.objectContaining({ nickName: firstName })]),
     );
   });
 });

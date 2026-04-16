@@ -1,10 +1,10 @@
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { changePassword } from "./change-password";
-import { forgotPassword } from "./forgot-password";
-import { login } from "./login";
-import { logout } from "./logout";
-import { refreshToken } from "./refresh-token";
-import { resetPassword } from "./reset-password";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { changePassword } from "./change-password.js";
+import { forgotPassword } from "./forgot-password.js";
+import { login } from "./login.js";
+import { logout } from "./logout.js";
+import { refreshToken } from "./refresh-token.js";
+import { resetPassword } from "./reset-password.js";
 
 export async function authRoutes(app: FastifyTypedInstace) {
   app.register(login);

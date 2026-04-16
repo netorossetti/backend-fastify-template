@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { TokenHelper } from "./token-helper";
+import { TokenHelper } from "./token-helper.js";
 
 describe("Token Helper", () => {
   test("sing / decoded valid token", () => {
@@ -18,15 +18,13 @@ describe("Token Helper", () => {
         name: "Flório",
         email: "florio@libertaetecnologia.com.br",
         role: "superAdmin",
-      })
+      }),
     );
   });
 
   test("decoded invalid token", () => {
     expect(async () => {
-      TokenHelper.decodedToken(
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.123456.-1231536-70tYofFU6UQ"
-      );
+      TokenHelper.decodedToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.123456.-1231536-70tYofFU6UQ");
     }).rejects.toBeInstanceOf(Error);
   });
 });

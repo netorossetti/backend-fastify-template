@@ -1,4 +1,4 @@
-import { QuarterHelper } from "./quadrimestre-helper";
+import { QuarterHelper } from "./quadrimestre-helper.js";
 
 describe("Quadrimestre Helper", () => {
   test("Is quarter", () => {
@@ -41,10 +41,7 @@ describe("Quadrimestre Helper", () => {
   });
 
   test("Quarter to array", () => {
-    const result = QuarterHelper.quarterToArray(
-      "2023/Q1",
-      new Date(2025, 0, 1)
-    );
+    const result = QuarterHelper.quarterToArray("2023/Q1", new Date(2025, 0, 1));
     expect(result).toEqual([
       "2023/Q1",
       "2023/Q2",

@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { env } from "src/core/env";
+import { env } from "src/core/env/index.js";
 
 export interface IRedisService {
   set(key: string, value: any, expire?: number): Promise<void>;

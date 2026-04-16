@@ -1,6 +1,6 @@
-import { FastifyTypedInstace } from "../../@types/fastify-typed-instance";
-import { getUserProfile } from "./get-user-profile";
-import { updateUserProfile } from "./update-user-profile";
+import { FastifyTypedInstace } from "../../@types/fastify-typed-instance.js";
+import { getUserProfile } from "./get-user-profile.js";
+import { updateUserProfile } from "./update-user-profile.js";
 
 export async function usersRoutes(app: FastifyTypedInstace) {
   app.register(getUserProfile);

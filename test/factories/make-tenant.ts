@@ -1,14 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client";
-import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id";
-import { Tenant, TenantProps } from "src/domain/enterprise/entities/tenant";
-import { PrismaTenantMapper } from "src/infra/database/repository/mappers/prisma-tenant-mapper";
+import { PrismaClient } from "prisma/generated/prisma/client";
+import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
+import { Tenant, TenantProps } from "src/domain/enterprise/entities/tenant.js";
+import { PrismaTenantMapper } from "src/infra/database/repository/mappers/prisma-tenant-mapper.js";
 import { fake } from "validation-br/dist/cpf";
 
-export function makeTenant(
-  override: Partial<TenantProps> = {},
-  id?: UniqueEntityId
-) {
+export function makeTenant(override: Partial<TenantProps> = {}, id?: UniqueEntityId) {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
   const newTenant = Tenant.create(
@@ -20,7 +17,7 @@ export function makeTenant(
       active: true,
       ...override,
     },
-    id ?? new UniqueEntityId()
+    id ?? new UniqueEntityId(),
   );
   return newTenant;
 }

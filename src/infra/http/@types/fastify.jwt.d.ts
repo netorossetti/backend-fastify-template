@@ -1,6 +1,6 @@
 // fastify-jwt.d.ts
 import "@fastify/jwt";
-import type { RoleUserType } from "src/domain/enterprise/entities/user";
+import type { RoleUserType } from "src/domain/enterprise/entities/user.js";
 
 declare module "@fastify/jwt" {
   export interface FastifyJWT {

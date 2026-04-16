@@ -1,6 +1,6 @@
-import { ValueObject } from "src/core/entities/value-object";
-import { Json } from "src/core/types/json";
-import { RoleUserType } from "../membership";
+import { ValueObject } from "src/core/entities/value-object.js";
+import { Json } from "src/core/types/json.js";
+import { RoleUserType } from "../membership.js";
 
 export interface UserWithMembershipProps {
   userId: string;

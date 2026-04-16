@@ -1,11 +1,9 @@
-import { jsonSchema } from "src/core/types/json";
-import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership";
+import { jsonSchema } from "src/core/types/json.js";
+import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership.js";
 import z from "zod/v4";
 
 export class UserMembershipPresenter {
-  static toHttp(
-    user: UserWithMembership
-  ): z.infer<typeof schemaUserMembershipPresenter> {
+  static toHttp(user: UserWithMembership): z.infer<typeof schemaUserMembershipPresenter> {
     return {
       userId: user.userId,
       firstName: user.firstName,

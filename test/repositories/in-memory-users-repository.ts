@@ -1,5 +1,5 @@
-import { UsersRepository } from "src/domain/application/repositories/users-repository";
-import { User } from "src/domain/enterprise/entities/user";
+import { UsersRepository } from "src/domain/application/repositories/users-repository.js";
+import { User } from "src/domain/enterprise/entities/user.js";
 
 export class InMemoryUsersRepository implements UsersRepository {
   public items: User[] = [];

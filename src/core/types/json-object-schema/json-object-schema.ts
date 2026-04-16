@@ -1,6 +1,6 @@
-import { Entity } from "@core/entities/entity";
-import { Optional } from "@core/types/optional";
-import { JsonObjectSchemaList } from "./json-object-schema-list";
+import { Entity } from "src/core/entities/entity.js";
+import { Optional } from "src/core/types/optional.js";
+import { JsonObjectSchemaList } from "./json-object-schema-list.js";
 
 export type enumTypeJsonObjectSchema =
   | "TEXT"
@@ -166,7 +166,7 @@ export class JsonObjectSchema extends Entity<JsonObjectSchemaProps> {
       JsonObjectSchemaProps,
       "isCollection" | "parentSchemaId" | "objectSchemas" | "createdAt"
     >,
-    id?: number
+    id?: number,
   ) {
     const jsonObjectSchema = new JsonObjectSchema(
       {
@@ -176,7 +176,7 @@ export class JsonObjectSchema extends Entity<JsonObjectSchemaProps> {
         objectSchemas: props.objectSchemas ?? new JsonObjectSchemaList(),
         createdAt: new Date(),
       },
-      id
+      id,
     );
     return jsonObjectSchema;
   }

@@ -1,18 +1,15 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "prisma/generated/prisma/client";
 
-import { MembershipsRepository } from "src/domain/application/repositories/memberships-repository";
-import { Membership } from "src/domain/enterprise/entities/membership";
-import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership";
-import { PrismaMembershipMapper } from "./mappers/prisma-membership-mapper";
-import { PrismaUserWithMembershipMapper } from "./mappers/prisma-user-with-membership-mapper";
+import { MembershipsRepository } from "src/domain/application/repositories/memberships-repository.js";
+import { Membership } from "src/domain/enterprise/entities/membership.js";
+import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership.js";
+import { PrismaMembershipMapper } from "./mappers/prisma-membership-mapper.js";
+import { PrismaUserWithMembershipMapper } from "./mappers/prisma-user-with-membership-mapper.js";
 
 export class PrismaMembershipsRepository implements MembershipsRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async findByUserAndTenant(
-    userId: string,
-    tenantId: string
-  ): Promise<Membership | null> {
+  async findByUserAndTenant(userId: string, tenantId: string): Promise<Membership | null> {
     const dbMembership = await this.prisma.usersOnTenants.findUnique({
       where: {
         userId_tenantId: {
@@ -25,20 +22,14 @@ export class PrismaMembershipsRepository implements MembershipsRepository {
     return PrismaMembershipMapper.toDomain(dbMembership);
   }
 
-  async findManyByUser(
-    userId: string,
-    active?: boolean
-  ): Promise<Membership[]> {
+  async findManyByUser(userId: string, active?: boolean): Promise<Membership[]> {
     const dbMemberships = await this.prisma.usersOnTenants.findMany({
       where: { userId, active: active !== undefined ? active : undefined },
     });
     return dbMemberships.map(PrismaMembershipMapper.toDomain);
   }
 
-  async findManyByTenant(
-    tenantId: string,
-    active?: boolean
-  ): Promise<Membership[]> {
+  async findManyByTenant(tenantId: string, active?: boolean): Promise<Membership[]> {
     const dbMemberships = await this.prisma.usersOnTenants.findMany({
       where: { tenantId, active: active !== undefined ? active : undefined },
     });
@@ -53,17 +44,12 @@ export class PrismaMembershipsRepository implements MembershipsRepository {
     return usersMembership.map(PrismaUserWithMembershipMapper.toDomain);
   }
 
-  async verifyPermissionAdmin(
-    tenantId: string,
-    userId: string
-  ): Promise<boolean> {
+  async verifyPermissionAdmin(tenantId: string, userId: string): Promise<boolean> {
     const membership = await this.prisma.usersOnTenants.findUnique({
       where: { userId_tenantId: { userId, tenantId } },
     });
     if (!membership) return false;
-    return (
-      membership.owner || ["superAdmin", "admin"].includes(membership.role)
-    );
+    return membership.owner || ["superAdmin", "admin"].includes(membership.role);
   }
 
   async updateLastAccess(userId: string, tenantId: string): Promise<boolean> {

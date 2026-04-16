@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
-import { StringHelper } from "src/core/helpers/string-helper";
+import { StringHelper } from "src/core/helpers/string-helper.js";
 import request from "supertest";
 import * as cnpj from "validation-br/dist/cnpj";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { app } from "../../app";
+import { app } from "../../app.js";
 
 describe("Tenant - CreateTenant (e2e)", () => {
   beforeAll(async () => {

@@ -2,10 +2,10 @@ UserWithMembership;
 import {
   UsersOnTenants as PrismaMembership,
   User as PrismaUser,
-} from "@prisma/client";
-import { Json } from "src/core/types/json";
-import { RoleUserType } from "src/domain/enterprise/entities/membership";
-import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership";
+} from "prisma/generated/prisma/client";
+import { Json } from "src/core/types/json.js";
+import { RoleUserType } from "src/domain/enterprise/entities/membership.js";
+import { UserWithMembership } from "src/domain/enterprise/entities/value-objects/user-with-membership.js";
 
 type RawUserWithMembership = PrismaMembership & {
   user: PrismaUser;

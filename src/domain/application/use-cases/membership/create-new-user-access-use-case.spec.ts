@@ -1,16 +1,16 @@
 import { faker } from "@faker-js/faker";
-import { ConflictError } from "src/core/errors/conflict-error";
-import { NotAllowedError } from "src/core/errors/not-allowed-error";
-import { NotFoundError } from "src/core/errors/not-found-error";
-import { makeMembership } from "test/factories/make-membership";
-import { makeTenant } from "test/factories/make-tenant";
-import { makeUser } from "test/factories/make-user";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher";
-import { FakerUploader } from "test/lib/faker-uploader";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository";
-import { CreateNewUserAccessUseCase } from "./create-new-user-access-use-case";
+import { ConflictError } from "src/core/errors/conflict-error.js";
+import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
+import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { makeMembership } from "test/factories/make-membership.js";
+import { makeTenant } from "test/factories/make-tenant.js";
+import { makeUser } from "test/factories/make-user.js";
+import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
+import { FakerUploader } from "test/lib/faker-uploader.js";
+import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
+import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
+import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
+import { CreateNewUserAccessUseCase } from "./create-new-user-access-use-case.js";
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTenantsRepository: InMemoryTenantsRepository;
@@ -31,7 +31,7 @@ describe("Create New User Access Use Case", () => {
       inMemoryTenantsRepository,
       inMemoryMembershipsRepository,
       fakerUploader,
-      fakeHasher
+      fakeHasher,
     );
   });
 
@@ -45,7 +45,7 @@ describe("Create New User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const firstName = faker.person.firstName();
@@ -87,7 +87,7 @@ describe("Create New User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const otherTenant = makeTenant();
@@ -99,7 +99,7 @@ describe("Create New User Access Use Case", () => {
         userId: otherUser.id.toString(),
         tenantId: otherTenant.id.toString(),
         role: "user",
-      })
+      }),
     );
 
     const result = await sut.execute({
@@ -228,9 +228,7 @@ describe("Create New User Access Use Case", () => {
     expect(result.isFailure()).toBe(true);
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
-      expect(result.value.message).toBe(
-        "Acesso negado. Usuário sem vinculo de acesso."
-      );
+      expect(result.value.message).toBe("Acesso negado. Usuário sem vinculo de acesso.");
     }
   });
 
@@ -244,7 +242,7 @@ describe("Create New User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         active: false,
-      })
+      }),
     );
 
     const firstName = faker.person.firstName();
@@ -275,7 +273,7 @@ describe("Create New User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "user",
-      })
+      }),
     );
 
     const firstName = faker.person.firstName();
@@ -293,7 +291,7 @@ describe("Create New User Access Use Case", () => {
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(NotAllowedError);
       expect(result.value.message).toBe(
-        "Usuário não tem permisão necessária para criar um novo usuário."
+        "Usuário não tem permisão necessária para criar um novo usuário.",
       );
     }
   });
@@ -308,7 +306,7 @@ describe("Create New User Access Use Case", () => {
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
         role: "admin",
-      })
+      }),
     );
 
     const otherUser = makeUser();
@@ -318,7 +316,7 @@ describe("Create New User Access Use Case", () => {
         userId: otherUser.id.toString(),
         tenantId: tenant.id.toString(),
         role: "user",
-      })
+      }),
     );
 
     const firstName = faker.person.firstName();
@@ -336,7 +334,7 @@ describe("Create New User Access Use Case", () => {
     if (result.isFailure()) {
       expect(result.value).toBeInstanceOf(ConflictError);
       expect(result.value.message).toBe(
-        "Já existe um usuário registrado para sua organização com o mesmo email informado!"
+        "Já existe um usuário registrado para sua organização com o mesmo email informado!",
       );
     }
   });

@@ -1,8 +1,8 @@
 import { convert } from "html-to-text";
 import nodemailer from "nodemailer";
-import { env } from "src/core/env";
-import { StringHelper } from "src/core/helpers/string-helper";
-import { MailSender, mailOptions } from "src/core/lib/mail-sender/mail-sender";
+import { env } from "src/core/env/index.js";
+import { StringHelper } from "src/core/helpers/string-helper.js";
+import { MailSender, mailOptions } from "src/core/lib/mail-sender/mail-sender.js";
 
 export class NodemailerMailSender implements MailSender {
   private transporter;
@@ -19,13 +19,7 @@ export class NodemailerMailSender implements MailSender {
     });
   }
 
-  async sendEmail({
-    to,
-    subject,
-    fromName,
-    fromEmail,
-    bodyMessage,
-  }: mailOptions): Promise<void> {
+  async sendEmail({ to, subject, fromName, fromEmail, bodyMessage }: mailOptions): Promise<void> {
     if (!bodyMessage) throw new Error("Texto da mensagem não foi definido");
 
     const isHtml = StringHelper.isHTML(bodyMessage);
@@ -41,18 +35,12 @@ export class NodemailerMailSender implements MailSender {
         html: isHtml ? bodyMessage : undefined,
       });
     } else if (env.NODE_ENV === "dev") {
-      let text = isHtml
-        ? convert(bodyMessage, { wordwrap: false })
-        : bodyMessage;
-      console.log(
-        "## FAKE EMAIL ###################################################"
-      );
+      let text = isHtml ? convert(bodyMessage, { wordwrap: false }) : bodyMessage;
+      console.log("## FAKE EMAIL ###################################################");
       console.log(`From: "${sendFromName}" <${sendFromEmail}>`);
       console.log(`To: `, to);
       console.log(text);
-      console.log(
-        "#################################################################"
-      );
+      console.log("#################################################################");
     }
   }
 }

@@ -1,4 +1,4 @@
-import { DateHelper } from "./date-helper";
+import { DateHelper } from "./date-helper.js";
 
 describe("Date Helper", () => {
   test("Timestamp to date", () => {
@@ -7,14 +7,9 @@ describe("Date Helper", () => {
   });
 
   test("Timestamp to date", () => {
-    const milisecondsts = DateHelper.dateToTimestamp(
-      new Date(2024, 9, 23, 15, 17, 47, 153)
-    );
+    const milisecondsts = DateHelper.dateToTimestamp(new Date(2024, 9, 23, 15, 17, 47, 153));
     expect(milisecondsts).toEqual(1729707467153);
-    const secondsts = DateHelper.dateToTimestamp(
-      new Date(2024, 9, 23, 15, 17, 47, 153),
-      "seconds"
-    );
+    const secondsts = DateHelper.dateToTimestamp(new Date(2024, 9, 23, 15, 17, 47, 153), "seconds");
     expect(secondsts).toEqual(1729707467);
   });
 

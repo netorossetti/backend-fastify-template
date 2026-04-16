@@ -1,10 +1,10 @@
-import redisServices from "src/core/lib/redis/redis-services";
-import { LoginUseCase } from "src/domain/application/use-cases/auth/login-use-case";
-import { PrismaMembershipsRepository } from "src/infra/database/repository/prisma-memberships-repository";
-import { PrismaTenantsRepository } from "src/infra/database/repository/prisma-tenants-repository";
-import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository";
-import { prisma } from "../../database/prisma";
-import { BcryptHasher } from "../../lib/criptography/bcrypt-hasher";
+import redisServices from "src/core/lib/redis/redis-services.js";
+import { LoginUseCase } from "src/domain/application/use-cases/auth/login-use-case.js";
+import { PrismaMembershipsRepository } from "src/infra/database/repository/prisma-memberships-repository.js";
+import { PrismaTenantsRepository } from "src/infra/database/repository/prisma-tenants-repository.js";
+import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository.js";
+import { prisma } from "../../database/prisma.js";
+import { BcryptHasher } from "../../lib/criptography/bcrypt-hasher.js";
 
 export function makeLoginUseCase() {
   const usersRepository = new PrismaUsersRepository(prisma);
@@ -16,6 +16,6 @@ export function makeLoginUseCase() {
     tenantsRepository,
     membershipsRepository,
     bcryptHasher,
-    redisServices
+    redisServices,
   );
 }
