@@ -1,14 +1,14 @@
-import { TenantsRepository } from "src/domain/application/repositories/tenants-repository.js";
-import { Tenant } from "src/domain/enterprise/entities/tenant.js";
-import { InMemoryMembershipsRepository } from "./in-memory-memberships-repository.js";
+import { TenantsRepository } from "src/domain/application/repositories/tenants-repository";
+import { Tenant } from "src/domain/enterprise/entities/tenant";
+import { InMemoryMembershipsRepository } from "./in-memory-memberships-repository";
 
 export class InMemoryTenantsRepository implements TenantsRepository {
   public items: Tenant[] = [];
 
-  private membershipsRepository?: InMemoryMembershipsRepository;
+  private getMembershipsRepository?: () => InMemoryMembershipsRepository;
 
-  setMembershipsRepository(repo: InMemoryMembershipsRepository) {
-    this.membershipsRepository = repo;
+  setMembershipsRepository(getter: () => InMemoryMembershipsRepository) {
+    this.getMembershipsRepository = getter;
   }
 
   async findById(id: string): Promise<Tenant | null> {
@@ -22,10 +22,10 @@ export class InMemoryTenantsRepository implements TenantsRepository {
   }
 
   async findManyByUser(userId: string): Promise<Tenant[]> {
-    if (!this.membershipsRepository)
-      throw new Error("InMemoryTenantsRepository: membershipsRepository not provider.");
+    const membershipsRepository = this.getMembershipsRepository?.();
+    if (!membershipsRepository) throw new Error("membershipsRepository not provider.");
 
-    const tenantsIds = this.membershipsRepository.items
+    const tenantsIds = membershipsRepository.items
       .filter((i) => i.userId === userId)
       .reduce<string[]>((acc, curr) => {
         if (
@@ -50,14 +50,14 @@ export class InMemoryTenantsRepository implements TenantsRepository {
   }
 
   async save(tenant: Tenant): Promise<void> {
-    const itemIndex = this.items.findIndex((item) => item.id === tenant.id);
+    const itemIndex = this.items.findIndex((item) => item.id.equals(tenant.id));
     if (itemIndex !== -1) {
       this.items[itemIndex] = tenant;
     }
   }
 
   async delete(tenant: Tenant): Promise<boolean> {
-    const newItems = this.items.filter((i) => i.id !== tenant.id);
+    const newItems = this.items.filter((i) => !i.id.equals(tenant.id));
     const excluded = newItems.length < this.items.length;
     this.items = newItems;
     return excluded;

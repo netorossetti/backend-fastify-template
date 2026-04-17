@@ -4,7 +4,7 @@ import { PrismaMembershipsRepository } from "src/infra/database/repository/prism
 import { PrismaTenantsRepository } from "src/infra/database/repository/prisma-tenants-repository.js";
 import { PrismaUsersRepository } from "src/infra/database/repository/prisma-users-repository.js";
 import { BcryptHasher } from "src/infra/lib/criptography/bcrypt-hasher.js";
-import { LocalUploader } from "src/infra/lib/uploader/local-uploader.js";
+import { LocalStorage } from "src/infra/lib/storage/local-storage.js";
 import { prisma } from "../../database/prisma.js";
 
 export function makeCreateNewUserAccessUseCase() {
@@ -12,7 +12,7 @@ export function makeCreateNewUserAccessUseCase() {
   const tenantsRepository = new PrismaTenantsRepository(prisma);
   const membershipsRepository = new PrismaMembershipsRepository(prisma);
   const bcryptHasher = new BcryptHasher();
-  const localUploader = new LocalUploader(env.UPLOADS_PUBLIC_PATH);
+  const localUploader = new LocalStorage(env.UPLOADS_PUBLIC_PATH);
 
   return new CreateNewUserAccessUseCase(
     usersRepository,

@@ -1,25 +1,19 @@
 import { env } from "src/core/env/index.js";
 import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
 import { DateHelper } from "src/core/helpers/date-helper.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeAuthToken } from "test/factories/make-auth-token.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
-import { FakeRedisServices } from "test/lib/faker-redis-services.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { RefreshTokenUseCase } from "./refresh-token-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let fakeHasher: FakeHasher;
-let fakeRedisServices: FakeRedisServices;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: RefreshTokenUseCase;
 
 describe("Refresh Token Use Case", () => {
   beforeEach(() => {
-    fakeHasher = new FakeHasher();
-    fakeRedisServices = new FakeRedisServices();
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    sut = new RefreshTokenUseCase(fakeRedisServices);
+    ctx = createTestContext();
+    sut = new RefreshTokenUseCase(ctx.fakerRedisServices);
 
     // tell vitest we use mocked time
     vi.useFakeTimers();
@@ -31,11 +25,11 @@ describe("Refresh Token Use Case", () => {
   });
 
   test("Deve ser possível solicitar um refresh", async () => {
-    const passwordHash = await fakeHasher.hash("teste@1234");
+    const passwordHash = await ctx.fakerHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const membership = makeMembership({ userId: user.id.toString() });
-    const token = makeAuthToken(user, membership, fakeRedisServices);
+    const token = makeAuthToken(user, membership, ctx.fakerRedisServices);
     const result = await sut.execute({
       usuarioId: user.id.toString(),
       token,
@@ -52,11 +46,11 @@ describe("Refresh Token Use Case", () => {
     const date = new Date();
     vi.setSystemTime(date);
 
-    const passwordHash = await fakeHasher.hash("teste@1234");
+    const passwordHash = await ctx.fakerHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const membership = makeMembership({ userId: user.id.toString() });
-    const token = makeAuthToken(user, membership, fakeRedisServices);
+    const token = makeAuthToken(user, membership, ctx.fakerRedisServices);
 
     const jwtExpSeconds = (env.JWT_EXP ?? 10) - 10;
     vi.setSystemTime(DateHelper.addSeconds(date, jwtExpSeconds));
@@ -76,11 +70,11 @@ describe("Refresh Token Use Case", () => {
     const date = new Date();
     vi.setSystemTime(date);
 
-    const passwordHash = await fakeHasher.hash("teste@1234");
+    const passwordHash = await ctx.fakerHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const membership = makeMembership({ userId: user.id.toString() });
-    const token = makeAuthToken(user, membership, fakeRedisServices);
+    const token = makeAuthToken(user, membership, ctx.fakerRedisServices);
 
     const jwtExpSeconds = (env.JWT_EXP ?? 10) + 10;
     vi.setSystemTime(DateHelper.addSeconds(date, jwtExpSeconds));

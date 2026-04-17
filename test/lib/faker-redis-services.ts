@@ -1,11 +1,31 @@
-import { IRedisService } from "src/core/lib/redis/redis-services.js";
+import Redis from "ioredis";
+import { IRedisService } from "src/core/lib/redis/redis-services";
 
-export class FakeRedisServices implements IRedisService {
+export class FakerRedisServices implements IRedisService {
+  public client: Redis;
+  constructor() {
+    this.client = new Redis();
+  }
+
   private store: Map<string, { value: any; expireAt?: number }> = new Map();
 
-  async set(key: string, value: any, expire?: number): Promise<void> {
-    const expireAt = expire ? Date.now() + expire * 1000 : undefined;
+  async set(key: string, value: any, expire?: number, nx?: boolean): Promise<boolean> {
+    const now = Date.now();
+    const existing = this.store.get(key);
+
+    // Lógica de expiração: se existia mas expirou, tratamos como se não existisse
+    const isExpired = existing?.expireAt && now > existing.expireAt;
+
+    if (nx && existing && !isExpired) {
+      // Se pediu NX e a chave já existe (e está válida), falha na aquisição
+      return false;
+    }
+
+    // Se chegou aqui, ou não é NX, ou a chave não existe/expirou
+    const expireAt = expire ? now + expire * 1000 : undefined;
     this.store.set(key, { value, expireAt });
+
+    return true; // Sucesso (equivale ao "OK" do Redis)
   }
 
   async get(key: string): Promise<any | null> {

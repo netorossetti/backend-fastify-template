@@ -1,38 +1,31 @@
 import { faker } from "@faker-js/faker";
 import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { ListUserAccessUseCase } from "./list-user-access-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: ListUserAccessUseCase;
 
 describe("Update User Access Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
-    inMemoryMembershipsRepository.setUsersRepository(inMemoryUsersRepository);
+    ctx = createTestContext();
     sut = new ListUserAccessUseCase(
-      inMemoryUsersRepository,
-      inMemoryTenantsRepository,
-      inMemoryMembershipsRepository,
+      ctx.usersRepository,
+      ctx.tenantsRepository,
+      ctx.membershipsRepository,
     );
   });
 
   test("Deve ser possível obter lista acessos dos usuarios.", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -41,8 +34,8 @@ describe("Update User Access Use Case", () => {
     );
 
     const otherUser = makeUser();
-    inMemoryUsersRepository.items.push(otherUser);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(otherUser);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: otherUser.id.toString(),
         tenantId: tenant.id.toString(),
@@ -75,7 +68,7 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível obter lista acessos dos usuarios com uma organização inválida", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -90,9 +83,9 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível obter lista acessos dos usuarios com uma organização inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -107,9 +100,9 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível obter lista acessos dos usuarios com uma organização inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -124,9 +117,9 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível obter lista acessos dos usuarios com um usuário sem vinculo de acesso à organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -141,10 +134,10 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível obter lista acessos dos usuarios com um usuário com vinculo de acesso inativado na organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -165,10 +158,10 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível obter lista acessos dos usuarios com um usuário sem privilegio de acesso na organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),

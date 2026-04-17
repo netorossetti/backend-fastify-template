@@ -5,6 +5,6 @@ export interface UploadParams {
   folder?: string; // opcional: pode ser "avatars"
 }
 
-export interface Uploader {
+export interface FileUploader {
   upload(params: UploadParams): Promise<string>; // retorna a URL do arquivo
 }

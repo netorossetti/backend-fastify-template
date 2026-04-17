@@ -2,43 +2,31 @@ import { faker } from "@faker-js/faker";
 import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
 import { UnauthorizedError } from "src/core/errors/unauthorized-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
-import { FakeRedisServices } from "test/lib/faker-redis-services.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { LoginUseCase } from "./login-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
-let fakeHasher: FakeHasher;
-let fakeRedisServices: FakeRedisServices;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: LoginUseCase;
 
 describe("Login Use Case", () => {
   beforeEach(() => {
-    fakeHasher = new FakeHasher();
-    fakeRedisServices = new FakeRedisServices();
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
+    ctx = createTestContext();
     sut = new LoginUseCase(
-      inMemoryUsersRepository,
-      inMemoryTenantsRepository,
-      inMemoryMembershipsRepository,
-      fakeHasher,
-      fakeRedisServices,
+      ctx.usersRepository,
+      ctx.tenantsRepository,
+      ctx.membershipsRepository,
+      ctx.fakerHasher,
+      ctx.fakerRedisServices,
     );
   });
 
   test("Deve ser possivel realizar um login", async () => {
-    const passwordHash = await fakeHasher.hash("teste@1234");
+    const passwordHash = await ctx.fakerHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
       }),
@@ -65,7 +53,7 @@ describe("Login Use Case", () => {
 
   test("Não deve ser possivel realizar um login de usuário com senha não definida", async () => {
     const user = makeUser({ password: "" });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const result = await sut.execute({
       email: user.email,
       password: "teste@",
@@ -78,9 +66,9 @@ describe("Login Use Case", () => {
   });
 
   test("Não deve ser possivel realizar um login de usuário com senha inválida", async () => {
-    const passwordHash = await fakeHasher.hash("teste@1234");
+    const passwordHash = await ctx.fakerHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const result = await sut.execute({
       email: user.email,
       password: "teste@",
@@ -90,9 +78,9 @@ describe("Login Use Case", () => {
   });
 
   test("Não deve ser possivel realizar um login de usuário sem vinculo de acesso", async () => {
-    const passwordHash = await fakeHasher.hash("teste@1234");
+    const passwordHash = await ctx.fakerHasher.hash("teste@1234");
     const user = makeUser({ password: passwordHash });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const result = await sut.execute({
       email: user.email,
       password: "teste@1234",

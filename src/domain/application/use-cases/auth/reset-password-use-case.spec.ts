@@ -2,24 +2,18 @@ import { env } from "src/core/env/index.js";
 import { BadRequestError } from "src/core/errors/bad-request-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
 import { DateHelper } from "src/core/helpers/date-helper.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeRecoveryCode } from "test/factories/make-recovery-code.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
-import { FakeRedisServices } from "test/lib/faker-redis-services.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { ResetPasswordUseCase } from "./reset-password-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let fakeRedisServices: FakeRedisServices;
-let fakeHasher: FakeHasher;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: ResetPasswordUseCase;
 
 describe("Reset Password Use Case", () => {
   beforeEach(() => {
-    fakeHasher = new FakeHasher();
-    fakeRedisServices = new FakeRedisServices();
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    sut = new ResetPasswordUseCase(inMemoryUsersRepository, fakeRedisServices, fakeHasher);
+    ctx = createTestContext();
+    sut = new ResetPasswordUseCase(ctx.usersRepository, ctx.fakerRedisServices, ctx.fakerHasher);
 
     // tell vitest we use mocked time
     vi.useFakeTimers();
@@ -32,9 +26,9 @@ describe("Reset Password Use Case", () => {
 
   test("Deve ser possivel redefinir uma senha", async () => {
     const user = makeUser({ password: "P@ssword_Old" });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
-    const recoveryCode = makeRecoveryCode(user, fakeRedisServices);
+    const recoveryCode = makeRecoveryCode(user, ctx.fakerRedisServices);
 
     const result = await sut.execute({
       recoveryCode: recoveryCode,
@@ -44,8 +38,8 @@ describe("Reset Password Use Case", () => {
 
     expect(result.isSuccess()).toBe(true);
     expect(result.value).toEqual({});
-    expect(inMemoryUsersRepository.items).toHaveLength(1);
-    expect(inMemoryUsersRepository.items[0].password).toEqual("Teste@2014-hashed");
+    expect(ctx.usersRepository.items).toHaveLength(1);
+    expect(ctx.usersRepository.items[0].password).toEqual("Teste@2014-hashed");
   });
 
   test("Não deve ser possivel redefinir uma senha com confirmação inválida", async () => {
@@ -83,7 +77,7 @@ describe("Reset Password Use Case", () => {
 
   test("Não deve ser possivel redefinir uma senha para um usuário não cadastrado", async () => {
     const user = makeUser();
-    const recoveryCode = makeRecoveryCode(user, fakeRedisServices);
+    const recoveryCode = makeRecoveryCode(user, ctx.fakerRedisServices);
 
     const result = await sut.execute({
       recoveryCode: recoveryCode,
@@ -103,9 +97,9 @@ describe("Reset Password Use Case", () => {
     vi.setSystemTime(date);
 
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
-    const recoveryCode = makeRecoveryCode(user, fakeRedisServices);
+    const recoveryCode = makeRecoveryCode(user, ctx.fakerRedisServices);
 
     const jwtExpSeconds = (env.JWT_EXP ?? 10) + 10;
     vi.setSystemTime(DateHelper.addSeconds(date, jwtExpSeconds));

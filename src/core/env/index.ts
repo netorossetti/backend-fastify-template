@@ -24,6 +24,8 @@ const envSchema = z.object({
   }),
   LOGGER_FOLDER: zodIsFolderSchema().optional(),
   LOGGER_FILENAME: z.string().optional(),
+  LOGGER_LEVEL: z.enum(["info", "debug", "warn", "error"]).optional(),
+  LOGGER_CONSOLE: z.stringbool().default(false),
   UPLOADS_PUBLIC_PATH: zodIsFolderSchema({ allowRelativePath: false }),
   UPLOADS_PRIVATE_PATH: zodIsFolderSchema({ allowRelativePath: false }),
   ENCRYPTION_KEY: z.string().min(10),

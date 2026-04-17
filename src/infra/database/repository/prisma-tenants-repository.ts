@@ -1,10 +1,10 @@
-import { PrismaClient } from "prisma/generated/prisma/client";
-import { TenantsRepository } from "src/domain/application/repositories/tenants-repository.js";
-import { Tenant } from "src/domain/enterprise/entities/tenant.js";
-import { PrismaTenantMapper } from "./mappers/prisma-tenant-mapper.js";
+import { Prisma, PrismaClient } from "prisma/generated/prisma/client";
+import { TenantsRepository } from "src/domain/application/repositories/tenants-repository";
+import { Tenant } from "src/domain/enterprise/entities/tenant";
+import { PrismaTenantMapper } from "./mappers/prisma-tenant-mapper";
 
 export class PrismaTenantsRepository implements TenantsRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient | Prisma.TransactionClient) {}
 
   async findById(id: string): Promise<Tenant | null> {
     const dbTenant = await this.prisma.tenant.findUnique({ where: { id } });
@@ -36,6 +36,7 @@ export class PrismaTenantsRepository implements TenantsRepository {
           },
         },
       },
+      orderBy: { name: "asc" },
     });
     return tenants.map(PrismaTenantMapper.toDomain);
   }

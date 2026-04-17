@@ -2,32 +2,23 @@ import { faker } from "@faker-js/faker";
 import { UniqueEntityId } from "src/core/entities/value-objects/unique-entity-id.js";
 import { BadRequestError } from "src/core/errors/bad-request-error.js";
 import { ConflictError } from "src/core/errors/conflict-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import * as cnpj from "validation-br/dist/cnpj";
 import { CreateTenantUseCase } from "./create-tenant-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
-let fakeHasher: FakeHasher;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: CreateTenantUseCase;
 
 describe("Login Use Case", () => {
   beforeEach(() => {
-    fakeHasher = new FakeHasher();
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
+    ctx = createTestContext();
     sut = new CreateTenantUseCase(
-      inMemoryTenantsRepository,
-      inMemoryUsersRepository,
-      inMemoryMembershipsRepository,
-      fakeHasher,
+      ctx.tenantsRepository,
+      ctx.usersRepository,
+      ctx.membershipsRepository,
+      ctx.fakerHasher,
     );
   });
 
@@ -47,17 +38,17 @@ describe("Login Use Case", () => {
       },
     });
     expect(result.isSuccess()).toBe(true);
-    expect(inMemoryUsersRepository.items.length).toEqual(1);
-    expect(inMemoryTenantsRepository.items.length).toEqual(1);
-    expect(inMemoryMembershipsRepository.items.length).toEqual(1);
-    expect(inMemoryUsersRepository.items).toEqual(
+    expect(ctx.usersRepository.items.length).toEqual(1);
+    expect(ctx.tenantsRepository.items.length).toEqual(1);
+    expect(ctx.membershipsRepository.items.length).toEqual(1);
+    expect(ctx.usersRepository.items).toEqual(
       expect.arrayContaining([expect.objectContaining({ nickName: firstName })]),
     );
   });
 
   test("Não deve ser possível criar um tenant com um mesmo numero de decumento", async () => {
     const documentNumber = cnpj.fake({ alphanumeric: false });
-    inMemoryTenantsRepository.items.push(makeTenant({ documentType: "CNPJ", documentNumber }));
+    ctx.tenantsRepository.items.push(makeTenant({ documentType: "CNPJ", documentNumber }));
 
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
@@ -158,7 +149,7 @@ describe("Login Use Case", () => {
       },
       new UniqueEntityId(),
     );
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       firstName: user.firstName,
@@ -174,10 +165,10 @@ describe("Login Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    expect(inMemoryUsersRepository.items.length).toEqual(1);
-    expect(inMemoryTenantsRepository.items.length).toEqual(1);
-    expect(inMemoryMembershipsRepository.items.length).toEqual(1);
-    expect(inMemoryUsersRepository.items).toEqual(
+    expect(ctx.usersRepository.items.length).toEqual(1);
+    expect(ctx.tenantsRepository.items.length).toEqual(1);
+    expect(ctx.membershipsRepository.items.length).toEqual(1);
+    expect(ctx.usersRepository.items).toEqual(
       expect.arrayContaining([expect.objectContaining({ nickName: firstName })]),
     );
   });

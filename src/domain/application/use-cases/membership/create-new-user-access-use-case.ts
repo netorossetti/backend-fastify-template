@@ -3,7 +3,7 @@ import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
 import { StringHelper } from "src/core/helpers/string-helper.js";
 import { HashGenerator } from "src/core/lib/criptography/hash-generator.js";
-import { Uploader } from "src/core/lib/uploader/uploader.js";
+import { FileUploader } from "src/core/lib/storage/file-uploader.js";
 import { Result, failure, success } from "src/core/result.js";
 import { FileField } from "src/core/types/zod-custom-types/file-schema.js";
 import { Membership, RoleUserType } from "src/domain/enterprise/entities/membership.js";
@@ -37,7 +37,7 @@ export class CreateNewUserAccessUseCase {
     private usersRepository: UsersRepository,
     private tenantsRepository: TenantsRepository,
     private membershipsRepository: MembershipsRepository,
-    private uploader: Uploader,
+    private uploader: FileUploader,
     private hasher: HashGenerator,
   ) {}
 

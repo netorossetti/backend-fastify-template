@@ -1,6 +1,6 @@
 import { convert } from "html-to-text";
-import { StringHelper } from "src/core/helpers/string-helper.js";
-import { mailOptions, MailSender } from "src/core/lib/mail-sender/mail-sender.js";
+import { StringHelper } from "src/core/helpers/string-helper";
+import { mailOptions, MailSender } from "src/core/lib/mail-sender/mail-sender";
 
 type StoredMail = {
   to: string | string[];
@@ -11,14 +11,22 @@ type StoredMail = {
   bodyText: string;
 };
 
-export class InMemoryMailSender implements MailSender {
+export class FakerMailSender implements MailSender {
   private mails: StoredMail[] = [];
 
-  async sendEmail({ to, subject, fromName, fromEmail, bodyMessage }: mailOptions): Promise<void> {
+  async sendEmail({
+    to,
+    subject,
+    fromName,
+    fromEmail,
+    bodyMessage,
+  }: mailOptions): Promise<void> {
     if (!bodyMessage) throw new Error("Texto da mensagem não foi definido");
 
     const isHtml = StringHelper.isHTML(bodyMessage);
-    const text = isHtml ? convert(bodyMessage, { wordwrap: false }) : bodyMessage;
+    const text = isHtml
+      ? convert(bodyMessage, { wordwrap: false })
+      : bodyMessage;
 
     const stored: StoredMail = {
       to,

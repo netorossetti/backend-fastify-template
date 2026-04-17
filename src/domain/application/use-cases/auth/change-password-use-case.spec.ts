@@ -1,26 +1,23 @@
 import { faker } from "@faker-js/faker";
 import { BadRequestError } from "src/core/errors/bad-request-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { ChangePasswordUseCase } from "./change-password-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let fakerHash: FakeHasher;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: ChangePasswordUseCase;
 
 describe("Select Account Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    fakerHash = new FakeHasher();
-    sut = new ChangePasswordUseCase(inMemoryUsersRepository, fakerHash);
+    ctx = createTestContext();
+    sut = new ChangePasswordUseCase(ctx.usersRepository, ctx.fakerHasher);
   });
 
   test("Deve ser possível alterar a senha de um usuário", async () => {
-    const passwordHashed = await fakerHash.hash("Test@2016");
+    const passwordHashed = await ctx.fakerHasher.hash("Test@2016");
     const user = makeUser({ password: passwordHashed });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -30,10 +27,10 @@ describe("Select Account Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    const updatedUser = inMemoryUsersRepository.items.find((u) => u.id === user.id);
+    const updatedUser = ctx.usersRepository.items.find((u) => u.id === user.id);
     expect(updatedUser).not.toBe(null);
     if (updatedUser) {
-      const compare = await fakerHash.compare("Test@2026", updatedUser.password);
+      const compare = await ctx.fakerHasher.compare("Test@2026", updatedUser.password);
       expect(compare).toBe(true);
     }
   });
@@ -89,9 +86,9 @@ describe("Select Account Use Case", () => {
   });
 
   test("Não deve ser possivel alterar uma senha sem informar a senha atual corretamente", async () => {
-    const passwordHashed = await fakerHash.hash("Test@2016");
+    const passwordHashed = await ctx.fakerHasher.hash("Test@2016");
     const user = makeUser({ password: passwordHashed });
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),

@@ -1,47 +1,41 @@
 import { faker } from "@faker-js/faker";
 import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { SelectTenantUseCase } from "./select-tenant-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: SelectTenantUseCase;
 
 describe("Select Account Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
+    ctx = createTestContext();
     sut = new SelectTenantUseCase(
-      inMemoryUsersRepository,
-      inMemoryMembershipsRepository,
-      inMemoryTenantsRepository,
+      ctx.usersRepository,
+      ctx.membershipsRepository,
+      ctx.tenantsRepository,
     );
   });
 
   test("Deve ser possível alterar o tenant do usuário", async () => {
     const tenant1 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant1);
+    ctx.tenantsRepository.items.push(tenant1);
     const tenant2 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant2);
+    ctx.tenantsRepository.items.push(tenant2);
 
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant1.id.toString(),
         userId: user.id.toString(),
       }),
     );
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant2.id.toString(),
         userId: user.id.toString(),
@@ -78,7 +72,7 @@ describe("Select Account Use Case", () => {
           ]),
         }),
       );
-      const lastAccess = inMemoryMembershipsRepository.items.find(
+      const lastAccess = ctx.membershipsRepository.items.find(
         (i) => i.tenantId === tenant2.id.toString(),
       );
       expect(lastAccess?.lastAccessAt).instanceOf(Date);
@@ -99,7 +93,7 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível alterar o tenant de um usuário para um tenant inválido", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -114,10 +108,10 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível alterar o tenant de um usuário para um tenant inativado", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -132,10 +126,10 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível alterar o tenant de um usuário que não pertence a nenhum tenant", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -150,14 +144,14 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível alterar o tenant de um usuário que não pertence ao tenant", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const tenant2 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant2);
+    ctx.tenantsRepository.items.push(tenant2);
 
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),

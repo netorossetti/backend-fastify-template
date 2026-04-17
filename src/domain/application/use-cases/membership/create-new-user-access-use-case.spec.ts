@@ -2,45 +2,33 @@ import { faker } from "@faker-js/faker";
 import { ConflictError } from "src/core/errors/conflict-error.js";
 import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeHasher } from "test/lib/cryptography/fake-hasher.js";
-import { FakerUploader } from "test/lib/faker-uploader.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { CreateNewUserAccessUseCase } from "./create-new-user-access-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
-let fakeHasher: FakeHasher;
-let fakerUploader: FakerUploader;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: CreateNewUserAccessUseCase;
 
 describe("Create New User Access Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
-    fakeHasher = new FakeHasher();
-    fakerUploader = new FakerUploader();
+    ctx = createTestContext();
     sut = new CreateNewUserAccessUseCase(
-      inMemoryUsersRepository,
-      inMemoryTenantsRepository,
-      inMemoryMembershipsRepository,
-      fakerUploader,
-      fakeHasher,
+      ctx.usersRepository,
+      ctx.tenantsRepository,
+      ctx.membershipsRepository,
+      ctx.fakerUploader,
+      ctx.fakerHasher,
     );
   });
 
   test("Deve ser possível criar um novo acesso de usuário.", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -70,19 +58,19 @@ describe("Create New User Access Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    expect(inMemoryUsersRepository.items.length).toEqual(2);
-    expect(inMemoryMembershipsRepository.items.length).toEqual(2);
-    const newUser = inMemoryUsersRepository.items.find((u) => u.id !== user.id);
+    expect(ctx.usersRepository.items.length).toEqual(2);
+    expect(ctx.membershipsRepository.items.length).toEqual(2);
+    const newUser = ctx.usersRepository.items.find((u) => u.id !== user.id);
     expect(newUser?.avatarUrl).toBe(`/uploads/avatars/${user.id}`);
-    expect(fakerUploader.uploaded.length).toBe(1);
+    expect(ctx.fakerUploader.uploaded.length).toBe(1);
   });
 
   test("Deve ser possível criar um novo acesso de usuário para um usuário já existente em outro organização.", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -91,10 +79,10 @@ describe("Create New User Access Use Case", () => {
     );
 
     const otherTenant = makeTenant();
-    inMemoryTenantsRepository.items.push(otherTenant);
+    ctx.tenantsRepository.items.push(otherTenant);
     const otherUser = makeUser();
-    inMemoryUsersRepository.items.push(otherUser);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(otherUser);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: otherUser.id.toString(),
         tenantId: otherTenant.id.toString(),
@@ -115,8 +103,8 @@ describe("Create New User Access Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    expect(inMemoryUsersRepository.items.length).toEqual(2);
-    expect(inMemoryMembershipsRepository.items.length).toEqual(3);
+    expect(ctx.usersRepository.items.length).toEqual(2);
+    expect(ctx.membershipsRepository.items.length).toEqual(3);
   });
 
   test("Não deve ser possível criar um novo acesso com um usuário inválido", async () => {
@@ -140,7 +128,7 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com uma organização inválida", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const firstName = faker.person.firstName();
     const result = await sut.execute({
@@ -162,9 +150,9 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com uma organização inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const firstName = faker.person.firstName();
     const result = await sut.execute({
@@ -186,9 +174,9 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com uma organização inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const firstName = faker.person.firstName();
     const result = await sut.execute({
@@ -210,9 +198,9 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com um usuário sem vinculo de acesso à organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const firstName = faker.person.firstName();
     const result = await sut.execute({
@@ -234,10 +222,10 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com um usuário com vinculo de acesso inativado na organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -265,10 +253,10 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com um usuário sem privilegio de acesso na organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -298,10 +286,10 @@ describe("Create New User Access Use Case", () => {
 
   test("Não deve ser possível criar um novo acesso com um usuário para um usuário que já possui acesso a organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -310,8 +298,8 @@ describe("Create New User Access Use Case", () => {
     );
 
     const otherUser = makeUser();
-    inMemoryUsersRepository.items.push(otherUser);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(otherUser);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: otherUser.id.toString(),
         tenantId: tenant.id.toString(),

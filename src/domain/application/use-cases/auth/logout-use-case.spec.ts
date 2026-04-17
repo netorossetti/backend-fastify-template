@@ -1,44 +1,38 @@
 import { faker } from "@faker-js/faker";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
 import { TokenHelper } from "src/core/helpers/token-helper.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeAuthToken } from "test/factories/make-auth-token.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakeRedisServices } from "test/lib/faker-redis-services.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { LogoutUseCase } from "./logout-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
-let fakeRedisServices: FakeRedisServices;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: LogoutUseCase;
 
 describe("Login Use Case", () => {
   beforeEach(() => {
-    fakeRedisServices = new FakeRedisServices();
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
-    sut = new LogoutUseCase(inMemoryUsersRepository, fakeRedisServices);
+    ctx = createTestContext();
+    sut = new LogoutUseCase(ctx.usersRepository, ctx.fakerRedisServices);
   });
 
   test("Deve ser possivel realizar um logout", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const membership = makeMembership({
       userId: user.id.toString(),
     });
-    inMemoryMembershipsRepository.items.push(membership);
-    makeAuthToken(user, membership, fakeRedisServices);
+    ctx.membershipsRepository.items.push(membership);
+    makeAuthToken(user, membership, ctx.fakerRedisServices);
 
     const keyAccessToken = TokenHelper.getAccessTokenKey(user.id.toString());
-    const haskey = await fakeRedisServices.get(keyAccessToken);
+    const haskey = await ctx.fakerRedisServices.get(keyAccessToken);
     expect(haskey).toEqual(expect.any(String));
 
     const result = await sut.execute({
       userId: user.id.toString(),
     });
-    const noKey = await fakeRedisServices.get(keyAccessToken);
+    const noKey = await ctx.fakerRedisServices.get(keyAccessToken);
     expect(noKey).toBe(null);
 
     expect(result.isSuccess()).toBe(true);

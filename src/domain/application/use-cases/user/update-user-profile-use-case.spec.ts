@@ -1,24 +1,21 @@
 import { faker } from "@faker-js/faker";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeUser } from "test/factories/make-user.js";
-import { FakerUploader } from "test/lib/faker-uploader.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { UpdateUserProfileUseCase } from "./update-user-profile-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let fakerUploader: FakerUploader;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: UpdateUserProfileUseCase;
 
 describe("Select Account Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    fakerUploader = new FakerUploader();
-    sut = new UpdateUserProfileUseCase(inMemoryUsersRepository, fakerUploader);
+    ctx = createTestContext();
+    sut = new UpdateUserProfileUseCase(ctx.usersRepository, ctx.fakerUploader);
   });
 
   test("Deve ser possível atualizar o perfil do usuário com sucesso (sem avatar)", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -28,7 +25,7 @@ describe("Select Account Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    const updatedUser = inMemoryUsersRepository.items.find((u) => u.id === user.id);
+    const updatedUser = ctx.usersRepository.items.find((u) => u.id === user.id);
     expect(updatedUser?.firstName).toBe("Novo");
     expect(updatedUser?.lastName).toBe("Nome");
     expect(updatedUser?.nickName).toBe("novo.nick");
@@ -36,7 +33,7 @@ describe("Select Account Use Case", () => {
 
   test("Deve ser possível atualizar o avatar do usuário", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const fakeBuffer = Buffer.from("fake image");
     const avatar = {
@@ -55,9 +52,9 @@ describe("Select Account Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    const updatedUser = inMemoryUsersRepository.items.find((u) => u.id === user.id);
+    const updatedUser = ctx.usersRepository.items.find((u) => u.id === user.id);
     expect(updatedUser?.avatarUrl).toBe(`/uploads/avatars/${user.id}`);
-    expect(fakerUploader.uploaded.length).toBe(1);
+    expect(ctx.fakerUploader.uploaded.length).toBe(1);
   });
 
   test("Não deve ser possível permitir atualização de usuário inexistente", async () => {

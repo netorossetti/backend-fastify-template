@@ -1,41 +1,34 @@
 import { faker } from "@faker-js/faker";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { FetchTenantsUseCase } from "./fetch-tenants-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: FetchTenantsUseCase;
 
 describe("Select Account Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
-    inMemoryTenantsRepository.setMembershipsRepository(inMemoryMembershipsRepository);
-    sut = new FetchTenantsUseCase(inMemoryUsersRepository, inMemoryTenantsRepository);
+    ctx = createTestContext();
+    sut = new FetchTenantsUseCase(ctx.usersRepository, ctx.tenantsRepository);
   });
 
   test("Deve ser possível listar tenants do usuário", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant1 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant1);
+    ctx.tenantsRepository.items.push(tenant1);
     const tenant2 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant2);
+    ctx.tenantsRepository.items.push(tenant2);
     const tenant3 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant3);
+    ctx.tenantsRepository.items.push(tenant3);
     const tenant4 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant4);
+    ctx.tenantsRepository.items.push(tenant4);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant1.id.toString(),
         userId: user.id.toString(),
@@ -43,7 +36,7 @@ describe("Select Account Use Case", () => {
         role: "admin",
       }),
     );
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant2.id.toString(),
         userId: user.id.toString(),
@@ -51,7 +44,7 @@ describe("Select Account Use Case", () => {
         role: "admin",
       }),
     );
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant3.id.toString(),
         userId: user.id.toString(),
@@ -59,7 +52,7 @@ describe("Select Account Use Case", () => {
         role: "admin",
       }),
     );
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant3.id.toString(),
         userId: user.id.toString(),

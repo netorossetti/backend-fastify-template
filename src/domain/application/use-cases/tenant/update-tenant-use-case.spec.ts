@@ -3,41 +3,34 @@ import { BadRequestError } from "src/core/errors/bad-request-error.js";
 import { ConflictError } from "src/core/errors/conflict-error.js";
 import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { fake } from "validation-br/dist/cnpj";
 import { UpdateTenantUseCase } from "./update-tenant-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: UpdateTenantUseCase;
 
 describe("Select Account Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
-
+    ctx = createTestContext();
     sut = new UpdateTenantUseCase(
-      inMemoryUsersRepository,
-      inMemoryTenantsRepository,
-      inMemoryMembershipsRepository,
+      ctx.usersRepository,
+      ctx.tenantsRepository,
+      ctx.membershipsRepository,
     );
   });
 
   test("Deve ser possível atualizar um tenant", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
@@ -85,7 +78,7 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant inválido", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -104,10 +97,10 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant inátivado", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -126,10 +119,10 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant com um usuário não percente ao tenant", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -148,12 +141,12 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant com um usuário com permisão inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
@@ -178,15 +171,15 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant com um documento de outro tenant existente", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const tenant2 = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant2);
+    ctx.tenantsRepository.items.push(tenant2);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
@@ -211,12 +204,12 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant com CPF inválido.", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
@@ -241,12 +234,12 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant com CNPJ inválido.", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),
@@ -271,12 +264,12 @@ describe("Select Account Use Case", () => {
 
   test("Não deve ser possível atualizar um tenant com CNH inválido.", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
-    inMemoryMembershipsRepository.items.push(
+    ctx.membershipsRepository.items.push(
       makeMembership({
         tenantId: tenant.id.toString(),
         userId: user.id.toString(),

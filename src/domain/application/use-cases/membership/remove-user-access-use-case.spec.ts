@@ -1,37 +1,31 @@
 import { faker } from "@faker-js/faker";
 import { NotAllowedError } from "src/core/errors/not-allowed-error.js";
 import { NotFoundError } from "src/core/errors/not-found-error.js";
+import { createTestContext } from "test/@context/context-test.js";
 import { makeMembership } from "test/factories/make-membership.js";
 import { makeTenant } from "test/factories/make-tenant.js";
 import { makeUser } from "test/factories/make-user.js";
-import { InMemoryMembershipsRepository } from "test/repositories/in-memory-memberships-repository.js";
-import { InMemoryTenantsRepository } from "test/repositories/in-memory-tenants-repository.js";
-import { InMemoryUsersRepository } from "test/repositories/in-memory-users-repository.js";
 import { RemoveUserAccessUseCase } from "./remove-user-access-use-case.js";
 
-let inMemoryUsersRepository: InMemoryUsersRepository;
-let inMemoryTenantsRepository: InMemoryTenantsRepository;
-let inMemoryMembershipsRepository: InMemoryMembershipsRepository;
+let ctx: ReturnType<typeof createTestContext>;
 let sut: RemoveUserAccessUseCase;
 
 describe("Update User Access Use Case", () => {
   beforeEach(() => {
-    inMemoryUsersRepository = new InMemoryUsersRepository();
-    inMemoryTenantsRepository = new InMemoryTenantsRepository();
-    inMemoryMembershipsRepository = new InMemoryMembershipsRepository();
+    ctx = createTestContext();
     sut = new RemoveUserAccessUseCase(
-      inMemoryUsersRepository,
-      inMemoryTenantsRepository,
-      inMemoryMembershipsRepository,
+      ctx.usersRepository,
+      ctx.tenantsRepository,
+      ctx.membershipsRepository,
     );
   });
 
   test("Deve ser possível remover o acesso de um usuário.", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -40,8 +34,8 @@ describe("Update User Access Use Case", () => {
     );
 
     const otherUser = makeUser();
-    inMemoryUsersRepository.items.push(otherUser);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(otherUser);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: otherUser.id.toString(),
         tenantId: tenant.id.toString(),
@@ -56,8 +50,8 @@ describe("Update User Access Use Case", () => {
     });
 
     expect(result.isSuccess()).toBe(true);
-    expect(inMemoryUsersRepository.items.length).toEqual(2);
-    expect(inMemoryMembershipsRepository.items.length).toEqual(1);
+    expect(ctx.usersRepository.items.length).toEqual(2);
+    expect(ctx.membershipsRepository.items.length).toEqual(1);
   });
 
   test("Não deve ser possível remover o acesso de um usuário com um usuário inválido", async () => {
@@ -75,7 +69,7 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário com uma organização inválida", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -91,9 +85,9 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário com uma organização inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -109,9 +103,9 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário com uma organização inativada", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant({ active: false });
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -127,9 +121,9 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário com um usuário sem vinculo de acesso à organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
 
     const result = await sut.execute({
       userId: user.id.toString(),
@@ -145,10 +139,10 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário com um usuário com vinculo de acesso inativado na organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -170,10 +164,10 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário com um usuário sem privilegio de acesso na organização", async () => {
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
+    ctx.usersRepository.items.push(user);
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
-    inMemoryMembershipsRepository.items.push(
+    ctx.tenantsRepository.items.push(tenant);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -197,10 +191,10 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário sem acesso definido para a organização", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -223,10 +217,10 @@ describe("Update User Access Use Case", () => {
 
   test("Não deve ser possível remover o acesso de um usuário proprietário da organização", async () => {
     const tenant = makeTenant();
-    inMemoryTenantsRepository.items.push(tenant);
+    ctx.tenantsRepository.items.push(tenant);
     const user = makeUser();
-    inMemoryUsersRepository.items.push(user);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(user);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: user.id.toString(),
         tenantId: tenant.id.toString(),
@@ -235,8 +229,8 @@ describe("Update User Access Use Case", () => {
     );
 
     const otherUser = makeUser();
-    inMemoryUsersRepository.items.push(otherUser);
-    inMemoryMembershipsRepository.items.push(
+    ctx.usersRepository.items.push(otherUser);
+    ctx.membershipsRepository.items.push(
       makeMembership({
         userId: otherUser.id.toString(),
         tenantId: tenant.id.toString(),
